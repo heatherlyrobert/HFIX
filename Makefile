@@ -9,7 +9,7 @@ NAME_BASE  = HFIX
 # additional standard and outside libraries
 LIB_STD    = 
 # all heatherly libraries used, debug versions whenever available
-LIB_MINE   = 
+LIB_MINE   = -lyENV_debug
 # directory for production code, no trailing slash
 INST_DIR   = /usr/local/bin
 

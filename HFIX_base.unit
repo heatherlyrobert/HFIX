@@ -1,0 +1,71 @@
+
+
+
+#23456789-12  123456789-123456789-123456789-12345  123456789-123456789-123456  123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-  123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-  123456789-123456789- 
+#==(verb)===  ===========(description)===========  =====(function)===========  ========================(arguments)=================================================================  ==(test)==  ==========================(results)=================================================================  ========(var)======= 
+SCRP  [0a/·]  (GCC) verify reading lines from file                                0s  read            BASE__read ((01.---))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+   local      create a workilng variable           - - - - - - - - - - - - -   char *x_gcc  = "/tmp/gcc.out";                                                                                                                                                                                             
+   local      create a workilng variable           - - - - - - - - - - - - -   char  x_recd [LEN_RECD];                                                                                                                                                                                                   
+
+   COND       verify program setup                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.001))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     setup the program                    HFIX_unit_quiet                                                                                                                   z_equal     0                                                                                                    
+
+   COND       create a simple file                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     ... remove test file                 yENV_rm                     x_gcc                                                                                                 c_equal     '-'                                                                                                  
+     file     data file                            - - - - - - - - - - - - -   [[ x_gcc ]]                                                                                                                                                                                                                
+     append   ... add a record                     - - - - - - - - - - - - -   /tmp/home/member/                                                                                                                                                                                                          
+     append   ... add a record                     - - - - - - - - - - - - -   HFIX_test.v02.return_type.c:3:1: warning: return type defaults to 'int' [-Wimplicit-int]
+     append   ... add a record                     - - - - - - - - - - - - -       3 | main       (void)
+     append   ... add a record                     - - - - - - - - - - - - -         | ^~~~
+     append   ... add a record                     - - - - - - - - - - - - -   yJOBS.h:311: warning: \"YJOBS_LOCAL\" redefined
+     append   ... add a record                     - - - - - - - - - - - - -     311 | #define     YJOBS_LOCAL     '´'
+     append   ... add a record                     - - - - - - - - - - - - -         | 
+     append   ... add a record                     - - - - - - - - - - - - -   yJOBS_file.c:33:1: warning: no previous prototype for 'yjobs_saveback' [-Wmissing-prototypes]
+     append   ... add a record                     - - - - - - - - - - - - -      33 | yjobs_saveback           (cchar a_loc, cchar *a_fuser, int a_fuid, char *a_fdesc, char *a_fname, char *a_fdir, char *a_full)
+     append   ... add a record                     - - - - - - - - - - - - -         | ^~~~~~~~~~~~~~
+     append   ... add a record                     - - - - - - - - - - - - -   yJOBS_file.c:102:12: error: too few arguments to function 'yENV_user_data'
+     append   ... add a record                     - - - - - - - - - - - - -     102 |       rc = yENV_user_data  ('i', x_name, &(r_stat->st_uid), NULL, NULL, NULL);
+     append   ... add a record                     - - - - - - - - - - - - -         |            ^~~~~~~~~~~~~~
+     append   ... add a record                     - - - - - - - - - - - - -   yJOBS_file.c:108:12: error: too few arguments to function 'yENV_group_data'
+     append   ... add a record                     - - - - - - - - - - - - -     108 |       rc = yENV_group_data ('i', x_name, &(r_stat->st_gid));
+     append   ... add a record                     - - - - - - - - - - - - -         |            ^~~~~~~~~~~~~~~
+     append   ... add a record                     - - - - - - - - - - - - -   yJOBS_file.c:257:31: warning: unused parameter 'a_runas' [-Wunused-parameter]
+     append   ... add a record                     - - - - - - - - - - - - -     257 | yjobs_file_secure       (char a_runas, char a_mode, char a_title [LEN_LABEL], char a_mark [LEN_TERSE], char a_fix [LEN_TERSE], char a_dir [LEN_DESC], char a_file [LEN_LABEL], char a_prefix [LEN_TERSE], char a_suffix [LEN_TERSE])
+     append   ... add a record                     - - - - - - - - - - - - -         |                          ~~~~~^~~~~~~
+     append   ... add a record                     - - - - - - - - - - - - -   yJOBS_file.c:303:28: warning: implicit declaration of function 'yENV_audit_reg' [-Wimplicit-function-declaration]
+     append   ... add a record                     - - - - - - - - - - - - -     303 |    else               rc = yENV_audit_reg     (x_fix, YENV_STANDARD, a_dir, a_file, \"root\", \"root\", \"f_tight\");
+     append   ... add a record                     - - - - - - - - - - - - -         |                            ^~~~~~~~~~~~~~
+     append   ... add a record                     - - - - - - - - - - - - -   yJOBS_file.c:308:35: warning: passing argument 1 of 'yLOG_exitr' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+     append   ... add a record                     - - - - - - - - - - - - -     308 |       DEBUG_YJOBS   yLOG_exitr   (__FUNCTION__, rce);
+     append   ... add a record                     - - - - - - - - - - - - -         |                                   ^~~~~~~~~~~~
+     append   ... add a record                     - - - - - - - - - - - - -   yJOBS_file.c:331:16: warning: unused variable 'rc_final' [-Wunused-variable]
+     append   ... add a record                     - - - - - - - - - - - - -     331 |    char        rc_final    =    0;
+     append   ... add a record                     - - - - - - - - - - - - -         |                ^~~~~~~~
+     append   ... add a record                     - - - - - - - - - - - - -   yJOBS_file.c:239:18: warning: 'o___ACCESSOR________________o' defined but not used [-Wunused-function]
+     append   ... add a record                     - - - - - - - - - - - - -     239 | static void      o___ACCESSOR________________o (void) {;};
+     append   ... add a record                     - - - - - - - - - - - - -         |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     append   ... add a record                     - - - - - - - - - - - - -   make: *** [/usr/local/sbin/zeno_make:203: yJOBS_file.o] Error 1
+     append   ... add a record                     - - - - - - - - - - - - -   /usr/libexec/gcc/x86_64-pc-linux-gnu/ld: /usr/local/lib64/libyJOBS_debug.so: undefined reference to `yENV_score_mark'
+     append   ... add a record                     - - - - - - - - - - - - -   /usr/libexec/gcc/x86_64-pc-linux-gnu/ld: /usr/local/lib64/libyJOBS_debug.so: undefined reference to `yENV_audit_localdir'
+     append   ... add a record                     - - - - - - - - - - - - -   /usr/libexec/gcc/x86_64-pc-linux-gnu/ld: /usr/local/lib64/libyJOBS_debug.so: undefined reference to `yENV_audit_central'
+     append   ... add a record                     - - - - - - - - - - - - -   collect2: error: ld returned 1 exit status
+     append   ... add a record                     - - - - - - - - - - - - -   make: *** [/usr/local/sbin/zeno_make:159: polymnia_debug] Error 1
+     exec     ... check existance                  yENV_exists                 x_gcc                                                                                                 c_equal     'r'                                                                                                  
+     exec     ... check line count                 yENV_lines                  x_gcc                                                                                                 z_equal     37                                                                                                   
+
+#> COND       verify quick success                                               - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((01.002))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+#>   code     set input                            - - - - - - - - - - - - -   strcpy (x_recd, u_gcc_norm);                                                                                                                                                                                             
+#>   code     set input                            - - - - - - - - - - - - -   p = x_recd;                                                                                                                                                                                                                
+#>   exec     call parse                           GCC__file                   p     , &n    , &x_typ, x_fil                                                                         z_equal     1                                                                                                    
+#>   echo     ... review next                      - - - - - - - - - - - - -   n                                                                                                     s_equal     3:1: warning: ¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬ 
+#>   echo     ... review type                      - - - - - - - - - - - - -   x_typ                                                                                                 c_equal     'c'                                                                                                  
+#>   echo     ... review file                      - - - - - - - - - - - - -   x_fil                                                                                                 w_equal     åHFIX_test.v02.return_type.cæ                                                                        
+
+
+
+
+   COND       verify program teardown purges                                     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   ((05.003))  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     exec     wrap-up the program                  HFIX_unit_end                                                                                                                     z_equal     0                                                                                                    
+
+
+

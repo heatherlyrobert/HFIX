@@ -42,8 +42,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "2.--  moving from awk to c-language"
 #define     P_VERMINOR  "2.0-"
-#define     P_VERNUM    "2.0a"
-#define     P_VERTXT    "porting to new project
+#define     P_VERNUM    "2.0b"
+#define     P_VERTXT    "GCC parsing logic is updated and unit tested"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -67,6 +67,7 @@
 #include <string.h>
 #include <yLOG.h>
 #include <yURG.h>
+#include <yENV.h>
 #include <ySTR_solo.h>
 #include <yCOLOR_solo.h>
 
@@ -88,6 +89,7 @@ char        PROG__args              (int a_argc, char *a_argv[]);
 
 /*===[[ HFIX_base ]]==========================================================*/
 /*········´ ´·····················´ ´·········································*/
+char        BASE__read              (FILE *f, short *b_lines, char r_recd [LEN_RECD]);
 char        BASE_pass               (char a_pass);
 
 
@@ -95,7 +97,11 @@ char        BASE_pass               (char a_pass);
 /*===[[ HFIX_gcc ]]===========================================================*/
 /*········´ ´·····················´ ´·········································*/
 char        GCC__file               (char *b_beg, char **r_next, char *r_type, char r_file [LEN_HUND]);
-char        GCC_parse               (char a_recd [LEN_RECD], int *b_count, char r_file [LEN_HUND], int *r_line, int *r_col, char *r_type, char r_msg [LEN_RECD], char r_flag [LEN_HUND]);
+char        GCC__num                (char *b_beg, char **r_next, short *r_num);
+char        GCC__level              (char *b_beg, char **r_next, char a_filter, char *r_type);
+char        GCC__msg                (char *b_beg, short *b_count, char r_msg [LEN_RECD], char r_flag [LEN_HUND]);
+char        GCC__regrade            (char a_msg [LEN_RECD], char *b_level);
+char        GCC_parse               (char a_recd [LEN_RECD], short *b_count, char r_file [LEN_HUND], char *r_type, short *r_line, short *r_col, char *r_level, char r_msg [LEN_RECD], char r_flag [LEN_HUND]);
 /*········´ ´··(done))············´ ´·········································*/
 
 

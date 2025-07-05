@@ -7,6 +7,12 @@
 #==(verb)===  ===========(description)===========  =====(function)===========  ========================(arguments)=================================================================  ==(test)==  ==========================(results)=================================================================  ========(var)======= 
 PREP          include the prototype headers                                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
    incl       include public header                HFIX.h                      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   - - - - -   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+   global     gcc testing content                  - - - - - - - - - - - - -   char *u_gcc_norm    = "HFIX_test.v02.return_type.c:3:1: warning: return type defaults to 'int' [-Wimplicit-int]";                                                                                                           
+   global     gcc testing content                  - - - - - - - - - - - - -   char *u_make_norm   = "make: *** [/usr/local/sbin/zeno_make:203: yJOBS_file.o] Error 1";                                                                                                                                    
+   global     gcc testing content                  - - - - - - - - - - - - -   char *u_header_norm = "yJOBS.h:311: warning: \"YJOBS_LOCAL\" redefined";
+   global     gcc testing content                  - - - - - - - - - - - - -   char *u_ld_norm     = "/usr/libexec/gcc/x86_64-pc-linux-gnu/ld: /usr/local/lib64/libyJOBS_debug.so: undefined reference to `yENV_score_mark'";
+   global     gcc testing content                  - - - - - - - - - - - - -   char *u_unit_norm   = "HFIX_gcc.unit:48:1: error: code verb can not xyz";
+   global     gcc testing content                  - - - - - - - - - - - - -   char *u_munit_norm  = "koios_base.munit:25:12: warning: unused variable 'rc_final' [-Wunused-variable]";
 
 
 
