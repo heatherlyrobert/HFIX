@@ -12,9 +12,9 @@ main               (int a_argc, char *a_argv [])
    rc = PROG__args (a_argc, a_argv);
    DEBUG_PROG  yLOG_value   ("args"      , rc);
    /*---(run)----------------------------*/
-   rc = BASE_pass (0);
+   rc = BASE_pass (0, g_filter, g_color);
    DEBUG_PROG  yLOG_value   ("header (0)", rc);
-   rc = BASE_pass (1);
+   rc = BASE_pass (1, g_filter, g_color);
    DEBUG_PROG  yLOG_value   ("detail (1)", rc);
    /*---(complete)-----------------------*/
    DEBUG_PROG  yLOG_exit    (__FUNCTION__);

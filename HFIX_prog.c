@@ -28,8 +28,13 @@ PROG__args              (int a_argc, char *a_argv[])
       if (i < a_argc - 1)  b = a_argv [i + 1];
       else                 b = NULL;
       /*---(simple)----------------------*/
-      if      (strcmp  (a, "--errors"       ) == 0)   g_filter = 'e';
-      else if (strcmp  (a, "--warnings"     ) == 0)   g_filter = 'w';
+      if      (strcmp  (a, "--linker"       ) == 0)   strcpy (g_filter, HFIX_CRITICAL);
+      else if (strcmp  (a, "--errors"       ) == 0)   strcpy (g_filter, HFIX_ERRORS);
+      else if (strcmp  (a, "--error-only"   ) == 0)   strcpy (g_filter, HFIX_ERROR);
+      else if (strcmp  (a, "--warnings"     ) == 0)   strcpy (g_filter, HFIX_WARNINGS);
+      else if (strcmp  (a, "--waste-only"   ) == 0)   strcpy (g_filter, HFIX_WASTE);
+      else if (strcmp  (a, "--all"          ) == 0)   strcpy (g_filter, HFIX_EVERYTHING);
+      else if (strcmp  (a, "--color"        ) == 0)   g_color  = 'y';
       else if (strncmp (a, "--"          , 2) != 0)   strlcpy (g_file, a, LEN_FULL);
    }
    DEBUG_ARGS  yLOG_value  ("entries"   , x_total);

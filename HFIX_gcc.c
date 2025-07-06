@@ -133,7 +133,7 @@ GCC__num                (char *b_beg, char **r_next, short *r_num)
 }
 
 char
-GCC__level              (char *b_beg, char **r_next, char a_filter, char *r_type)
+GCC__level              (char *b_beg, char **r_next, char *r_type)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -173,20 +173,8 @@ GCC__level              (char *b_beg, char **r_next, char a_filter, char *r_type
       return rce;
    }
    DEBUG_PROG  yLOG_info    ("b_beg"     , b_beg);
-   --rce; if  (strcmp (b_beg, " warning") == 0) {
-      if (strchr ("Ww"  , a_filter) != NULL)  x_type = 'W';
-      else {
-         DEBUG_ARGS  yLOG_exit   (__FUNCTION__);
-         return 0;
-      }
-   }
-   else if    (strcmp (b_beg, " error"  ) == 0) {
-      if (strchr ("EeWw", a_filter) != NULL)  x_type = 'E';
-      else {
-         DEBUG_ARGS  yLOG_exit   (__FUNCTION__);
-         return 0;
-      }
-   }
+   --rce; if  (strcmp (b_beg, " warning") == 0)   x_type = 'W';
+   else if    (strcmp (b_beg, " error"  ) == 0)   x_type = 'E';
    else {
       DEBUG_ARGS  yLOG_exitr  (__FUNCTION__, rce);
       return rce;
@@ -268,6 +256,10 @@ GCC__regrade            (char a_msg [LEN_RECD], char *b_level)
    if (strstr  (a_msg, "unused variable" )      != NULL)  x_level = 'U';
    if (strstr  (a_msg, "unused parameter")      != NULL)  x_level = 'U';
    if (strstr  (a_msg, "unused function" )      != NULL)  x_level = 'U';
+   /*---(yLOG)---------------------------*/
+   if (strstr  (a_msg, "yLOG_enter"      )      != NULL)  x_level = 'w';
+   if (strstr  (a_msg, "yLOG_exit"       )      != NULL)  x_level = 'w';
+   if (strstr  (a_msg, "yLOG_exitr"      )      != NULL)  x_level = 'w';
    /*---(save-back)----------------------*/
    if (b_level != NULL)  *b_level = x_level;
    /*---(complete)-----------------------*/
@@ -315,7 +307,7 @@ GCC_parse               (char a_recd [LEN_RECD], short *b_count, char r_file [LE
    DEBUG_PROG  yLOG_value   ("column"    , rc);
    /*---(level)--------------------------*/
    p = n;
-   rc  = GCC__level   (p, &n, g_filter, r_level);
+   rc  = GCC__level   (p, &n, r_level);
    DEBUG_PROG  yLOG_value   ("level"     , rc);
    --rce;  if (rc < 0) {
       DEBUG_PROG  yLOG_exitr   (__FUNCTION__, rce);

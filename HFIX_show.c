@@ -59,7 +59,7 @@ SHOW_num                (int a_num, int a_max, char r_out [LEN_TERSE])
 }
 
 char*
-SHOW_totals             (char a_pass, int a_show, int a_fail, int a_errs, int a_warn, int a_waste, int a_msgs, int a_total)
+SHOW_totals             (char c_pass, char c_color, short a_show, short a_fail, short a_errs, short a_warn, short a_waste, short a_msgs, short a_total)
 {
    char        x_grade     [LEN_TERSE] = "----";
    char        x_on        [LEN_TERSE] = "";
@@ -71,31 +71,32 @@ SHOW_totals             (char a_pass, int a_show, int a_fail, int a_errs, int a_
    char        x_waste     [LEN_TERSE] = "····";
    char        x_msgs      [LEN_TERSE] = "····";
    char        x_total     [LEN_TERSE] = "····";
+   char        x_filter    [LEN_HUND]  = "";
    char        x_suffix    [LEN_TERSE] = "";
    /*---(header)-------------------------*/
    DEBUG_PROG  yLOG_enter   (__FUNCTION__);
-   if      (a_fail > 0) { strcpy (x_grade, "FAIL"); strcpy (x_suffix, "[!]"); /* strcpy (x_on, INVR_RED); */ }
-   else if (a_errs > 0) { strcpy (x_grade, "ERRS"); strcpy (x_suffix, "[E]"); /* strcpy (x_on, INVR_RED); */ }
-   else if (a_warn > 0) { strcpy (x_grade, "WARN"); strcpy (x_suffix, "[W]"); /* strcpy (x_on, INVR_YEL); */ }
-   else                 { strcpy (x_grade, "pass"); strcpy (x_suffix, "[p]"); /* strcpy (x_on, INVR_GRN); */ }
-   /*> strcpy (x_off, BACK_OFF);                                                      <*/
+   if      (a_fail > 0) { strcpy (x_grade, "FAIL");  strcpy (x_suffix, "[!]");  if (c_color == 'y')  strcpy (x_on, INVR_RED);  }
+   else if (a_errs > 0) { strcpy (x_grade, "ERRS");  strcpy (x_suffix, "[E]");  if (c_color == 'y')  strcpy (x_on, INVR_RED);  }
+   else if (a_warn > 0) { strcpy (x_grade, "WARN");  strcpy (x_suffix, "[W]");  if (c_color == 'y')  strcpy (x_on, INVR_YEL);  }
+   else                 { strcpy (x_grade, "pass");  strcpy (x_suffix, "[p]");  if (c_color == 'y')  strcpy (x_on, INVR_GRN);  }
+   if (c_color == 'y')  strcpy (x_off, BACK_OFF);
    SHOW_num (a_show , 4, x_show);
    SHOW_num (a_fail , 4, x_fail);
    SHOW_num (a_errs , 4, x_errs);
    SHOW_num (a_warn , 4, x_warn);
    SHOW_num (a_waste, 4, x_waste);
    SHOW_num (a_msgs , 4, x_msgs);
-   SHOW_num (a_total, 4, x_total);
+   SHOW_num (a_total, 5, x_total);
    sprintf (g_break, "%shnt -·---buffer--------------------- line col typ·---message-------------------------------------------------- ---gcc-flag-----------------------------%s", x_on, x_off);
-   if (a_pass ==  0) {
+   if (c_pass ==  0) {
       /*> printf ("%sgcc/make (help) q:quik f:full w:wipe a:ansi c:comp i:inst u:test m:manu Z:revw%s\n", x_on, x_off);   <*/
-      sprintf (g_print, "%scompiler (%s) show=%s, fail=%s, errs=%s, warn=%s, wast=%s, msgs=%s, line=%s   (filter=%c)··············································· %s%s",
+      sprintf (x_filter, "filter=%s··············································································", g_filter);
+      sprintf (g_print, "%scompiler (%s) show=%s, fail=%s, errs=%s, warn=%s, wast=%s, msgs=%s, line=%s   %-58.58s %s%s",
             x_on, x_grade,
             x_show, x_fail, x_errs, x_warn, x_waste, x_msgs, x_total,
-            g_filter, x_suffix, x_off);
-      /*> printf (g_break);                                                           <*/
-   } else if (a_pass ==  1) {
-      sprintf (g_print, "%send-of-data (%s) compiler feedback··················································································································· %s%s", x_on, x_grade, x_suffix, x_off);
+            x_filter, x_suffix, x_off);
+   } else if (c_pass ==  1) {
+      sprintf (g_print, "%send-of-data (%s) compiler feedback····················································································································· %s%s", x_on, x_grade, x_suffix, x_off);
    }
    DEBUG_PROG  yLOG_exit    (__FUNCTION__);
    return g_print;
