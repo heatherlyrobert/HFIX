@@ -151,7 +151,7 @@ SHOW_totals             (char c_pass, char c_color, short a_show, short a_fail, 
             x_show, x_fail, x_errs, x_warn, x_waste, x_msgs, x_total,
             x_filter, x_suffix, x_off);
    } else if (c_pass ==  1) {
-      sprintf (g_print, "%send-of-data (%s) compiler feedback······················································································································ %s%s", x_on, x_grade, x_suffix, x_off);
+      sprintf (g_print, "%send-of-data (%s) compiler feedback···········································(v%-4.4s)···································································· %s%s", x_on, x_grade, P_VERNUM, x_suffix, x_off);
    }
    DEBUG_PROG  yLOG_exit    (__FUNCTION__);
    return g_print;

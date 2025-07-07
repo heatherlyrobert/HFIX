@@ -21,13 +21,17 @@ INC_MINE   =
 # utilities generated, separate from main program
 NAME_UTIL  = 
 # libraries only for the utilities
-LIB_UTIL   = 
+LIB_UTIL   =
+# files to be included in editing session (maybe conf, data, ...)
+EDIT_TOO   = HFIX.vim
 
 
 
 #===(post-processing)======================================#
 # create a rule for...
+#
 #install_prep       :
+
 #remove_prep        :
 
 
@@ -39,7 +43,11 @@ include /usr/local/sbin/zeno_make
 
 #===(post-processing)======================================#
 # create a rule for...
-#install_post       :
+
+install_post       :
+	@cp -f HFIX.vim /home/machine/vim/plugin
+	@sha1sum   /home/machine/vim/plugin/HFIX.vim
+
 #remove_post        :
 
 

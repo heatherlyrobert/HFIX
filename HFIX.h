@@ -42,8 +42,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "2.--  moving from awk to c-language"
 #define     P_VERMINOR  "2.0-"
-#define     P_VERNUM    "2.0e"
-#define     P_VERTXT    "tweaks to looks and uniformity during early use in vim"
+#define     P_VERNUM    "2.0f"
+#define     P_VERTXT    "added help (,q?) and cleaning up HFIX.vim script"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
