@@ -3,13 +3,14 @@
 
 
 char
-GCC__file               (char *b_beg, char **r_next, char *r_type, char r_file [LEN_HUND])
+GCC__file               (char c_conf, char *b_beg, char **r_next, char *r_type, char r_file [LEN_HUND])
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    char       *n           = NULL;
+   char       *s           = NULL;
    int         l           =    0;
-   char        x_type      =  '-';
+   char        x_type      =  'á';
    char        x_file      [LEN_HUND]  = "";
    /*---(header)-------------------------*/
    DEBUG_PROG  yLOG_enter   (__FUNCTION__);
@@ -29,7 +30,9 @@ GCC__file               (char *b_beg, char **r_next, char *r_type, char r_file [
       DEBUG_PROG  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   /*---(get file name)------------------*/
+   /*---(leading space)------------------*/
+   if (b_beg [0] == ' ')  ++b_beg;
+   /*---(check delimiter)----------------*/
    n = strchr (b_beg , ':');
    DEBUG_PROG  yLOG_point   ("n"         , n);
    --rce;  if (n == NULL) {
@@ -37,6 +40,14 @@ GCC__file               (char *b_beg, char **r_next, char *r_type, char r_file [
       return rce;
    }
    n [0] = '\0';
+   /*---(handle path)--------------------*/
+   DEBUG_PROG  yLOG_char    ("c_conf"    , c_conf);
+   s = strrchr (b_beg, '/');
+   if (s != NULL) {
+      s [0] = '\0';
+      b_beg = s + 1;
+   }
+   /*---(check size)---------------------*/
    l = strlen (b_beg);
    DEBUG_PROG  yLOG_value   ("l"         , l);
    --rce;  if (l < 3 || l >= LEN_HUND) {
@@ -46,19 +57,23 @@ GCC__file               (char *b_beg, char **r_next, char *r_type, char r_file [
    }
    DEBUG_PROG  yLOG_info    ("b_beg"     , b_beg);
    /*---(convert)------------------------*/
-   strlcpy (x_file, b_beg, LEN_HUND);
+   if (c_conf == 'm')   strlcpy (x_file, "zeno_make·····················", LEN_HUND);
+   else                 strlcpy (x_file, b_beg, LEN_HUND);
    DEBUG_ARGS  yLOG_complex ("FILE"      , "%3då%sæ", l, x_file);
    /*---(check file type)----------------*/
-   DEBUG_PROG  yLOG_info    ("suffix"    , x_file + l - 2);
-   --rce; if (l > 3 && strcmp (x_file + l - 2, ".c")     == 0)  x_type = 'c';
-   else if   (l > 4 && strcmp (x_file + l - 3, ".cs")    == 0)  x_type = 'c';
-   else if   (l > 3 && strcmp (x_file + l - 2, ".h")     == 0)  x_type = 'h';
-   else if   (l > 6 && strcmp (x_file + l - 5, ".unit")  == 0)  x_type = 'u';
-   else if   (l > 7 && strcmp (x_file + l - 6, ".munit") == 0)  x_type = 'm';
-   else {
-      n [0] = ':';  /* put it back to original conditions */
-      DEBUG_ARGS  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
+   --rce;  if (strchr ("gl", c_conf) != NULL) {
+      DEBUG_PROG  yLOG_info    ("suffix"    , x_file + l - 2);
+      if      (l > 3 && strcmp (x_file + l - 2, ".c")     == 0)  x_type = 'c';
+      else if (l > 4 && strcmp (x_file + l - 3, ".cs")    == 0)  x_type = 'c';
+      else if (l > 3 && strcmp (x_file + l - 2, ".h")     == 0)  x_type = 'h';
+      else if (l > 6 && strcmp (x_file + l - 5, ".unit")  == 0)  x_type = 'u';
+      else if (l > 7 && strcmp (x_file + l - 6, ".munit") == 0)  x_type = 'm';
+      else if (l > 3 && strcmp (x_file + l - 3, ".so")    == 0)  x_type = 's';
+      else {
+         n [0] = ':';  /* put it back to original conditions */
+         DEBUG_ARGS  yLOG_exitr   (__FUNCTION__, rce);
+         return rce;
+      }
    }
    /*---(save-back)----------------------*/
    if (r_next  != NULL)  *r_next = n + 1;
@@ -189,18 +204,20 @@ GCC__level              (char *b_beg, char **r_next, char *r_type)
 }
 
 char
-GCC__msg                (char *b_beg, short *b_count, char r_msg [LEN_RECD], char r_flag [LEN_HUND])
+GCC__msg                (char c_conf, char *b_beg, short *b_count, char r_msg [LEN_RECD], char r_flag [LEN_HUND])
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    char       *n           = NULL;
    int         l           =    0;
+   char       *s           = NULL;
    int         x_count     =    0;
    char        x_msg       [LEN_RECD]  = "";
-   char        x_flag      [LEN_HUND]  = "";
+   char        x_flag      [LEN_HUND]  = "···";
    /*---(header)-------------------------*/
    DEBUG_PROG  yLOG_enter   (__FUNCTION__);
    /*---(default)------------------------*/
+   if (b_count != NULL)  x_count = *b_count;
    if (r_msg   != NULL)  strcpy (r_msg , "");
    if (r_flag  != NULL)  strcpy (r_flag, "");
    /*---(defence)------------------------*/
@@ -210,21 +227,36 @@ GCC__msg                (char *b_beg, short *b_count, char r_msg [LEN_RECD], cha
       return rce;
    }
    DEBUG_PROG  yLOG_info    ("b_beg"     , b_beg);
-   if (b_count != NULL)  x_count = *b_count;
-   /*---(get message)--------------------*/
+   /*---(leading space)------------------*/
    if (b_beg [0] == ' ')  ++b_beg;
+   /*---(get message)--------------------*/
    strlcpy (x_msg , b_beg, LEN_RECD);
-   n = strstr (x_msg, " [-W");
-   if (n != NULL) {
-      strlcpy (x_flag, n + 2, LEN_HUND);
-      l = strlen (x_flag);
-      if (x_flag [l - 1] == ']')  x_flag [l - 1] = '\0';
-      n [0] = '\0';
-      l = strlen (x_flag);
-      DEBUG_ARGS  yLOG_complex ("FLAG"      , "%3då%sæ", l, x_flag);
+   /*---(handle flag)--------------------*/
+   if (c_conf == 'g') {
+      s = strstr (x_msg, " [-W");
+      if (s != NULL) {
+         s [0] = '\0';
+         strlcpy (x_flag, s + 2, LEN_HUND);
+         l = strlen (x_flag);
+         if (x_flag [l - 1] == ']')  x_flag [l - 1] = '\0';
+      }
+   } else if (c_conf == 'l') {
+      s = strchr (x_msg, '\'');
+      if (s != NULL)   s [0] = 'æ';
+      s = strchr (x_msg, '`');
+      if (s != NULL)   s [0] = 'å';
+   } else if (c_conf == 'm') {
+      s = strchr (x_msg, ']');
+      if (s != NULL) {
+         s [0] = '\0';
+         strlcpy (x_flag, s + 2, LEN_HUND);
+      }
    }
+   /*---(display)------------------------*/
    l = strlen (x_msg);
    DEBUG_ARGS  yLOG_complex ("MSG"       , "%3då%sæ", l, x_msg);
+   l = strlen (x_flag);
+   DEBUG_ARGS  yLOG_complex ("FLAG"      , "%3då%sæ", l, x_flag);
    /*---(save-back)----------------------*/
    if (b_count != NULL)  *b_count = x_count + 1;
    if (r_msg   != NULL)  strlcpy (r_msg , x_msg , LEN_RECD);
@@ -235,31 +267,66 @@ GCC__msg                (char *b_beg, short *b_count, char r_msg [LEN_RECD], cha
 }
 
 char
-GCC__regrade            (char a_msg [LEN_RECD], char *b_level)
+GCC__regrade            (char c_ylog, char b_msg [LEN_RECD], char *b_level)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    char        x_level     =  '-';
+   char        x_quotes    =  '-';
+   char       *p           = NULL;
+   char        x_msg       [LEN_RECD]  = "";
    /*---(header)-------------------------*/
    DEBUG_PROG  yLOG_enter   (__FUNCTION__);
    /*---(save)---------------------------*/
    if (b_level != NULL)  x_level = *b_level;
+   /*---(defence)------------------------*/
+   DEBUG_PROG  yLOG_point   ("b_msg"     , b_msg);
+   --rce;  if (b_msg  == NULL) {
+      DEBUG_PROG  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_PROG  yLOG_info    ("b_msg"     , b_msg);
    /*---(cut-out)------------------------*/
-   --rce;  if (strncmp (a_msg, "'o___"       ,  5) == 0   ) {
+   --rce;  if (strncmp (b_msg, "'o___"       ,  5) == 0   ) {
       if (b_level != NULL)  *b_level = '-';
       DEBUG_PROG  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(upgrades)-----------------------*/
-   if (strstr  (a_msg, "no previous prototype") != NULL)  x_level = 'e';
+   if      (strstr  (b_msg, "no previous prototype")  != NULL) { x_level = 'e';  x_quotes = 'y'; strcpy  (x_msg, "no prototype for·····"); }
+   else if (strstr  (b_msg, "implicit declaration")   != NULL) { x_level = 'e';  x_quotes = 'y'; strcpy  (x_msg, "no header for········"); }
    /*---(downgrades)---------------------*/
-   if (strstr  (a_msg, "unused variable" )      != NULL)  x_level = 'U';
-   if (strstr  (a_msg, "unused parameter")      != NULL)  x_level = 'U';
-   if (strstr  (a_msg, "unused function" )      != NULL)  x_level = 'U';
+   else if (strstr  (b_msg, "unused variable" )       != NULL) { x_level = 'U';  x_quotes = 'y'; strcpy  (x_msg, "unused variable······");  }
+   else if (strstr  (b_msg, "unused parameter")       != NULL) { x_level = 'U';  x_quotes = 'y'; strcpy  (x_msg, "unused parameter·····");  }
+   else if (strstr  (b_msg, "unused function" )       != NULL) { x_level = 'U';  x_quotes = 'y'; strcpy  (x_msg, "unused function······");  }
+   /*---(clarifies)----------------------*/
+   else if (strstr  (b_msg, "too few arguments to")   != NULL) {                 x_quotes = 'y'; strcpy  (x_msg, "too few args·to······"); }
+   else if (strstr  (b_msg, "too many arguments to")  != NULL) {                 x_quotes = 'y'; strcpy  (x_msg, "too many args to·····"); }
+   else if (strstr  (b_msg, "discards 'const'")       != NULL) {
+      if   (strstr  (b_msg, "yLOG_") == NULL || c_ylog == 'y') {                 x_quotes = 'Y'; sprintf (x_msg, "discards const (%c)···", b_msg [17]); }
+      else                                                     { x_level = '-'; }
+   }
    /*---(yLOG)---------------------------*/
-   if (strstr  (a_msg, "yLOG_enter"      )      != NULL)  x_level = 'w';
-   if (strstr  (a_msg, "yLOG_exit"       )      != NULL)  x_level = 'w';
-   if (strstr  (a_msg, "yLOG_exitr"      )      != NULL)  x_level = 'w';
+   /*> else if (strstr  (b_msg, "yLOG_enter"      )       != NULL) {  if (c_ylog == 'y')  x_level = 'w';  else  x_level = '-';  }   <* 
+    *> else if (strstr  (b_msg, "yLOG_exit"       )       != NULL) {  if (c_ylog == 'y')  x_level = 'w';  else  x_level = '-';  }   <* 
+    *> else if (strstr  (b_msg, "yLOG_exitr"      )       != NULL) {  if (c_ylog == 'y')  x_level = 'w';  else  x_level = '-';  }   <*/
+   else if (strstr  (b_msg, "yLOG_"           )       != NULL) {  if (c_ylog == 'y')  x_level = 'w';  else  x_level = '-';  }
+   /*---(replace-quotes)-----------------*/
+   if (x_quotes == 'y') {
+      p = strrchr (b_msg, '\'');
+      if (p != NULL)  p [0] = '\0';
+      p = strrchr (b_msg, '\'');
+      if (p != NULL)  p [0] = '·';
+      strlcat (x_msg, p, LEN_RECD);
+      if (b_msg   != NULL)  strlcpy (b_msg, x_msg, LEN_RECD);
+   } else if (x_quotes == 'Y') {
+      p = strchr (b_msg, '\'');
+      if (p != NULL)  p [0] = '·';
+      strlcat (x_msg, p, LEN_RECD);
+      p = strchr (x_msg, '\'');
+      if (p != NULL)  p [0] = '\0';
+      if (b_msg   != NULL)  strlcpy (b_msg, x_msg, LEN_RECD);
+   }
    /*---(save-back)----------------------*/
    if (b_level != NULL)  *b_level = x_level;
    /*---(complete)-----------------------*/
@@ -287,7 +354,7 @@ GCC_parse               (char a_recd [LEN_RECD], short *b_count, char r_file [LE
    if (r_flag  != NULL)  strcpy (r_flag, "");
    /*---(file)---------------------------*/
    p = a_recd;
-   rc  = GCC__file    (p, &n, r_type, r_file);
+   rc  = GCC__file    ('g', p, &n, r_type, r_file);
    DEBUG_PROG  yLOG_value   ("file"      , rc);
    --rce;  if (rc < 0) {
       DEBUG_PROG  yLOG_exitr   (__FUNCTION__, rce);
@@ -315,14 +382,14 @@ GCC_parse               (char a_recd [LEN_RECD], short *b_count, char r_file [LE
    }
    /*---(message)------------------------*/
    p = n;
-   rc  = GCC__msg     (p, b_count, r_msg, r_flag);
+   rc  = GCC__msg     ('g', p, b_count, r_msg, r_flag);
    DEBUG_PROG  yLOG_value   ("msg/flag"  , rc);
    --rce;  if (rc < 0) {
       DEBUG_PROG  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(regrade)------------------------*/
-   rc  = GCC__regrade (r_msg, r_level);
+   rc  = GCC__regrade (g_ylog, r_msg, r_level);
    DEBUG_PROG  yLOG_value   ("regrade"   , rc);
    --rce;  if (rc < 0) {
       DEBUG_PROG  yLOG_exitr   (__FUNCTION__, rce);
@@ -333,140 +400,4 @@ GCC_parse               (char a_recd [LEN_RECD], short *b_count, char r_file [LE
    return 1;
 }
 
-/*> char                                                                                                                                                                           <* 
- *> GCC_parse               (char a_recd [LEN_RECD], int *b_count, char r_file [LEN_HUND], int *r_line, int *r_col, char *r_type, char r_msg [LEN_RECD], char r_flag [LEN_HUND])   <* 
- *> {                                                                                                                                                                              <* 
- *>    /+---(locals)-----------+-----+-----+-+/                                                                                                                                    <* 
- *>    char        rce         =  -10;                                                                                                                                             <* 
- *>    char        rc          =    0;                                                                                                                                             <* 
- *>    char        x_recd      [LEN_RECD]  = "";                                                                                                                                   <* 
- *>    char       *p           = NULL;                                                                                                                                             <* 
- *>    char       *n           = NULL;                                                                                                                                             <* 
- *>    int         i           =    0;                                                                                                                                             <* 
- *>    int         l           =    0;                                                                                                                                             <* 
- *>    int         x_count     =    0;                                                                                                                                             <* 
- *>    char        x_file      [LEN_HUND]  = "";                                                                                                                                   <* 
- *>    int         x_line      =    0;                                                                                                                                             <* 
- *>    int         x_col       =    0;                                                                                                                                             <* 
- *>    char        x_type      =  '-';                                                                                                                                             <* 
- *>    char        x_msg       [LEN_RECD]  = "";                                                                                                                                   <* 
- *>    char        x_flag      [LEN_HUND]  = "";                                                                                                                                   <* 
- *>    /+---(header)-------------------------+/                                                                                                                                    <* 
- *>    DEBUG_PROG  yLOG_enter   (__FUNCTION__);                                                                                                                                    <* 
- *>    /+---(default)------------------------+/                                                                                                                                    <* 
- *>    if (b_count != NULL)  x_count = *b_count;                                                                                                                                   <* 
- *>    if (r_file  != NULL)  strcpy (r_file, "");                                                                                                                                  <* 
- *>    if (r_line  != NULL)  *r_line = 0;                                                                                                                                          <* 
- *>    if (r_col   != NULL)  *r_col  = 0;                                                                                                                                          <* 
- *>    if (r_type  != NULL)  *r_type = '-';                                                                                                                                        <* 
- *>    if (r_msg   != NULL)  strcpy (r_msg , "");                                                                                                                                  <* 
- *>    if (r_flag  != NULL)  strcpy (r_flag, "");                                                                                                                                  <* 
- *>    /+---(defence)------------------------+/                                                                                                                                    <* 
- *>    --rce;  if (a_recd     == NULL)  return rce;                                                                                                                                <* 
- *>    --rce;  if (a_recd [0] == '\0')  return rce;                                                                                                                                <* 
- *>    --rce;  if (a_recd [0] == ' ')   return rce;                                                                                                                                <* 
- *>    l = strlen (a_recd);                                                                                                                                                        <* 
- *>    --rce;  if (l < 10)              return rce;                                                                                                                                <* 
- *>    /+---(prepare)------------------------+/                                                                                                                                    <* 
- *>    strlcpy (x_recd, a_recd, LEN_RECD);                                                                                                                                         <* 
- *>    p = x_recd;                                                                                                                                                                 <* 
- *>    /+---(get file name)------------------+/                                                                                                                                    <* 
- *>    n = strchr (p, ':');                                                                                                                                                        <* 
- *>    --rce;  if (n == NULL) {                                                                                                                                                    <* 
- *>       DEBUG_ARGS  yLOG_exitr   (__FUNCTION__, rce);                                                                                                                            <* 
- *>       return rce;                                                                                                                                                              <* 
- *>    }                                                                                                                                                                           <* 
- *>    n [0] = '\0';                                                                                                                                                               <* 
- *>    l = strlen (p);                                                                                                                                                             <* 
- *>    --rce;  if (l < 3 || l >= LEN_HUND) {                                                                                                                                       <* 
- *>       DEBUG_ARGS  yLOG_exitr   (__FUNCTION__, rce);                                                                                                                            <* 
- *>       return rce;                                                                                                                                                              <* 
- *>    }                                                                                                                                                                           <* 
- *>    strlcpy (x_file, p, LEN_HUND);                                                                                                                                              <* 
- *>    DEBUG_ARGS  yLOG_complex ("FILE"      , "%3då%sæ\n", l, x_file);                                                                                                            <* 
- *>    p = n + 1;                                                                                                                                                                  <* 
- *>    /+---(get line number)----------------+/                                                                                                                                    <* 
- *>    n = strchr (p, ':');                                                                                                                                                        <* 
- *>    --rce;  if (n == NULL) {                                                                                                                                                    <* 
- *>       DEBUG_ARGS  yLOG_exitr   (__FUNCTION__, rce);                                                                                                                            <* 
- *>       return rce;                                                                                                                                                              <* 
- *>    }                                                                                                                                                                           <* 
- *>    n [0] = '\0';                                                                                                                                                               <* 
- *>    l = strlen (p);                                                                                                                                                             <* 
- *>    --rce;  if (l < 1 || l > 5) {                                                                                                                                               <* 
- *>       DEBUG_ARGS  yLOG_exitr   (__FUNCTION__, rce);                                                                                                                            <* 
- *>       return rce;                                                                                                                                                              <* 
- *>    }                                                                                                                                                                           <* 
- *>    x_line = atoi (p);                                                                                                                                                          <* 
- *>    DEBUG_ARGS  yLOG_value   ("LINE"      , x_line);                                                                                                                            <* 
- *>    p = n + 1;                                                                                                                                                                  <* 
- *>    /+---(get column number)--------------+/                                                                                                                                    <* 
- *>    n = strchr (p, ':');                                                                                                                                                        <* 
- *>    --rce;  if (n == NULL) {                                                                                                                                                    <* 
- *>       DEBUG_ARGS  yLOG_exitr   (__FUNCTION__, rce);                                                                                                                            <* 
-*>       return rce;                                                                                                                                                              <* 
-*>    }                                                                                                                                                                           <* 
-*>    n [0] = '\0';                                                                                                                                                               <* 
-*>    l = strlen (p);                                                                                                                                                             <* 
-*>    --rce;  if (l < 1 || l > 3) {                                                                                                                                               <* 
-   *>       DEBUG_ARGS  yLOG_exitr   (__FUNCTION__, rce);                                                                                                                            <* 
-      *>       return rce;                                                                                                                                                              <* 
-      *>    }                                                                                                                                                                           <* 
-      *>    x_col  = atoi (p);                                                                                                                                                          <* 
-      *>    DEBUG_ARGS  yLOG_value   ("COL"       , x_col);                                                                                                                             <* 
-      *>    p = n + 1;                                                                                                                                                                  <* 
-      *>    /+---(get type)-----------------------+/                                                                                                                                    <* 
-      *>    n = strchr (p, ':');                                                                                                                                                        <* 
-      *>    --rce;  if (n == NULL) {                                                                                                                                                    <* 
-         *>       DEBUG_ARGS  yLOG_exitr  (__FUNCTION__, rce);                                                                                                                             <* 
-            *>       return rce;                                                                                                                                                              <* 
-            *>    }                                                                                                                                                                           <* 
-            *>    n [0] = '\0';                                                                                                                                                               <* 
-            *>    l = strlen (p);                                                                                                                                                             <* 
-            *>    --rce;  if (l < 3 || l >= LEN_LABEL) {                                                                                                                                      <* 
-               *>       DEBUG_ARGS  yLOG_exitr   (__FUNCTION__, rce);                                                                                                                            <* 
-                  *>       return rce;                                                                                                                                                              <* 
-                  *>    }                                                                                                                                                                           <* 
-                  *>    --rce; if  (strcmp (p, " warning") == 0 && strchr ("Ww"  , g_filter) != NULL)  x_type = 'W';                                                                                <* 
-                  *>    else if    (strcmp (p, " error"  ) == 0 && strchr ("EeWw", g_filter) != NULL)  x_type = 'E';                                                                                <* 
-                  *>    else {                                                                                                                                                                      <* 
-                     *>       DEBUG_ARGS  yLOG_exitr  (__FUNCTION__, rce);                                                                                                                             <* 
-                        *>       return rce;                                                                                                                                                              <* 
-                        *>    }                                                                                                                                                                           <* 
-                        *>    DEBUG_ARGS  yLOG_char    ("TYPE"      , x_type);                                                                                                                            <* 
-                        *>    p = n + 1;                                                                                                                                                                  <* 
-                        *>    /+---(get message)--------------------+/                                                                                                                                    <* 
-                        *>    ++p;                                                                                                                                                                        <* 
-                        *>    strlcpy (x_msg , p, LEN_RECD);                                                                                                                                              <* 
-                        *>    n = strstr (x_msg, " [-W");                                                                                                                                                 <* 
-                        *>    if (n != NULL) {                                                                                                                                                            <* 
-                           *>       strlcpy (x_flag, n + 2, LEN_HUND);                                                                                                                                       <* 
-                              *>       l = strlen (x_flag);                                                                                                                                                     <* 
-                              *>       if (x_flag [l - 1] == ']')  x_flag [l - 1] = '\0';                                                                                                                       <* 
-                              *>       n [0] = '\0';                                                                                                                                                            <* 
-                              *>       l = strlen (x_flag);                                                                                                                                                     <* 
-                              *>       DEBUG_ARGS  yLOG_complex ("FLAG"      , "%3då%sæ\n", l, x_flag);                                                                                                         <* 
-                              *>    }                                                                                                                                                                           <* 
-                              *>    l = strlen (x_msg);                                                                                                                                                         <* 
-                              *>    DEBUG_ARGS  yLOG_complex ("MSG"       , "%3då%sæ\n", l, x_msg);                                                                                                             <* 
-                              *>    ++x_count;                                                                                                                                                                  <* 
-                              *>    /+---(cut-out)------------------------+/                                                                                                                                    <* 
-                              *>    --rce;  if (strncmp (x_msg, "'o___"       ,  5) == 0   )  return rce;                                                                                                       <* 
-                              *>    /+---(upgrades)-----------------------+/                                                                                                                                    <* 
-                              *>    if (strstr (x_msg, "no previous prototype") != NULL)  x_type = 'e';                                                                                                         <* 
-                              *>    /+---(downgrades)---------------------+/                                                                                                                                    <* 
-                              *>    if (strstr  (x_msg, "unused variable" ) != NULL)  x_type = 'U';                                                                                                             <* 
-                              *>    if (strstr  (x_msg, "unused parameter") != NULL)  x_type = 'U';                                                                                                             <* 
-                              *>    if (strstr  (x_msg, "unused function" ) != NULL)  x_type = 'U';                                                                                                             <* 
-                              *>    /+---(save-back)----------------------+/                                                                                                                                    <* 
-                              *>    if (b_count != NULL)  *b_count = x_count;                                                                                                                                   <* 
-                              *>    if (r_file  != NULL)  strlcpy (r_file, x_file, LEN_HUND);                                                                                                                   <* 
-                              *>    if (r_line  != NULL)  *r_line  = x_line;                                                                                                                                    <* 
-                              *>    if (r_col   != NULL)  *r_col   = x_col;                                                                                                                                     <* 
-                              *>    if (r_type  != NULL)  *r_type  = x_type;                                                                                                                                    <* 
-                              *>    if (r_msg   != NULL)  strlcpy (r_msg , x_msg , LEN_RECD);                                                                                                                   <* 
-                              *>    if (r_flag  != NULL)  strlcpy (r_flag, x_flag, LEN_HUND);                                                                                                                   <* 
-                              *>    /+---(complete)-----------------------+/                                                                                                                                    <* 
-                              *>    DEBUG_PROG  yLOG_exit    (__FUNCTION__);                                                                                                                                    <* 
-                              *>    return 1;                                                                                                                                                                   <* 
-                              *> }                                                                                                                                                                              <*/
+

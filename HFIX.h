@@ -42,8 +42,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "2.--  moving from awk to c-language"
 #define     P_VERMINOR  "2.0-"
-#define     P_VERNUM    "2.0c"
-#define     P_VERTXT    "main loop and display mechanics stabilizing/unit-tested"
+#define     P_VERNUM    "2.0d"
+#define     P_VERTXT    "basics integrated with vim/ide and unit tested"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -102,10 +102,11 @@ extern char   g_file   [LEN_HUND];
 extern char   g_filter [LEN_LABEL];
 extern char   g_color;
 extern char   g_break  [LEN_FULL];
+extern char   g_ylog;
 
 
 
-#define    HFIX_CRITICAL   "!"
+#define    HFIX_CRITICAL   "!E"
 
 #define    HFIX_ERRORS     "!Ee"
 #define    HFIX_ERROR      "Ee"
@@ -137,11 +138,11 @@ char        BASE_pass               (char c_pass, char c_filter [LEN_LABEL], cha
 
 /*===[[ HFIX_gcc ]]===========================================================*/
 /*········´ ´·····················´ ´·········································*/
-char        GCC__file               (char *b_beg, char **r_next, char *r_type, char r_file [LEN_HUND]);
+char        GCC__file               (char c_conf, char *b_beg, char **r_next, char *r_type, char r_file [LEN_HUND]);
 char        GCC__num                (char *b_beg, char **r_next, short *r_num);
 char        GCC__level              (char *b_beg, char **r_next, char *r_type);
-char        GCC__msg                (char *b_beg, short *b_count, char r_msg [LEN_RECD], char r_flag [LEN_HUND]);
-char        GCC__regrade            (char a_msg [LEN_RECD], char *b_level);
+char        GCC__msg                (char c_conf, char *b_beg, short *b_count, char r_msg [LEN_RECD], char r_flag [LEN_HUND]);
+char        GCC__regrade            (char c_ylog, char b_msg [LEN_RECD], char *b_level);
 char        GCC_parse               (char a_recd [LEN_RECD], short *b_count, char r_file [LEN_HUND], char *r_type, short *r_line, short *r_col, char *r_level, char r_msg [LEN_RECD], char r_flag [LEN_HUND]);
 /*········´ ´··(done))············´ ´·········································*/
 
@@ -158,7 +159,8 @@ char*       SHOW_totals             (char c_pass, char c_color, short a_show, sh
 
 /*===[[ HFIX_make ]]==========================================================*/
 /*········´ ´·····················´ ´·········································*/
-char        MAKE_parse              (char a_recd [LEN_RECD], int *b_count, char r_file [LEN_HUND], int *r_line, int *r_col, char *r_type, char r_msg [LEN_RECD], char r_flag [LEN_HUND]);
+char        MAKE__msg               (char a_type, char *b_beg, short *b_count, char r_msg [LEN_RECD], char r_flag [LEN_HUND]);
+char        MAKE_parse              (char a_recd [LEN_RECD], short *b_count, char r_file [LEN_HUND], char *r_type, short *r_line, short *r_col, char *r_level, char r_msg [LEN_RECD], char r_flag [LEN_HUND]);
 char        MAKE_collect            (char a_recd [LEN_RECD], int *b_count, char r_file [LEN_HUND], int *r_line, char *r_type, char r_msg [LEN_RECD]);
 /*········´ ´··(done))············´ ´·········································*/
 
@@ -166,7 +168,8 @@ char        MAKE_collect            (char a_recd [LEN_RECD], int *b_count, char 
 
 /*===[[ HFIX_ld ]]============================================================*/
 /*········´ ´·····················´ ´·········································*/
-char        LD_parse                (char a_recd [LEN_RECD], int *b_count, char r_file [LEN_HUND], int *r_line, int *r_col, char *r_type, char r_msg [LEN_RECD], char r_flag [LEN_HUND]);
+char        LD__wasted              (char *b_beg, char **r_next);
+char        LD_parse                (char a_recd [LEN_RECD], short *b_count, char r_file [LEN_HUND], char *r_type, short *r_line, short *r_col, char *r_level, char r_msg [LEN_RECD], char r_flag [LEN_HUND]);
 /*········´ ´··(done))············´ ´·········································*/
 
 

@@ -7,6 +7,7 @@ char        g_print    [LEN_RECD]  = "";
 char        g_file     [LEN_HUND]  = "gcc.txt";
 char        g_filter   [LEN_LABEL] = HFIX_ERRORS;
 char        g_color    =  '-';
+char        g_ylog     =  '-';
 
 char        g_break    [LEN_FULL]  = "";
 
@@ -198,10 +199,11 @@ BASE__handle            (char c_pass, char c_filter [LEN_LABEL], char c_color, c
    DEBUG_PROG  yLOG_info    ("a_recd"    , a_recd);
    strlcpy (x_recd, a_recd, LEN_RECD);
    /*---(handle)-------------------------*/
-   if      (strncmp (x_recd, "make: *** ["      ,  11) == 0)    rc = MAKE_parse   (x_recd + 11, &x_count, x_file, &x_line, &x_col, &x_level, x_msg, x_flag);
-   else if (strncmp (x_recd, "/usr/libexec/gcc/",  16) == 0)    rc = LD_parse     (x_recd     , &x_count, x_file, &x_line, &x_col, &x_level, x_msg, x_flag);
-   else if (strncmp (x_recd, "collect"          ,   7) == 0)    rc = MAKE_collect (x_recd     , &x_count, NULL, NULL, NULL, NULL);
-   else                                                         rc = GCC_parse    (x_recd     , &x_count, x_file, &x_type, &x_line, &x_col, &x_level, x_msg, x_flag);
+   if      (strncmp (x_recd, "make:"      ,   5) == 0)    rc = MAKE_parse   (x_recd, &x_count, x_file, &x_type, &x_line, &x_col, &x_level, x_msg, x_flag);
+   else if (strncmp (x_recd, "make["      ,   5) == 0)    rc = MAKE_parse   (x_recd, &x_count, x_file, &x_type, &x_line, &x_col, &x_level, x_msg, x_flag);
+   else if (strncmp (x_recd, "/usr/libexec/gcc/",  16) == 0)    rc = LD_parse     (x_recd, &x_count, x_file, &x_type, &x_line, &x_col, &x_level, x_msg, x_flag);
+   /*> else if (strncmp (x_recd, "collect"          ,   7) == 0)    rc = MAKE_collect (x_recd     , &x_count, NULL, NULL, NULL, NULL);   <*/
+   else                                                         rc = GCC_parse    (x_recd, &x_count, x_file, &x_type, &x_line, &x_col, &x_level, x_msg, x_flag);
    /*---(trouble)------------------------*/
    DEBUG_PROG  yLOG_value   ("return"    , rc);
    if (rc <= 0) {
@@ -236,7 +238,8 @@ BASE__handle            (char c_pass, char c_filter [LEN_LABEL], char c_color, c
       DEBUG_PROG  yLOG_info    ("x_ln"      , x_ln);
       SHOW_num (x_col , 3, x_co);
       DEBUG_PROG  yLOG_info    ("x_co"      , x_co);
-      sprintf (x_show, "%s%-2.2s· - %-30.30s %c %-4.4s %-3.3s (%c) %-60.60s %-40.40s [%c]%s", x_on, SHOW_hint (x_shown - 1), x_file, x_type, x_ln, x_co, x_level, x_msg, x_flag, x_level, x_off);
+      sprintf (x_show, "%s%-2.2s· - %c  %-30.30s %-4.4s %-3.3s %c   %-60.60s %-40.40s [%c]%s", x_on, SHOW_hint (x_shown - 1), x_type, x_file, x_ln, x_co, x_level, x_msg, x_flag, x_level, x_off);
+      /*> sprintf (x_show, "%s%-2.2s· - %c  %-30.30s %4d %3d %c   %-60.60s %-40.40s [%c]%s", x_on, SHOW_hint (x_shown - 1), x_type, x_file, x_line, x_col, x_level, x_msg, x_flag, x_level, x_off);   <*/
    }
    DEBUG_PROG  yLOG_value   ("rc_final"  , rc_final);
    /*---(save-back)----------------------*/
