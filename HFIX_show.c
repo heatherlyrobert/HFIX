@@ -59,6 +59,61 @@ SHOW_num                (int a_num, int a_max, char r_out [LEN_TERSE])
 }
 
 char*
+SHOW_line               (char c_color, short a_shown, char a_type, char a_file [LEN_HUND], short a_line, short a_col, char a_level, char a_msg [LEN_RECD], char a_flag [LEN_HUND])
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        x_on        [LEN_TERSE] = "";
+   char        x_off       [LEN_TERSE] = "";
+   char        x_ln        [LEN_TERSE] = "";
+   char        x_co        [LEN_TERSE] = "";
+   /*---(header)-------------------------*/
+   DEBUG_PROG  yLOG_enter   (__FUNCTION__);
+   /*---(defense)------------------------*/
+   DEBUG_PROG  yLOG_point   ("a_file"    , a_file);
+   --rce;  if (a_file == NULL) {
+      DEBUG_PROG  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_PROG  yLOG_point   ("a_msg"     , a_msg);
+   --rce;  if (a_msg  == NULL) {
+      DEBUG_PROG  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_PROG  yLOG_point   ("a_flag"    , a_flag);
+   --rce;  if (a_flag == NULL) {
+      DEBUG_PROG  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(colorize)-----------------------*/
+   DEBUG_PROG  yLOG_char    ("c_color"   , c_color);
+   if (c_color == 'y') {
+      switch (a_level) {
+      case '!' :   strcpy (x_on, BOLD_CRI);   break;
+      case 'E' :   strcpy (x_on, BOLD_RED);   break;
+      case 'e' :   strcpy (x_on, BOLD_ORA);   break;
+      case 'W' :   strcpy (x_on, BOLD_YEL);   break;
+      case 'w' :   strcpy (x_on, BOLD_PUR);   break;
+      case 'U' :   strcpy (x_on, BOLD_BLU);   break;
+      case 'u' :   strcpy (x_on, BOLD_BRN);   break;
+      case 'm' :   strcpy (x_on, BOLD_OFF);   break;
+      }
+      strcpy (x_off, BOLD_OFF);
+   }
+   /*---(format numbes)------------------*/
+   SHOW_num (a_line, 4, x_ln);
+   DEBUG_PROG  yLOG_info    ("x_ln"      , x_ln);
+   SHOW_num (a_col , 3, x_co);
+   DEBUG_PROG  yLOG_info    ("x_co"      , x_co);
+   /*---(create line)--------------------*/
+   sprintf (g_print, "%s%-2.2s· - %c  %-30.30s %-4.4s %-3.3s %c   %-60.60s %-40.40s [%c]%s", x_on, SHOW_hint (a_shown - 1), a_type, a_file, x_ln, x_co, a_level, a_msg, a_flag, a_level, x_off);
+   /*> sprintf (x_show, "%s%-2.2s· - %c  %-30.30s %4d %3d %c   %-60.60s %-40.40s [%c]%s", x_on, SHOW_hint (a_shown - 1), a_type, a_file, a_line, a_col, a_level, a_msg, a_flag, a_level, x_off);   <*/
+   /*---(complete)-----------------------*/
+   DEBUG_PROG  yLOG_exit    (__FUNCTION__);
+   return g_print;
+}
+
+char*
 SHOW_totals             (char c_pass, char c_color, short a_show, short a_fail, short a_errs, short a_warn, short a_waste, short a_msgs, short a_total)
 {
    char        x_grade     [LEN_TERSE] = "----";

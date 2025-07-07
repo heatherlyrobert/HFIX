@@ -210,22 +210,7 @@ BASE__handle            (char c_pass, char c_filter [LEN_LABEL], char c_color, c
       DEBUG_PROG  yLOG_exit    (__FUNCTION__);
       return 0;
    }
-   /*---(success)------------------------*/
    ++x_handled;
-   DEBUG_PROG  yLOG_char    ("c_color"   , c_color);
-   if (c_color == 'y') {
-      switch (x_level) {
-      case '!' :   strcpy (x_on, BOLD_CRI);   break;
-      case 'E' :   strcpy (x_on, BOLD_RED);   break;
-      case 'e' :   strcpy (x_on, BOLD_ORA);   break;
-      case 'W' :   strcpy (x_on, BOLD_YEL);   break;
-      case 'w' :   strcpy (x_on, BOLD_PUR);   break;
-      case 'U' :   strcpy (x_on, BOLD_BLU);   break;
-      case 'u' :   strcpy (x_on, BOLD_BRN);   break;
-      case 'm' :   strcpy (x_on, BOLD_OFF);   break;
-      }
-      strcpy (x_off, BOLD_OFF);
-   }
    /*---(classify)-----------------------*/
    DEBUG_PROG  yLOG_info    ("c_filter"  , c_filter);
    DEBUG_PROG  yLOG_value   ("c_pass"    , c_pass);
@@ -233,15 +218,8 @@ BASE__handle            (char c_pass, char c_filter [LEN_LABEL], char c_color, c
    else if (c_pass == 0)                           {  ++x_shown;   }
    else                                            {  ++x_shown;  rc_final = 1; }
    /*---(show)---------------------------*/
-   if (rc_final == 1) {
-      SHOW_num (x_line, 4, x_ln);
-      DEBUG_PROG  yLOG_info    ("x_ln"      , x_ln);
-      SHOW_num (x_col , 3, x_co);
-      DEBUG_PROG  yLOG_info    ("x_co"      , x_co);
-      sprintf (x_show, "%s%-2.2s· - %c  %-30.30s %-4.4s %-3.3s %c   %-60.60s %-40.40s [%c]%s", x_on, SHOW_hint (x_shown - 1), x_type, x_file, x_ln, x_co, x_level, x_msg, x_flag, x_level, x_off);
-      /*> sprintf (x_show, "%s%-2.2s· - %c  %-30.30s %4d %3d %c   %-60.60s %-40.40s [%c]%s", x_on, SHOW_hint (x_shown - 1), x_type, x_file, x_line, x_col, x_level, x_msg, x_flag, x_level, x_off);   <*/
-   }
    DEBUG_PROG  yLOG_value   ("rc_final"  , rc_final);
+   if (rc_final == 1)  strlcpy (x_show, SHOW_line (c_color, x_shown, x_type, x_file, x_line, x_col, x_level, x_msg, x_flag), LEN_FULL);
    /*---(save-back)----------------------*/
    if (b_handled != NULL)  *b_handled = x_handled;
    if (b_shown   != NULL)  *b_shown   = x_shown;

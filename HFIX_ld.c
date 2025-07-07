@@ -88,6 +88,13 @@ LD_parse                (char a_recd [LEN_RECD], short *b_count, char r_file [LE
       DEBUG_PROG  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
+   /*---(regrade)------------------------*/
+   rc  = GCC__regrade (g_ylog, r_msg, r_level);
+   DEBUG_PROG  yLOG_value   ("regrade"   , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_PROG  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(save-back)----------------------*/
    if (r_level != NULL)  *r_level = '!';
    /*---(complete)-----------------------*/

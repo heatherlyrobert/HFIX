@@ -300,6 +300,7 @@ GCC__regrade            (char c_ylog, char b_msg [LEN_RECD], char *b_level)
    else if (strstr  (b_msg, "unused parameter")       != NULL) { x_level = 'U';  x_quotes = 'y'; strcpy  (x_msg, "unused parameter·····");  }
    else if (strstr  (b_msg, "unused function" )       != NULL) { x_level = 'U';  x_quotes = 'y'; strcpy  (x_msg, "unused function······");  }
    /*---(clarifies)----------------------*/
+   else if (strstr  (b_msg, "undefined reference to") != NULL) {                 x_quotes = 'L'; strcpy  (x_msg, "undefined ref··>>>>>·"); }
    else if (strstr  (b_msg, "too few arguments to")   != NULL) {                 x_quotes = 'y'; strcpy  (x_msg, "too few args·to······"); }
    else if (strstr  (b_msg, "too many arguments to")  != NULL) {                 x_quotes = 'y'; strcpy  (x_msg, "too many args to·····"); }
    else if (strstr  (b_msg, "discards 'const'")       != NULL) {
@@ -314,18 +315,37 @@ GCC__regrade            (char c_ylog, char b_msg [LEN_RECD], char *b_level)
    /*---(replace-quotes)-----------------*/
    if (x_quotes == 'y') {
       p = strrchr (b_msg, '\'');
-      if (p != NULL)  p [0] = '\0';
-      p = strrchr (b_msg, '\'');
-      if (p != NULL)  p [0] = '·';
-      strlcat (x_msg, p, LEN_RECD);
-      if (b_msg   != NULL)  strlcpy (b_msg, x_msg, LEN_RECD);
+      if (p != NULL) {
+         p [0] = '\0';
+         p = strrchr (b_msg, '\'');
+         if (p != NULL) {
+            p [0] = '·';
+            strlcat (x_msg, p, LEN_RECD);
+            if (b_msg   != NULL)  strlcpy (b_msg, x_msg, LEN_RECD);
+         }
+      }
    } else if (x_quotes == 'Y') {
       p = strchr (b_msg, '\'');
-      if (p != NULL)  p [0] = '·';
-      strlcat (x_msg, p, LEN_RECD);
-      p = strchr (x_msg, '\'');
-      if (p != NULL)  p [0] = '\0';
-      if (b_msg   != NULL)  strlcpy (b_msg, x_msg, LEN_RECD);
+      if (p != NULL) {
+         p [0] = '·';
+         strlcat (x_msg, p, LEN_RECD);
+         p = strchr (x_msg, '\'');
+         if (p != NULL) {
+            p [0] = '\0';
+            if (b_msg   != NULL)  strlcpy (b_msg, x_msg, LEN_RECD);
+         }
+      }
+   } else if (x_quotes == 'L') {
+      p = strchr (b_msg, 'æ');
+      if (p != NULL) {
+         p [0] = '\0';
+         p = strrchr (b_msg, 'å');
+         if (p != NULL) {
+            p [0] = '·';
+            strlcat (x_msg, p, LEN_RECD);
+            if (b_msg   != NULL)  strlcpy (b_msg, x_msg, LEN_RECD);
+         }
+      }
    }
    /*---(save-back)----------------------*/
    if (b_level != NULL)  *b_level = x_level;

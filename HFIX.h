@@ -42,8 +42,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "2.--  moving from awk to c-language"
 #define     P_VERMINOR  "2.0-"
-#define     P_VERNUM    "2.0d"
-#define     P_VERTXT    "basics integrated with vim/ide and unit tested"
+#define     P_VERNUM    "2.0e"
+#define     P_VERTXT    "tweaks to looks and uniformity during early use in vim"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -152,6 +152,7 @@ char        GCC_parse               (char a_recd [LEN_RECD], short *b_count, cha
 /*········´ ´·····················´ ´·········································*/
 char*       SHOW_hint               (int n);
 char        SHOW_num                (int a_num, int a_max, char r_out [LEN_TERSE]);
+char*       SHOW_line               (char a_color, short a_shown, char a_type, char a_file [LEN_HUND], short a_line, short a_col, char a_level, char a_msg [LEN_RECD], char a_flag [LEN_HUND]);
 char*       SHOW_totals             (char c_pass, char c_color, short a_show, short a_fail, short a_errs, short a_warn, short a_waste, short a_msgs, short a_total);
 /*········´ ´··(done))············´ ´·········································*/
 
