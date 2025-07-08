@@ -9,11 +9,11 @@
 #define     P_SUBJECT   "parsing make/compiler output"
 #define     P_PURPOSE   "converting make/compiler output into useful tags"
 /*········· ··········· ´·····························´········································*/
-#define     P_NAMESAKE  "hephaestus-klytotekhnes (the blacksmith)"
+#define     P_NAMESAKE  "hephaestus-klytotekhnes (blacksmith)"
 #define     P_PRONOUNCE ""
 #define     P_HERITAGE  "olympian god of technology, tools, and blacksmiths"
 #define     P_BRIEFLY   ""
-#define     P_IMAGERY   ""
+#define     P_IMAGERY   "muscular, lame-footed, usually shown seated with a hammer and an anvil"
 #define     P_REASON    ""
 /*········· ··········· ´·····························´········································*/
 #define     P_ONELINE   P_NAMESAKE " " P_SUBJECT
@@ -42,8 +42,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "2.--  moving from awk to c-language"
 #define     P_VERMINOR  "2.0-"
-#define     P_VERNUM    "2.0f"
-#define     P_VERTXT    "added help (,q?) and cleaning up HFIX.vim script"
+#define     P_VERNUM    "2.0g"
+#define     P_VERTXT    "rebuilt vim-script clean, compile, and install code"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -67,10 +67,20 @@
 
 /*······´ ´·················´ ´················································*/
 #define   P_SUMMARY           "summary¦"\
-   "HFIX (heatherly fix) is a support tool for my VIM/IDE environment¦" \
-   "to summarize and present gnu make, gcc compilation, and ld linking¦" \
-   "output as clear, filtered, and easily followed tags.¦"
+   "HFIX (heatherly fix) is my VIM/IDE service to accelerate the painful,¦" \
+   "repetitive, tedious, and error-prone cycle of compiling, linking,¦" \
+   "debugging, and installing software into a more smooth and targeted one.¦"
 
+#define   P_HARDREQS          "hard requirements¦"\
+   "1) gentoo gnu/linux as the base¦" \
+   "2) vim (vi) as the editor, no desire to move to integrated toolsets¦" \
+   "3) gnu gcc as the compiler (obviously)¦" \
+   "4) gnu make and ld (linker) (also obviously)¦"
+
+#define   P_ARCHITECTURE      "architecture¦"\
+   "1) vim-script which provides user-interface and quarter-backing¦" \
+   "2) c-language program to convert gcc/make/ld output into usable tags¦" \
+   "3) standardized makefile content across all programs (zeno)¦"
 
 
 
@@ -89,6 +99,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include <yLOG.h>
 #include <yURG.h>
 #include <yENV.h>

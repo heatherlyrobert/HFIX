@@ -145,13 +145,14 @@ SHOW_totals             (char c_pass, char c_color, short a_show, short a_fail, 
    sprintf (g_break, "%shnt -·---buffer--------------------- line col typ·---message-------------------------------------------------- ---gcc-flag-----------------------------%s", x_on, x_off);
    if (c_pass ==  0) {
       /*> printf ("%sgcc/make (help) q:quik f:full w:wipe a:ansi c:comp i:inst u:test m:manu Z:revw%s\n", x_on, x_off);   <*/
-      sprintf (x_filter, "filter=%s················································································", g_filter);
-      sprintf (g_print, "%scompiler (%s) show=%s, fail=%s, errs=%s, warn=%s, wast=%s, msgs=%s, line=%s   %-59.59s %s%s",
+      sprintf (x_filter, "filter=%s···········································································", g_filter);
+      /*> sprintf (g_print, "%scompiler (%s) show=%s, fail=%s, errs=%s, warn=%s, wast=%s, msgs=%s, line=%s   %-59.59s %s%s",   <*/
+      sprintf (g_print, "%sHFIX·gcc/make·(%s)·show=%s,·fail=%s,·errs=%s,·warn=%s,·wast=%s,·msgs=%s,·line=%s···%-54.54s·%s%s",
             x_on, x_grade,
             x_show, x_fail, x_errs, x_warn, x_waste, x_msgs, x_total,
             x_filter, x_suffix, x_off);
    } else if (c_pass ==  1) {
-      sprintf (g_print, "%send-of-data (%s) compiler feedback···········································(v%-4.4s)···································································· %s%s", x_on, x_grade, P_VERNUM, x_suffix, x_off);
+      sprintf (g_print, "%send-of-data (%s) compiler feedback···········································(v%-4.4s)·····································································%s%s", x_on, x_grade, P_VERNUM, x_suffix, x_off);
    }
    DEBUG_PROG  yLOG_exit    (__FUNCTION__);
    return g_print;
