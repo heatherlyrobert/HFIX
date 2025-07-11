@@ -9,10 +9,10 @@
  *> HFIX_base··············n·c    HFIX_gcc··········n·123s·c    HFIX_ld···········n·123s·c                                                                                     <* 
  *> HFIX_main·········n·123s·c    HFIX_make·········n·123s·c    HFIX_prog·········n·123s·c                                                                                     <* 
  *> HFIX_run··········n·123s·c    HFIX_show·········n·123s·c    ··························                                                                                     <* 
+ *> polymnia_testing···-·-··1m    ··························    ··························                                                                                    <* 
  *> ··························    ··························    ··························                                                                                    <* 
  *> ··························    ··························    ··························                                                                                    <* 
- *> ··························    ··························    ··························                                                                                    <* 
- *> ··························    ··························    TOTAL···9·········n·123s·c                                                                                    <* 
+ *> ··························    ··························    TOTAL···9···-···-·····123s                                                                                  <* 
  *>                                                                                                                                                                         <* 
  *> exists                                                                                                                                                                  <* 
  *> needs-compiling                                                                                                                                                         <* 
@@ -36,8 +36,10 @@ COMP_clear              (void)
    s_compile [20][ 2] = 'T';
    s_compile [20][ 3] = 'A';
    s_compile [20][ 4] = 'L';
-   s_compile [20][ 7] = '-';
    s_compile [20][ 8] = '-';
+   s_compile [20][12] = '-';
+   s_compile [20][16] = '-';
+   s_compile [20][24] = '-';
    s_ncount = 0;
    return 0;
 }
@@ -146,8 +148,8 @@ COMP_base          (char a_base [LEN_LABEL], char a_ext [LEN_TERSE])
       x_name [l - le] = '\0';
       /*---(place)-----------------------*/
       DEBUG_YSCORE   yLOG_note    ("accepted and placing");
-      snprintf (x_full , 22, "%s············································", x_name);
-      sprintf  (s_compile [s_ncount], "%s··-·-    ", x_full);
+      snprintf (x_full , 19, "%s············································", x_name);
+      sprintf  (s_compile [s_ncount], "%s·-·-··-·    ", x_full);
       ++s_ncount;
       /*---(done)------------------------*/
    }
@@ -165,6 +167,7 @@ COMP_base          (char a_base [LEN_LABEL], char a_ext [LEN_TERSE])
    if (x_bit [1] == ' ')  x_bit [1] = '·';
    s_compile [20][ 7] = x_bit [0];
    s_compile [20][ 8] = x_bit [1];
+   s_compile [20][ 9] = 't';
    /*---(complete)------------------------------*/
    DEBUG_YSCORE   yLOG_exit    (__FUNCTION__);
    return s_ncount;
@@ -219,6 +222,87 @@ COMP_sort               (void)
    /*---(complete)------------------------------*/
    DEBUG_YSCORE    yLOG_exit    (__FUNCTION__);
    return 0;
+}
+
+char
+COMP_by_name       (char a_name [LEN_TITLE], char a_type)
+{
+   char        i           =    0;
+   char        l           =    0;
+   l = strlen (a_name);
+   for (i = 0; i < MAX_LINES; ++i) {
+      if (strncmp (s_compile [i], a_name, l) != 0)  continue;
+      if      (a_type == 'n')  s_compile [i][19] = '³';
+      else if (a_type == 'c')  s_compile [i][21] = ' ';
+      else if (a_type == 'd')  s_compile [i][21] = 'Ï';
+      return 1;
+   }
+   return 0;
+}
+
+char
+COMP_recon         (void)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   FILE       *f           = NULL;
+   char        x_recd      [LEN_RECD]  = "";
+   int         i           =    0;
+   short       c           =    0;
+   char        x_name      [LEN_TITLE] = "";
+   char       *p           = NULL;
+   char        x_bit       [LEN_TERSE] = "";
+   /*---(header)-------------------------*/
+   DEBUG_YSCORE    yLOG_enter   (__FUNCTION__);
+   /*---(open)---------------------------*/
+   rc = BASE__open  ("HFIX.out", NULL, NULL, &f);
+   DEBUG_PROG  yLOG_value   ("open"      , rc);
+   DEBUG_PROG  yLOG_point   ("f"         , f);
+   --rce;  if (rc < 1 || f == NULL) {
+      DEBUG_PROG  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(handle lines)-------------------*/
+   while (1) {
+      /*---(read)------------------------*/
+      rc = BASE__read (f, NULL, NULL, x_recd);
+      DEBUG_PROG  yLOG_value   ("read"      , rc);
+      if (rc == 0)   break;
+      /*---(filter)----------------------*/
+      if (strncmp ("gcc -c -std=", x_recd, 12) != 0) {
+         DEBUG_PROG  yLOG_note    ("filtered line");
+         continue;
+      }
+      strlcpy (x_name, x_recd + 88, LEN_TITLE);
+      p = strstr (x_name, ".c     ");
+      if (p == NULL)     continue;
+      p [0] = '\0';
+      DEBUG_PROG  yLOG_info    ("x_name"    , x_name);
+      rc = COMP_by_name (x_name, 'n');
+      DEBUG_PROG  yLOG_value   ("marked"    , rc);
+      ++c;
+      /*---(done)------------------------*/
+   }
+   DEBUG_PROG  yLOG_value   ("c"         , c);
+   /*---(close)--------------------------*/
+   rc = BASE__close (&f);
+   DEBUG_PROG  yLOG_value   ("close"     , rc);
+   DEBUG_PROG  yLOG_point   ("f"         , f);
+   --rce;  if (rc < 1 || f != NULL) {
+      DEBUG_PROG  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(update total)-------------------*/
+   sprintf (x_bit, "%2d", c);
+   if (x_bit [0] == ' ')  x_bit [0] = '·';
+   if (x_bit [1] == ' ')  x_bit [1] = '·';
+   s_compile [20][11] = x_bit [0];
+   s_compile [20][12] = x_bit [1];
+   s_compile [20][13] = 'n';
+   /*---(complete)------------------------------*/
+   DEBUG_YSCORE    yLOG_exit    (__FUNCTION__);
+   return c;
 }
 
 
