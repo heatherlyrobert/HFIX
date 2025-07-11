@@ -12,9 +12,9 @@ HFIX_unit_quiet    (void)
 char       /*----: set up programgents/debugging -----------------------------*/
 HFIX_unit_loud     (void)
 {
-   char       *x_args [3]  = { "HFIX_unit","@@kitchen", "@@prog" };
-   yURG_logger (3, x_args);
-   yURG_urgs   (3, x_args);
+   char       *x_args [4]  = { "HFIX_unit","@@kitchen", "@@prog" , "@@yscore"};
+   yURG_logger (4, x_args);
+   yURG_urgs   (4, x_args);
    return 0;
 }
 

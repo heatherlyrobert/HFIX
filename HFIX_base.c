@@ -182,6 +182,7 @@ BASE__handle            (char c_pass, char c_filter [LEN_LABEL], char c_color, c
    char        x_ln        [LEN_TERSE] = "";
    char        x_co        [LEN_TERSE] = "";
    char        x_show      [LEN_FULL]  = "";
+   char        x_nada      =  '-';
    /*---(header)-------------------------*/
    DEBUG_PROG  yLOG_enter   (__FUNCTION__);
    /*---(default/save)-------------------*/
@@ -199,11 +200,15 @@ BASE__handle            (char c_pass, char c_filter [LEN_LABEL], char c_color, c
    DEBUG_PROG  yLOG_info    ("a_recd"    , a_recd);
    strlcpy (x_recd, a_recd, LEN_RECD);
    /*---(handle)-------------------------*/
-   if      (strncmp (x_recd, "make:"      ,   5) == 0)    rc = MAKE_parse   (x_recd, &x_count, x_file, &x_type, &x_line, &x_col, &x_level, x_msg, x_flag);
-   else if (strncmp (x_recd, "make["      ,   5) == 0)    rc = MAKE_parse   (x_recd, &x_count, x_file, &x_type, &x_line, &x_col, &x_level, x_msg, x_flag);
+   if      (strncmp (x_recd, "make:"      ,   5) == 0)          rc = MAKE_parse   (x_recd, &x_count, x_file, &x_type, &x_line, &x_col, &x_level, x_msg, x_flag, &x_nada);
+   else if (strncmp (x_recd, "make["      ,   5) == 0)          rc = MAKE_parse   (x_recd, &x_count, x_file, &x_type, &x_line, &x_col, &x_level, x_msg, x_flag, &x_nada);
    else if (strncmp (x_recd, "/usr/libexec/gcc/",  16) == 0)    rc = LD_parse     (x_recd, &x_count, x_file, &x_type, &x_line, &x_col, &x_level, x_msg, x_flag);
-   /*> else if (strncmp (x_recd, "collect"          ,   7) == 0)    rc = MAKE_collect (x_recd     , &x_count, NULL, NULL, NULL, NULL);   <*/
    else                                                         rc = GCC_parse    (x_recd, &x_count, x_file, &x_type, &x_line, &x_col, &x_level, x_msg, x_flag);
+   /*---(nothing to do)------------------*/
+   if (x_nada == 'y') {
+      if (r_level   != NULL)  *r_level   = 'm';
+      return 0;
+   }
    /*---(trouble)------------------------*/
    DEBUG_PROG  yLOG_value   ("return"    , rc);
    if (rc <= 0) {
@@ -291,7 +296,7 @@ BASE_pass               (char c_pass, char c_filter [LEN_LABEL], char c_color)
       return rce;
    }
    /*---(totals)-------------------------*/
-   printf ("%s\n", SHOW_totals (c_pass, c_color, x_shown, x_fail, x_errs, x_warn, x_waste, 0, x_total));
+   printf ("%s\n", SHOW_totals (c_pass, c_color, x_shown, x_fail, x_errs, x_warn, x_waste, x_msgs, x_total));
    /*---(complete)-----------------------*/
    DEBUG_PROG  yLOG_exit    (__FUNCTION__);
    return 0;

@@ -36,6 +36,9 @@ PROG__args              (int a_argc, char *a_argv[])
       else if (strcmp  (a, "--all"          ) == 0)   strcpy (g_filter, HFIX_EVERYTHING);
       else if (strcmp  (a, "--color"        ) == 0)   g_color  = 'y';
       else if (strcmp  (a, "--ylog"         ) == 0)   g_ylog   = 'y';
+      else if (strcmp  (a, "--vim-help"     ) == 0)   SHOW_vim_help   ();
+      else if (strcmp  (a, "--vim-action"   ) == 0)   SHOW_vim_action (b);
+      else if (strcmp  (a, "--vim-simple"   ) == 0)   SHOW_vim_simple ();
       else if (strncmp (a, "--"          , 2) != 0)   strlcpy (g_file, a, LEN_FULL);
    }
    DEBUG_ARGS  yLOG_value  ("entries"   , x_total);

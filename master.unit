@@ -14,6 +14,7 @@ PREP          include the prototype headers                                    
    global     gcc testing content                  - - - - - - - - - - - - -   static char *u_unit_norm   = "HFIX_gcc.unit:48:1: error: code verb can not xyz";
    global     gcc testing content                  - - - - - - - - - - - - -   static char *u_munit_norm  = "koios_base.munit:25:12: warning: unused variable 'rc_final' [-Wunused-variable]";
    global     gcc testing content                  - - - - - - - - - - - - -   static char *u_make_recurs = "make[1]: *** [/usr/local/sbin/zeno_make:543: yJOBS_action.o] Error 1";
+   global     gcc testing content                  - - - - - - - - - - - - -   static char *u_gcc_2func   = "yJOBS_world.c:373:9: warning: implicit declaration of function 'yENV_open_full'; did you mean 'yENV_user_full'? [-Wimplicit-function-declaration]";
    global     create global/shared variable        - - - - - - - - - - - - -   static char u_error    [LEN_FULL]  = "";                                                                                                                                                                                   
    global     create global/shared variable        - - - - - - - - - - - - -   static char u_shown    [LEN_FULL]  = "";                                                                                                                                                                                   
 

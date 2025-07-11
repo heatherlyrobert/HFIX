@@ -192,10 +192,12 @@ func! s:HFIX_syntax()
    syn   match rsh_fix_esum     '^HFIX∑gcc.*\[E\]$'
    syn   match rsh_fix_wsum     '^HFIX∑gcc.*\[W\]$'
    syn   match rsh_fix_psum     '^HFIX∑gcc.*\[p\]$'
+   syn   match rsh_fix_msum     '^HFIX∑gcc.*\[m\]$'
    high  rsh_fix_lsum     cterm=none   ctermbg=7     ctermfg=none
    high  rsh_fix_esum     cterm=none   ctermbg=1     ctermfg=none
    high  rsh_fix_wsum     cterm=none   ctermbg=3     ctermfg=none
    high  rsh_fix_psum     cterm=none   ctermbg=2     ctermfg=none
+   high  rsh_fix_msum     cterm=none   ctermbg=0     ctermfg=none
    "---(syntax highlighting = footers)-----------#
    syn   match rsh_fix_lend     '^end-of-data .*\[!\]$'
    syn   match rsh_fix_eend     '^end-of-data .*\[E\]$'
@@ -212,12 +214,14 @@ func! s:HFIX_syntax()
    syn   match rsh_fix_warn     '^[A-Z][A-Z]∑.*\[W\]$'
    syn   match rsh_fix_warn2    '^[A-Z][A-Z]∑.*\[w\]$'
    syn   match rsh_fix_waste    '^[A-Z][A-Z]∑.*\[[Uu]\]$'
+   syn   match rsh_fix_curr     '^[A-Z][A-Z]∞.*$'
    high  rsh_fix_fail     cterm=bold   ctermbg=none  ctermfg=7
    high  rsh_fix_error    cterm=bold   ctermbg=none  ctermfg=1
    high  rsh_fix_error2   cterm=bold   ctermbg=none  ctermfg=6
    high  rsh_fix_warn     cterm=bold   ctermbg=none  ctermfg=3
    high  rsh_fix_warn2    cterm=bold   ctermbg=none  ctermfg=5
    high  rsh_fix_waste    cterm=bold   ctermbg=none  ctermfg=4
+   high  rsh_fix_curr     cterm=bold   ctermbg=none  ctermfg=0
    "---(syntax highlighting = headers)-----------#
    syn   match rsh_fix_help1    '^HFIX∑gcc.*\[?\]$'
    syn   match rsh_fix_help2    '^[^H].*\[?\]$'
@@ -276,22 +280,19 @@ endf
 function! HFIX_help  ()
    call   HFIX_unkeys()
    setlo  modifiable
-   sil!   exec    ":0,$delete"
-   sil!   exec   printf ("normal i%s\n", "HFIX∑gcc/make∑(help)∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑quick∑reminders∑for∑HFIX∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑[?]")
-   sil!   exec   printf ("normal i%s\n", "   1) cleaning      (2)   ,qw wipe    ,qW all      É NO cleaning                                                                                             [?]")
-   sil!   exec   printf ("normal i%s\n", "   2) making        (2)   ,qc comp    ,qq quik∑∑∑∑∑Ü gnu89 compile   (c)                                                                                     [?]")
-   sil!   exec   printf ("normal i%s\n", "   3) installing    (2)   ,qi inst    ,qm mans     Å install w/mans  (i)+(m)                                                                                 [?]")
-   sil!   exec   printf ("normal i%s\n", "   4) unit-tests    (2)   ,qu unit    ,q* cert     Ñ NO unit actions                                                                                         [?]")
-   sil!   exec   printf ("normal i%s\n", "   5)∑hints∑∑∑∑∑∑∑∑∑(1)∑∑∑∑∑∑∑;;AA∑=∑go∑directly∑to∑buffer/position∑of∑hint∑AA∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑[?]")
-   sil!   exec   printf ("normal i%s\n", "   6) cursoring     (5)   ,q[ head    ,q< prev    ,q. curr    ,q> next    ,q] last                                                                           [?]")
-   sil!   exec   printf ("normal i%s\n", "   7) configure     (4)   ,q  show    ,qh hide    ,q+ more    ,q- less    ,q# this                                                                           [?]")
-   sil!   exec   printf ("normal i%s\n", "   8)∑bag-of-chips∑∑(1)∑∑∑,qQ∑deep∑clean,∑full∑compile/install,∑and∑certification∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑[?]")
-   sil!   exec   printf ("normal i%s\n", "   9) help          (2)   ,q? help    #> man HFIX                                                                                                            [?]")
-   normal _j0
+   sil!   exec   ":silent 0,$!HFIX --vim-help"
+   normal _0
    setlo  nomodifiable
    call   HFIX_keys()
    call   HBUF_restore ()
    return
+endfunction
+
+function! HFIX_reset   ()
+   call   HFIX_unkeys  ()
+   call s:HFIX_prefix  ()
+   call   HFIX_keys    ()
+   call   HBUF_restore ()
 endfunction
 
 func! HFIX_keys()
@@ -301,9 +302,13 @@ func! HFIX_keys()
    nmap  <buffer>   q      :call HFIX_compile ("q")<cr>
    nmap  <buffer>   f      :call HFIX_compile ("f")<cr>
    nmap  <buffer>   w      :call HFIX_compile ("w")<cr>
-   nmap  <buffer>   W      :call HFIX_compile ("W")<cr>
+   nmap  <buffer>   b      :call HFIX_compile ("b")<cr>
    nmap  <buffer>   a      :call HFIX_compile ("a")<cr>
    nmap  <buffer>   c      :call HFIX_compile ("c")<cr>
+   nmap  <buffer>   C      :call HFIX_compile ("C")<cr>
+   nmap  <buffer>   E      :call HFIX_compile ("E")<cr>
+   nmap  <buffer>   W      :call HFIX_compile ("W")<cr>
+   nmap  <buffer>   *      :call HFIX_compile ("*")<cr>
    nmap  <buffer>   i      :call HFIX_compile ("i")<cr>
    nmap  <buffer>   I      :call HFIX_compile ("I")<cr>
    nmap  <buffer>   u      :call HFIX_compile ("u")<cr>
@@ -325,6 +330,7 @@ func! HFIX_keys()
    "---(other)---------------------------------------#
    nmap  <buffer>   Z      :call HFIX_unkeys  ()<cr>
    nmap  <buffer>   ?      :call HFIX_help    ()<cr>
+   nmap  <buffer>   !      :call HFIX_reset   ()<cr>
    "---(complete)------------------------------------#
    setlo  nomodifiable
    retu
@@ -337,10 +343,14 @@ func! HFIX_unkeys()
    nunm  <buffer>   q
    nunm  <buffer>   f
    nunm  <buffer>   w
-   nunm  <buffer>   W
+   nunm  <buffer>   b
    nunm  <buffer>   a
    nunm  <buffer>   c
-   nunm  <buffer>   i
+   nunm  <buffer>   C
+   nunm  <buffer>   E
+   nunm  <buffer>   W
+   nunm  <buffer>   *
+      nunm  <buffer>   i
    nunm  <buffer>   I
    nunm  <buffer>   u
    nunm  <buffer>   m
@@ -356,6 +366,7 @@ func! HFIX_unkeys()
    "---(other)---------------------------------------#
    nmap  <buffer>   Z      :call HFIX_keys  ()<cr>
    nunm  <buffer>   ?
+   nunm  <buffer>   !
       "---(complete)------------------------------------#
    setlo  nomodifiable
    retu
@@ -463,10 +474,13 @@ endf
 ""=========================-------------------------==========================##
 func! s:o___SPECIFIC________o()
 endf
+
 func! s:HFIX_prefix  ()
    setlo  modifiable
-   sil!   exec   ":silent 0,$d"
-   sil!   exec   printf ("normal i%s\n", "HFIX∑gcc/make∑∑∑∑∑∑∑∑∑w:wipe∑∑q:quik∑∑i:inst∑∑u:unit∑∑m:manu∑∑?:help∑∑∑∑∑∑∑∑∑∑∑∑∑∑HFIX∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑[?]")
+   " sil!   exec   ":silent 0,$d"
+   " sil!   exec   printf ("normal i%s", "HFIX∑gcc/make∑∑∑∑∑,qw∑wipe∑∑,qc∑comp∑∑,qi∑inst∑∑,qu∑unit∑∑,qm∑manu∑∑,q?∑help∑∑∑∑∑∑HFIX∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑[?]")
+   sil!   exec   ":silent 0,$!HFIX --vim-simple"
+   normal _0
    setlo  nomodifiable
 endf
 
@@ -475,35 +489,18 @@ func! s:HFIX_prepare (a_opt)
    call   HFIX_unkeys()
    setlo  modifiable
    sil!   exec   ":silent 0,$d"
-   if     (a:a_opt == "w")
-      sil!   exec   printf ("normal i%s\n", "HFIX∑gcc/make∑(----)∑∑chosen∑∑(w:wipe)∑=∑small∑clean∑(opject/exec)∑∑∑∑∑∑∑∑∑∑∑,q! reset∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑[?]")
-   elseif (a:a_opt == "W")
-      sil!   exec   printf ("normal i%s\n", "HFIX∑gcc/make∑(----)∑∑chosen∑∑(W:WIPE)∑=∑big∑clean∑(all∑temp/waste)∑∑∑∑∑∑∑∑∑∑,q! reset∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑[?]")
-   elseif (a:a_opt == "c")
-      sil!   exec   printf ("normal i%s\n", "HFIX∑gcc/make∑(----)∑∑chosen∑∑(c:comp)∑=∑compile∑only∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑,q! reset∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑[?]")
-   elseif (a:a_opt == "q")
-      sil!   exec   printf ("normal i%s\n", "HFIX∑gcc/make∑(----)∑∑chosen∑∑(q:quik)∑=∑compile∑and∑install∑code∑∑∑∑∑∑∑∑∑∑∑∑,q! reset∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑[?]")
-   elseif (a:a_opt == "i")
-      sil!   exec   printf ("normal i%s\n", "HFIX∑gcc/make∑(----)∑∑chosen∑∑(i:inst)∑=∑install∑code∑only∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑,q! reset∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑[?]")
-   elseif (a:a_opt == "m")
-      sil!   exec   printf ("normal i%s\n", "HFIX∑gcc/make∑(----)∑∑chosen∑∑(m:mans)∑=∑install∑manuals∑only∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑,q! reset∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑[?]")
-   elseif (a:a_opt == "u")
-      sil!   exec   printf ("normal i%s\n", "HFIX∑gcc/make∑(----)∑∑chosen∑∑(u:unit)∑=∑compile∑units∑only∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑,q! reset∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑[?]")
-   elseif (a:a_opt == "U")
-      sil!   exec   printf ("normal i%s\n", "HFIX∑gcc/make∑(----)∑∑chosen∑∑(U:cert)∑=∑compile∑units∑and∑certify∑∑∑∑∑∑∑∑∑∑∑,q! reset∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑[?]")
-   else
-      sil!   exec   printf ("normal i%s\n", "HFIX∑gcc/make∑(----)∑∑chosen∑∑unknown∑option∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑,q! reset∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑[?]")
-   endif
-   " redraw!
+   sil!   exec   ":silent 0,$!HFIX --vim-action ".a:a_opt
 endf
 
 func! s:HFIX_clean   (a_opt)
-   normal GG0
+   normal _0
    if     (stridx ("w", a:a_opt) >= 0)
       sil!   exec   ":!make --silent clean"
-      sil!   exec   printf ("normal _o%s\n", "small clean done >> erased primary working files (will cause FULL recompile later)                                                                           [?]")
+      sil!   exec   printf ("normal _o%s", "small clean done >> erased primary working files (will cause FULL recompile later)                                                                           [?]")
+      " sil!   exec   ":0,$!uwait "
+      norm   _0
       redraw!
-   elseif (stridx ("W", a:a_opt) >= 0)
+   elseif (stridx ("b", a:a_opt) >= 0)
       sil!   exec   ":!make -silent bigclean"
       sil!   exec   printf ("normal _o%s\n", "big clean done >> erased ALL working files (will cause FULL recompile later)                                                                                 [?]")
       redraw!
@@ -511,16 +508,28 @@ func! s:HFIX_clean   (a_opt)
 endf
 
 func! s:HFIX_make     (a_opt)
+   let    x_msg   = ""
    normal GG
-   if     (stridx ("qca", a:a_opt) >= 0)
+   if     (stridx ("qcaCEW*", a:a_opt) >= 0)
       sil!   exec   ":!make  > gcc.out  2>&1"
-      sil!   exec   ":silent 0,$!HFIX gcc.out"
-      call   HFIX_count ()
+      if     (a:a_opt == 'q')
+         let   x_msg  = "--errors"
+      elseif (a:a_opt == 'c')
+         let   x_msg  = "--errors"
+      elseif (a:a_opt == 'C')
+         let   x_msg  = "--criticals"
+      elseif (a:a_opt == 'E')
+         let   x_msg  = "--errors"
+      elseif (a:a_opt == 'W')
+         let   x_msg  = "--warnings"
+      elseif (a:a_opt == '*')
+         let   x_msg  = "--all"
+      endif
+      sil!   exec   ":silent 0,$!HFIX gcc.out ".x_msg
       redraw!
    elseif (stridx ("u"  , a:a_opt) >= 0)
       sil!   exec   ":!make units > gcc.out  2>&1"
       sil!   exec   ":silent 0,$!HFIX gcc.out"
-      call  HFIX_count ()
       redraw!
    endi
 endf
@@ -564,22 +573,21 @@ func! HFIX_compile  (a_opt)
       retu
    endi
    "---(prepare)---------------------------------#
-   " call   s:HFIX_prefix  ()
    call   s:HFIX_prepare (a:a_opt)
    call   s:HFIX_clean   (a:a_opt)
    call   s:HFIX_make    (a:a_opt)
    call   s:HFIX_install (a:a_opt)
-
    "---(get the function names)------------------#
+   call   HFIX_count ()
    let   x_curr = 2
    normal _ 0 j
-   while (line ('.') < s:hfix_maxx)
-   "    "       "echo  "tagn=".s:hfix_tagn.", file=".s:hfix_file.", line=".s:hfix_line
+   while (line ('.') <= s:hfix_maxx)
+      "    "       "echo  "tagn=".s:hfix_tagn.", file=".s:hfix_file.", line=".s:hfix_line
       let   x_buf  = HFIX_buf ()
       if x_buf < 0
          let  x_buf = "-"
       elseif (x_buf > 9)
-         let x_buf = printf("%c", 65 - 11 + x_buf)
+         let x_buf = printf("%c", 65 - 10 + x_buf)
          exec "normal 0 4l R".x_buf
       else
          exec "normal 0 4l R".x_buf
@@ -587,7 +595,7 @@ func! HFIX_compile  (a_opt)
       normal 0 j
    endwhile
 
-   norm  _j
+   norm  _0
    setlo nomodifiable
    let   g:hfix_locked = "n"
    call  HFIX_keys()
@@ -814,6 +822,8 @@ function! HFIX_count  ()
    call  search("^end-of_data")
    if    (line(".") > 2)
       let   s:hfix_maxx   = line ('.') - 1
+   else
+      let   s:hfix_maxx   = 0
    endif
    exec  "normal ".l:count."G"
    echon "l:count = ".l:count.", s:hfix_maxx = ".s:hfix_maxx
@@ -876,10 +886,12 @@ function!  HFIX_atoi  (str)
       return strpart (a:str, 3, 1) + 0
    elseif (strpart (a:str, 1, 1) == "∑")
       return strpart (a:str, 2, 2) + 0
+   elseif (strpart (a:str, 0, 1) == " ")
+      return strpart (a:str, 1, 3) + 0
    elseif (strpart (a:str, 0, 1) == "∑")
       return strpart (a:str, 1, 3) + 0
    else
-      return str + 1
+      return a:str + 1
    endif
 endfunction
 

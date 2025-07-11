@@ -293,8 +293,8 @@ GCC__regrade            (char c_ylog, char b_msg [LEN_RECD], char *b_level)
       return rce;
    }
    /*---(upgrades)-----------------------*/
-   if      (strstr  (b_msg, "no previous prototype")  != NULL) { x_level = 'e';  x_quotes = 'y'; strcpy  (x_msg, "no prototype for·····"); }
-   else if (strstr  (b_msg, "implicit declaration")   != NULL) { x_level = 'e';  x_quotes = 'y'; strcpy  (x_msg, "no header for········"); }
+   if      (strstr  (b_msg, "no previous prototype")  != NULL) { x_level = 'W';  x_quotes = ';'; strcpy  (x_msg, "no prototype for·····"); }
+   else if (strstr  (b_msg, "implicit declaration")   != NULL) { x_level = 'W';  x_quotes = ';'; strcpy  (x_msg, "no header for········"); }
    /*---(downgrades)---------------------*/
    else if (strstr  (b_msg, "unused variable" )       != NULL) { x_level = 'U';  x_quotes = 'y'; strcpy  (x_msg, "unused variable······");  }
    else if (strstr  (b_msg, "unused parameter")       != NULL) { x_level = 'U';  x_quotes = 'y'; strcpy  (x_msg, "unused parameter·····");  }
@@ -313,7 +313,11 @@ GCC__regrade            (char c_ylog, char b_msg [LEN_RECD], char *b_level)
     *> else if (strstr  (b_msg, "yLOG_exitr"      )       != NULL) {  if (c_ylog == 'y')  x_level = 'w';  else  x_level = '-';  }   <*/
    else if (strstr  (b_msg, "yLOG_"           )       != NULL) {  if (c_ylog == 'y')  x_level = 'w';  else  x_level = '-';  }
    /*---(replace-quotes)-----------------*/
-   if (x_quotes == 'y') {
+   if (strchr ("y;", x_quotes) != NULL) {
+      if (x_quotes == ';') {
+         p = strrchr (b_msg, ';');
+         if (p != NULL)  p [0] = '\0';
+      }
       p = strrchr (b_msg, '\'');
       if (p != NULL) {
          p [0] = '\0';

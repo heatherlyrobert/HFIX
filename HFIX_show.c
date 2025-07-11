@@ -130,9 +130,10 @@ SHOW_totals             (char c_pass, char c_color, short a_show, short a_fail, 
    char        x_suffix    [LEN_TERSE] = "";
    /*---(header)-------------------------*/
    DEBUG_PROG  yLOG_enter   (__FUNCTION__);
-   if      (a_fail > 0) { strcpy (x_grade, "FAIL");  strcpy (x_suffix, "[!]");  if (c_color == 'y')  strcpy (x_on, INVR_RED);  }
+   if      (a_fail > 0) { strcpy (x_grade, "FAIL");  strcpy (x_suffix, "[!]");  if (c_color == 'y')  strcpy (x_on, INVR_CRI);  }
    else if (a_errs > 0) { strcpy (x_grade, "ERRS");  strcpy (x_suffix, "[E]");  if (c_color == 'y')  strcpy (x_on, INVR_RED);  }
    else if (a_warn > 0) { strcpy (x_grade, "WARN");  strcpy (x_suffix, "[W]");  if (c_color == 'y')  strcpy (x_on, INVR_YEL);  }
+   else if (a_msgs > 0) { strcpy (x_grade, "----");  strcpy (x_suffix, "[m]");  if (c_color == 'y')  strcpy (x_on, INVR_BRN);  }
    else                 { strcpy (x_grade, "pass");  strcpy (x_suffix, "[p]");  if (c_color == 'y')  strcpy (x_on, INVR_GRN);  }
    if (c_color == 'y')  strcpy (x_off, BACK_OFF);
    SHOW_num (a_show , 4, x_show);
@@ -157,4 +158,54 @@ SHOW_totals             (char c_pass, char c_color, short a_show, short a_fail, 
    DEBUG_PROG  yLOG_exit    (__FUNCTION__);
    return g_print;
 }
+
+char
+SHOW_vim_simple         (void)
+{
+   printf ("HFIX·gcc/make·····,qw·wipe··,qc·comp··,qi·inst··,qu·unit··,qm·manu··,q?·help····(%-4.4s)·······································································[?]\n", P_VERNUM);
+   exit (0);
+}
+
+char
+SHOW_vim_action         (char a_opt [LEN_TERSE])
+{
+   switch (a_opt [0]) {
+   case 'w' :  printf ("HFIX·gcc/make·(----)··chosen··(w:wipe)·=·small·clean·(opject/exec)··············(%-4.4s)·······································································[?]\n", P_VERNUM);  break;
+   case 'b' :  printf ("HFIX·gcc/make·(----)··chosen··(b:big)··=·big·clean·(all·temp/waste)·············(%-4.4s)·······································································[?]\n", P_VERNUM);  break;
+   case 'q' :  printf ("HFIX·gcc/make·(----)··chosen··(q:quik)·=·compile·and·install·code···············(%-4.4s)·······································································[?]\n", P_VERNUM);  break;
+   case 'c' :  printf ("HFIX·gcc/make·(----)··chosen··(c:comp)·=·compile·only,·show·critical·only·······(%-4.4s)·······································································[?]\n", P_VERNUM);  break;
+   case 'C' :  printf ("HFIX·gcc/make·(----)··chosen··(E:errr)·=·compile·only,·show errors··············(%-4.4s)·······································································[?]\n", P_VERNUM);  break;
+   case 'W' :  printf ("HFIX·gcc/make·(----)··chosen··(W:warn)·=·compile·only,·show errors/warnings·····(%-4.4s)·······································································[?]\n", P_VERNUM);  break;
+   case '*' :  printf ("HFIX·gcc/make·(----)··chosen··(*:evry)·=·compile·only, show every·valid·········(%-4.4s)·······································································[?]\n", P_VERNUM);  break;
+   case 'i' :  printf ("HFIX·gcc/make·(----)··chosen··(i:inst)·=·install·code·only······················(%-4.4s)·······································································[?]\n", P_VERNUM);  break;
+   case 'm' :  printf ("HFIX·gcc/make·(----)··chosen··(m:mans)·=·install·manuals·only···················(%-4.4s)·······································································[?]\n", P_VERNUM);  break;
+   case 'u' :  printf ("HFIX·gcc/make·(----)··chosen··(u:unit)·=·compile·units·only·····················(%-4.4s)·······································································[?]\n", P_VERNUM);  break;
+   case 'U' :  printf ("HFIX·gcc/make·(----)··chosen··(U:cert)·=·compile·units·and·certify··············(%-4.4s)·······································································[?]\n", P_VERNUM);  break;
+   default  :  printf ("HFIX·gcc/make·(----)··chosen··unknown·option····································(%-4.4s)·······································································[?]\n", P_VERNUM);  break;
+   }
+   exit (0);
+}
+
+char
+SHOW_vim_help           (void)
+{
+   printf ("HFIX·gcc/make·(help)············································quick·reminders·(%-4.4s)·······································································[?]\n", P_VERNUM);
+   printf ("   1) cleaning      (2)   ,qw wipe    ,qb big      ƒ NO cleaning          ,qr recon                                                                          [?]\n");
+   printf ("   2) making        (2)   ,qc comp    ,qq quik·····† gnu89 compile   (c)                                                                                     [?]\n");
+   printf ("   3) installing    (2)   ,qi inst    ,qm mans      install w/mans  (i)+(m)                                                                                 [?]\n");
+   printf ("   4) unit-tests    (2)   ,qu unit    ,q* cert     „ NO unit actions                                                                                         [?]\n");
+   printf ("   5)·hints·········(1)·······;;AA·=·go·directly·to·buffer/position·of·hint·AA···············································································[?]\n");
+   printf ("   6) cursoring     (5)   ,q[ head    ,q< prev    ,q. curr    ,q> next    ,q] last                                                                           [?]\n");
+   printf ("   7) configure     (4)   ,q  show    ,qh hide    ,q+ more    ,q- less    ,q# this                                                                           [?]\n");
+   printf ("   8)·bag-of-chips··(1)···,qQ·deep·clean,·full·compile/install,·and·certification············································································[?]\n");
+   printf ("   9) help          (2)   ,q? help    ,qC crit    ,qE errs    ,qW warn    ,q* every                                                                          [?]\n");
+   exit (0);
+}
+
+/*> char                                                                                        <* 
+ *> SHOW_vim_recon          (void)                                                              <* 
+ *> {                                                                                           <* 
+ *>    /+> rc = system ("make --recon");                                                  <+/   <* 
+ *>    exit (0);                                                                                <* 
+ *> }                                                                                           <*/
 

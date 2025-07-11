@@ -58,7 +58,7 @@ MAKE__msg               (char a_type, char *b_beg, short *b_count, char r_msg [L
 }
 
 char
-MAKE_parse              (char a_recd [LEN_RECD], short *b_count, char r_file [LEN_HUND], char *r_type, short *r_line, short *r_col, char *r_level, char r_msg [LEN_RECD], char r_flag [LEN_HUND])
+MAKE_parse              (char a_recd [LEN_RECD], short *b_count, char r_file [LEN_HUND], char *r_type, short *r_line, short *r_col, char *r_level, char r_msg [LEN_RECD], char r_flag [LEN_HUND], char *r_nada)
 {
    /*---(design notes)-------------------*/
    /*
@@ -83,6 +83,20 @@ MAKE_parse              (char a_recd [LEN_RECD], short *b_count, char r_file [LE
    if (r_level != NULL)  *r_level =  '-';
    if (r_msg   != NULL)  strcpy (r_msg , "");
    if (r_flag  != NULL)  strcpy (r_flag, "");
+   if (r_nada  != NULL)  *r_nada  =  '-';
+   /*---(defense)------------------------*/
+   DEBUG_PROG  yLOG_point   ("a_recd"    , a_recd);
+   --rce;  if (a_recd == NULL) {
+      DEBUG_PROG  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(quick-out)----------------------*/
+   if (strstr (a_recd, "Nothing to be done for 'base'.") == 0) {
+      if (r_nada  != NULL)  *r_nada  =  'y';
+      if (r_level != NULL)  *r_level =  'm';
+      DEBUG_PROG  yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
    /*---(quick-out)----------------------*/
    --rce; if (strncmp (a_recd, "make:"         ,   5) == 0)   x_pre = 11;
    else if   (strncmp (a_recd, "make["         ,   5) == 0) {
