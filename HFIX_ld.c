@@ -11,24 +11,24 @@ LD__wasted              (char *b_beg, char **r_next)
    int         l           =    0;
    short       x_num       =    0;
    /*---(header)-------------------------*/
-   DEBUG_PROG  yLOG_enter   (__FUNCTION__);
+   DEBUG_HFIX  yLOG_enter   (__FUNCTION__);
    /*---(default)------------------------*/
    if (r_next  != NULL)  *r_next = b_beg;
    /*---(defence)------------------------*/
-   DEBUG_PROG  yLOG_point   ("b_beg"     , b_beg);
+   DEBUG_HFIX  yLOG_point   ("b_beg"     , b_beg);
    --rce;  if (b_beg  == NULL) {
-      DEBUG_PROG  yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_PROG  yLOG_info    ("b_beg"     , b_beg);
-   DEBUG_PROG  yLOG_point   ("r_next"    , r_next);
+   DEBUG_HFIX  yLOG_info    ("b_beg"     , b_beg);
+   DEBUG_HFIX  yLOG_point   ("r_next"    , r_next);
    --rce;  if (r_next == NULL) {
-      DEBUG_PROG  yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(get line number)----------------*/
    n = strchr (b_beg , ':');
-   DEBUG_PROG  yLOG_point   ("n"         , n);
+   DEBUG_HFIX  yLOG_point   ("n"         , n);
    --rce;  if (n == NULL) {
       DEBUG_ARGS  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
@@ -37,7 +37,7 @@ LD__wasted              (char *b_beg, char **r_next)
    /*---(save-back)----------------------*/
    if (r_next  != NULL)  *r_next = n + 1;
    /*---(complete)-----------------------*/
-   DEBUG_PROG  yLOG_exit    (__FUNCTION__);
+   DEBUG_HFIX  yLOG_exit    (__FUNCTION__);
    return 1;
 }
 
@@ -50,7 +50,7 @@ LD_parse                (char a_recd [LEN_RECD], short *b_count, char r_file [LE
    char       *p           = NULL;
    char       *n           = NULL;
    /*---(header)-------------------------*/
-   DEBUG_PROG  yLOG_enter   (__FUNCTION__);
+   DEBUG_HFIX  yLOG_enter   (__FUNCTION__);
    /*---(default)------------------------*/
    if (r_file  != NULL)  strcpy (r_file, "");
    if (r_type  != NULL)  *r_type  =  'á';
@@ -61,44 +61,44 @@ LD_parse                (char a_recd [LEN_RECD], short *b_count, char r_file [LE
    if (r_flag  != NULL)  strcpy (r_flag, "");
    /*---(quick-out)----------------------*/
    if (strncmp (a_recd, "/usr/libexec/gcc/",  16) != 0) {
-      DEBUG_PROG  yLOG_exit    (__FUNCTION__);
+      DEBUG_HFIX  yLOG_exit    (__FUNCTION__);
       return 0;
    }
    p = a_recd;
    /*---(line)---------------------------*/
    rc  = LD__wasted   (p, &n);
-   DEBUG_PROG  yLOG_value   ("wasted"    , rc);
+   DEBUG_HFIX  yLOG_value   ("wasted"    , rc);
    --rce;  if (rc < 0) {
-      DEBUG_PROG  yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(file)---------------------------*/
    p = n;
    rc  = GCC__file    ('l', p, &n, r_type, r_file);
-   DEBUG_PROG  yLOG_value   ("file"      , rc);
+   DEBUG_HFIX  yLOG_value   ("file"      , rc);
    --rce;  if (rc < 0) {
-      DEBUG_PROG  yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(message)------------------------*/
    p = n;
    rc  = GCC__msg     ('l', p, b_count, r_msg, r_flag);
-   DEBUG_PROG  yLOG_value   ("msg/flag"  , rc);
+   DEBUG_HFIX  yLOG_value   ("msg/flag"  , rc);
    --rce;  if (rc < 0) {
-      DEBUG_PROG  yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(regrade)------------------------*/
    rc  = GCC__regrade (g_ylog, r_msg, r_level);
-   DEBUG_PROG  yLOG_value   ("regrade"   , rc);
+   DEBUG_HFIX  yLOG_value   ("regrade"   , rc);
    --rce;  if (rc < 0) {
-      DEBUG_PROG  yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(save-back)----------------------*/
    if (r_level != NULL)  *r_level = '!';
    /*---(complete)-----------------------*/
-   DEBUG_PROG  yLOG_exit    (__FUNCTION__);
+   DEBUG_HFIX  yLOG_exit    (__FUNCTION__);
    return 1;
 }
 

@@ -224,9 +224,11 @@ func! s:HFIX_syntax()
    high  rsh_fix_curr     cterm=bold   ctermbg=none  ctermfg=0
    "---(syntax highlighting = headers)-----------#
    syn   match rsh_fix_help1    '^HFIX·gcc.*\[?\]$'
-   syn   match rsh_fix_help2    '^[^H].*\[?\]$'
+   syn   match rsh_fix_help2    '^....[^·].*\[?\]$'
+   syn   match rsh_fix_help3    '^·.*\[?\]$'
    high  rsh_fix_help1    cterm=none   ctermbg=7     ctermfg=none
    high  rsh_fix_help2    cterm=bold   ctermbg=none  ctermfg=7
+   high  rsh_fix_help3    cterm=bold   ctermbg=none  ctermfg=7
    "
    "
    " syn   match rsh_fix_file     '^sources :: .*$'
@@ -313,6 +315,7 @@ func! HFIX_keys()
    nmap  <buffer>   I      :call HFIX_compile ("I")<cr>
    nmap  <buffer>   u      :call HFIX_compile ("u")<cr>
    nmap  <buffer>   m      :call HFIX_compile ("m")<cr>
+   nmap  <buffer>   r      :call HFIX_compile ("r")<cr>
    "---(presentation/size)---------------------------#
    nmap  <buffer>   -      :call HFIX_resize  ("-")<cr>
    nmap  <buffer>   +      :call HFIX_resize  ("+")<cr>
@@ -354,6 +357,7 @@ func! HFIX_unkeys()
    nunm  <buffer>   I
    nunm  <buffer>   u
    nunm  <buffer>   m
+   nunm  <buffer>   r
    "---(presentation/size)---------------------------#
    nunm  <buffer>   +
       nunm  <buffer>   -
@@ -495,11 +499,13 @@ endf
 func! s:HFIX_clean   (a_opt)
    normal _0
    if     (stridx ("w", a:a_opt) >= 0)
-      sil!   exec   ":!make --silent clean"
-      sil!   exec   printf ("normal _o%s", "small clean done >> erased primary working files (will cause FULL recompile later)                                                                           [?]")
+      sil!   exec   ":silent 0,$!HFIX --clean"
+      norm  0_
+      " sil!   exec   ":!make --silent clean"
+      " sil!   exec   printf ("normal _o%s", "small clean done >> erased primary working files (will cause FULL recompile later)                                                                           [?]")
       " sil!   exec   ":0,$!uwait "
-      norm   _0
-      redraw!
+      " norm   _0
+      " redraw!
    elseif (stridx ("b", a:a_opt) >= 0)
       sil!   exec   ":!make -silent bigclean"
       sil!   exec   printf ("normal _o%s\n", "big clean done >> erased ALL working files (will cause FULL recompile later)                                                                                 [?]")
@@ -531,6 +537,9 @@ func! s:HFIX_make     (a_opt)
       sil!   exec   ":!make units > gcc.out  2>&1"
       sil!   exec   ":silent 0,$!HFIX gcc.out"
       redraw!
+   elseif (stridx ("r"  , a:a_opt) >= 0)
+      sil!   exec   ":silent 0,$!HFIX --reconc"
+      norm  0_
    endi
 endf
 

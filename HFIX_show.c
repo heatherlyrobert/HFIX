@@ -13,7 +13,7 @@ SHOW_hint               (int n)
    char       *x_valid     = YSTR_UPPER;
    static char x_hint      [LEN_SHORT] = "";
    /*---(header)-------------------------*/
-   DEBUG_PROG  yLOG_senter  (__FUNCTION__);
+   DEBUG_HFIX  yLOG_senter  (__FUNCTION__);
    /*---(default)------------------------*/
    strcpy (x_hint, "··");
    /*---(defense)------------------------*/
@@ -27,7 +27,7 @@ SHOW_hint               (int n)
    x_minor = n - (x_major * 26);
    x_hint [1] = x_valid [x_minor];
    /*---(complete)-----------------------*/
-   DEBUG_PROG  yLOG_sexit   (__FUNCTION__);
+   DEBUG_HFIX  yLOG_sexit   (__FUNCTION__);
    return x_hint;
 }
 
@@ -38,7 +38,7 @@ SHOW_num                (int a_num, int a_max, char r_out [LEN_TERSE])
    char        t           [LEN_LABEL] = "";
    char        i           =    0;
    int         l           =    0;
-   DEBUG_PROG  yLOG_senter  (__FUNCTION__);
+   DEBUG_HFIX  yLOG_senter  (__FUNCTION__);
    if (r_out != NULL)  strlcpy (r_out, x_out, LEN_TERSE);
    sprintf (t, "%d", a_num);
    l = strlen (t);
@@ -54,7 +54,7 @@ SHOW_num                (int a_num, int a_max, char r_out [LEN_TERSE])
       }
    }
    if (r_out != NULL)  strlcpy (r_out, x_out, LEN_TERSE);
-   DEBUG_PROG  yLOG_sexit   (__FUNCTION__);
+   DEBUG_HFIX  yLOG_sexit   (__FUNCTION__);
    return 0;
 }
 
@@ -68,25 +68,25 @@ SHOW_line               (char c_color, short a_shown, char a_type, char a_file [
    char        x_ln        [LEN_TERSE] = "";
    char        x_co        [LEN_TERSE] = "";
    /*---(header)-------------------------*/
-   DEBUG_PROG  yLOG_enter   (__FUNCTION__);
+   DEBUG_HFIX  yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
-   DEBUG_PROG  yLOG_point   ("a_file"    , a_file);
+   DEBUG_HFIX  yLOG_point   ("a_file"    , a_file);
    --rce;  if (a_file == NULL) {
-      DEBUG_PROG  yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_PROG  yLOG_point   ("a_msg"     , a_msg);
+   DEBUG_HFIX  yLOG_point   ("a_msg"     , a_msg);
    --rce;  if (a_msg  == NULL) {
-      DEBUG_PROG  yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_PROG  yLOG_point   ("a_flag"    , a_flag);
+   DEBUG_HFIX  yLOG_point   ("a_flag"    , a_flag);
    --rce;  if (a_flag == NULL) {
-      DEBUG_PROG  yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(colorize)-----------------------*/
-   DEBUG_PROG  yLOG_char    ("c_color"   , c_color);
+   DEBUG_HFIX  yLOG_char    ("c_color"   , c_color);
    if (c_color == 'y') {
       switch (a_level) {
       case '!' :   strcpy (x_on, BOLD_CRI);   break;
@@ -102,14 +102,14 @@ SHOW_line               (char c_color, short a_shown, char a_type, char a_file [
    }
    /*---(format numbes)------------------*/
    SHOW_num (a_line, 4, x_ln);
-   DEBUG_PROG  yLOG_info    ("x_ln"      , x_ln);
+   DEBUG_HFIX  yLOG_info    ("x_ln"      , x_ln);
    SHOW_num (a_col , 3, x_co);
-   DEBUG_PROG  yLOG_info    ("x_co"      , x_co);
+   DEBUG_HFIX  yLOG_info    ("x_co"      , x_co);
    /*---(create line)--------------------*/
    sprintf (g_print, "%s%-2.2s· - %c  %-30.30s %-4.4s %-3.3s %c   %-60.60s %-40.40s [%c]%s", x_on, SHOW_hint (a_shown - 1), a_type, a_file, x_ln, x_co, a_level, a_msg, a_flag, a_level, x_off);
    /*> sprintf (x_show, "%s%-2.2s· - %c  %-30.30s %4d %3d %c   %-60.60s %-40.40s [%c]%s", x_on, SHOW_hint (a_shown - 1), a_type, a_file, a_line, a_col, a_level, a_msg, a_flag, a_level, x_off);   <*/
    /*---(complete)-----------------------*/
-   DEBUG_PROG  yLOG_exit    (__FUNCTION__);
+   DEBUG_HFIX  yLOG_exit    (__FUNCTION__);
    return g_print;
 }
 
@@ -129,7 +129,7 @@ SHOW_totals             (char c_pass, char c_color, short a_show, short a_fail, 
    char        x_filter    [LEN_HUND]  = "";
    char        x_suffix    [LEN_TERSE] = "";
    /*---(header)-------------------------*/
-   DEBUG_PROG  yLOG_enter   (__FUNCTION__);
+   DEBUG_HFIX  yLOG_enter   (__FUNCTION__);
    if      (a_fail > 0) { strcpy (x_grade, "FAIL");  strcpy (x_suffix, "[!]");  if (c_color == 'y')  strcpy (x_on, INVR_CRI);  }
    else if (a_errs > 0) { strcpy (x_grade, "ERRS");  strcpy (x_suffix, "[E]");  if (c_color == 'y')  strcpy (x_on, INVR_RED);  }
    else if (a_warn > 0) { strcpy (x_grade, "WARN");  strcpy (x_suffix, "[W]");  if (c_color == 'y')  strcpy (x_on, INVR_YEL);  }
@@ -155,7 +155,7 @@ SHOW_totals             (char c_pass, char c_color, short a_show, short a_fail, 
    } else if (c_pass ==  1) {
       sprintf (g_print, "%send-of-data (%s) compiler feedback···········································(v%-4.4s)·····································································%s%s", x_on, x_grade, P_VERNUM, x_suffix, x_off);
    }
-   DEBUG_PROG  yLOG_exit    (__FUNCTION__);
+   DEBUG_HFIX  yLOG_exit    (__FUNCTION__);
    return g_print;
 }
 
@@ -172,6 +172,7 @@ SHOW_vim_action         (char a_opt [LEN_TERSE])
    switch (a_opt [0]) {
    case 'w' :  printf ("HFIX·gcc/make·(----)··chosen··(w:wipe)·=·small·clean·(opject/exec)··············(%-4.4s)·······································································[?]\n", P_VERNUM);  break;
    case 'b' :  printf ("HFIX·gcc/make·(----)··chosen··(b:big)··=·big·clean·(all·temp/waste)·············(%-4.4s)·······································································[?]\n", P_VERNUM);  break;
+   case 'r' :  printf ("HFIX·gcc/make·(----)··chosen··(r:reco)·=·recon·files·to·be·compilied············(%-4.4s)·······································································[?]\n", P_VERNUM);  break;
    case 'q' :  printf ("HFIX·gcc/make·(----)··chosen··(q:quik)·=·compile·and·install·code···············(%-4.4s)·······································································[?]\n", P_VERNUM);  break;
    case 'c' :  printf ("HFIX·gcc/make·(----)··chosen··(c:comp)·=·compile·only,·show·critical·only·······(%-4.4s)·······································································[?]\n", P_VERNUM);  break;
    case 'C' :  printf ("HFIX·gcc/make·(----)··chosen··(E:errr)·=·compile·only,·show errors··············(%-4.4s)·······································································[?]\n", P_VERNUM);  break;
@@ -183,7 +184,7 @@ SHOW_vim_action         (char a_opt [LEN_TERSE])
    case 'U' :  printf ("HFIX·gcc/make·(----)··chosen··(U:cert)·=·compile·units·and·certify··············(%-4.4s)·······································································[?]\n", P_VERNUM);  break;
    default  :  printf ("HFIX·gcc/make·(----)··chosen··unknown·option····································(%-4.4s)·······································································[?]\n", P_VERNUM);  break;
    }
-   exit (0);
+   return 0;
 }
 
 char

@@ -42,8 +42,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "2.--  moving from awk to c-language"
 #define     P_VERMINOR  "2.0-"
-#define     P_VERNUM    "2.0i"
-#define     P_VERTXT    "produces recon markes over base layer and unit tested"
+#define     P_VERNUM    "2.0j"
+#define     P_VERTXT    "divided out export/import code and improved a great deal (unit tested)"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -55,9 +55,9 @@
 
 /*······´ ´·················´ ´················································*/
 #define   P_BACKGROUD         "background¦" \
-   "i have a large, growing, and evolving c-language code-base.  so, i need¦" \
-   "to roll-out changes and quickly identify, test, and resolve issues in¦" \
-   "often now-unfamiliar source code.  anything that can help is golden.¦"
+   "i solely maintain a large (500M+ lines), growing, and evolving c codebase;¦" \
+   "so i must roll-out sometimes sweeping changes and quickly identify and¦" \
+   "resolve issues while weary, under pressure, and in often unfamiliar code.¦"
 
 /*······´ ´·················´ ´················································*/
 #define   P_SITUATION         "itch¦" \
@@ -103,10 +103,11 @@ typedef     struct      stat        tSTAT;
 #include <string.h>
 #include <stdlib.h>
 
-#include <unistd.h>          /* opendir */
+#include <unistd.h>          /* opendir() */
 #include <sys/syscall.h>
-#include <dirent.h>          /* readdir */
+#include <dirent.h>          /* readdir() */
 #include <sys/types.h>
+#include <time.h>            /* time() */
 
 #include <yLOG.h>
 #include <yURG.h>
@@ -123,10 +124,23 @@ extern char   g_color;
 extern char   g_break  [LEN_FULL];
 extern char   g_ylog;
 
+extern char   s_whoami      [LEN_LABEL];
+extern char   s_ext         [LEN_TERSE];
+extern long   s_rpid;
+extern long   s_cnt;
+extern long   s_beg;
+extern long   s_cur;
+extern long   s_end;
+
+extern char   g_action;
+extern char   g_phase;
+extern char   g_data   [LEN_FULL];
 
 
-#define MAX_LINES     21
-extern char   s_compile     [MAX_LINES][LEN_DESC];
+
+#define MAX_ENTRY     27
+#define MAX_LINES     12
+extern char   s_compile     [MAX_ENTRY][LEN_DESC];
 
 
 
@@ -145,7 +159,9 @@ extern char   s_compile     [MAX_LINES][LEN_DESC];
 
 /*===[[ HFIX_prog ]]==========================================================*/
 /*········´ ´·····················´ ´·········································*/
+char        PROG__urgs              (int argc, char *argv[]);
 char        PROG__args              (int a_argc, char *a_argv[]);
+char        PROG_handler            (char a_action);
 /*········´ ´··(done))············´ ´·········································*/
 
 
@@ -162,12 +178,34 @@ char        BASE_pass               (char c_pass, char c_filter [LEN_LABEL], cha
 
 /*===[[ HFIX_comp ]]==========================================================*/
 /*········´ ´·····················´ ´·········································*/
-char        COMP_clear              (void);
-char        COMP_base               (char a_base [LEN_LABEL], char a_ext [LEN_TERSE]);
-char        COMP_show               (FILE *f);
-char        COMP_sort               (void);
-char        COMP_by_name       (char a_name [LEN_TITLE], char a_type);
-char        COMP_recon              (void);
+char        COMP__clear             (char a_ext [LEN_TERSE]);
+char        COMP__base              (char a_base [LEN_LABEL], char a_ext [LEN_TERSE]);
+char        COMP__sort              (void);
+char        COMP__by_name           (char a_name [LEN_TITLE], char a_type);
+char        COMP__recon             (void);
+/*········´ ´·····················´ ´·········································*/
+char        COMP_clean_0            (void);
+char        COMP_clean_n            (void);
+/*········´ ´·····················´ ´·········································*/
+char        COMP_c_recon            (char a_phase);
+/*········´ ´·····················´ ´·········································*/
+char        COMP_u_prep             (void);
+char        COMP_u_recon            (void);
+/*········´ ´·····················´ ´·········································*/
+
+
+
+/*===[[ HFIX_exim ]]==========================================================*/
+/*········´ ´·····················´ ´·········································*/
+char        EXIM__import_time       (char a_line [LEN_FULL], long *r_rpid, long *r_cnt, long *r_beg, long *r_cur, long *r_end);
+char        EXIM__import_whoami     (char a_line [LEN_FULL], char r_whoami [LEN_LABEL], char r_ext [LEN_TERSE]);
+char        EXIM__import_entries    (char a_line [LEN_FULL], char a_row, char r_table [MAX_ENTRY][LEN_DESC], char *b_count);
+char        EXIM_import             (char a_file [LEN_PATH]);
+/*········´ ´·····················´ ´·········································*/
+char*       EXIM__export_time       (long a_rpid, long a_cnt, long a_beg, long a_cur, long a_end);
+char*       EXIM__export_whoami     (char a_whoami [LEN_LABEL], char a_ext [LEN_TERSE]);
+char        EXIM_export             (char a_file [LEN_PATH]);
+/*········´ ´·····················´ ´·········································*/
 
 
 
@@ -210,6 +248,14 @@ char        MAKE_collect            (char a_recd [LEN_RECD], int *b_count, char 
 char        LD__wasted              (char *b_beg, char **r_next);
 char        LD_parse                (char a_recd [LEN_RECD], short *b_count, char r_file [LEN_HUND], char *r_type, short *r_line, short *r_col, char *r_level, char r_msg [LEN_RECD], char r_flag [LEN_HUND]);
 /*········´ ´··(done))············´ ´·········································*/
+
+
+
+/*===[[ HFIX_ld ]]============================================================*/
+/*········´ ´·····················´ ´·········································*/
+char        HFIX_whoami             (char r_name [LEN_LABEL]);
+/*········´ ´·····················´ ´·········································*/
+
 
 
 #endif

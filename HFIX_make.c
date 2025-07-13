@@ -12,29 +12,29 @@ MAKE__msg               (char a_type, char *b_beg, short *b_count, char r_msg [L
    char        x_msg       [LEN_RECD]  = "";
    char        x_flag      [LEN_HUND]  = "···";
    /*---(header)-------------------------*/
-   DEBUG_PROG  yLOG_enter   (__FUNCTION__);
+   DEBUG_HFIX  yLOG_enter   (__FUNCTION__);
    /*---(default)------------------------*/
    if (r_msg   != NULL)  strcpy (r_msg , "");
    if (r_flag  != NULL)  strcpy (r_flag, "");
    /*---(defence)------------------------*/
-   DEBUG_PROG  yLOG_point   ("b_beg"     , b_beg);
+   DEBUG_HFIX  yLOG_point   ("b_beg"     , b_beg);
    --rce;  if (b_beg  == NULL) {
-      DEBUG_PROG  yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_PROG  yLOG_info    ("b_beg"     , b_beg);
+   DEBUG_HFIX  yLOG_info    ("b_beg"     , b_beg);
    if (b_count != NULL)  x_count = *b_count;
    /*---(get object)---------------------*/
    if (b_beg [0] == ' ')  ++b_beg;
    n = strchr (b_beg, ']');
    --rce;  if (n == NULL) {
-      DEBUG_ARGS  yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    n [0] = '\0';
    l = strlen (b_beg);
    --rce;  if (l < 3 || l >= LEN_HUND) {
-      DEBUG_ARGS  yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    switch (a_type) {
@@ -42,18 +42,18 @@ MAKE__msg               (char a_type, char *b_beg, short *b_count, char r_msg [L
    }
    strlcat (x_msg , b_beg, LEN_RECD);
    l = strlen (x_msg);
-   DEBUG_ARGS  yLOG_complex ("MSG"       , "%3då%sæ\n", l, x_msg);
+   DEBUG_HFIX  yLOG_complex ("MSG"       , "%3då%sæ\n", l, x_msg);
    /*---(error)--------------------------*/
    /*> n += 2;                                                                        <* 
     *> strlcpy (x_flag, n, LEN_HUND);                                                 <*/
    l = strlen (x_flag);
-   DEBUG_ARGS  yLOG_complex ("FLAG"      , "%3då%sæ\n", l, x_flag);
+   DEBUG_HFIX  yLOG_complex ("FLAG"      , "%3då%sæ\n", l, x_flag);
    /*---(save-back)----------------------*/
    if (b_count != NULL)  *b_count = x_count + 1;
    if (r_msg   != NULL)  strlcpy (r_msg , x_msg , LEN_RECD);
    if (r_flag  != NULL)  strlcpy (r_flag, x_flag, LEN_HUND);
    /*---(complete)-----------------------*/
-   DEBUG_PROG  yLOG_exit    (__FUNCTION__);
+   DEBUG_HFIX  yLOG_exit    (__FUNCTION__);
    return 1;
 }
 
@@ -74,7 +74,7 @@ MAKE_parse              (char a_recd [LEN_RECD], short *b_count, char r_file [LE
    char       *p           = NULL;
    char       *n           = NULL;
    /*---(header)-------------------------*/
-   DEBUG_PROG  yLOG_enter   (__FUNCTION__);
+   DEBUG_HFIX  yLOG_enter   (__FUNCTION__);
    /*---(default)------------------------*/
    if (r_file  != NULL)  strcpy (r_file, "");
    if (r_type  != NULL)  *r_type  =  '-';
@@ -85,16 +85,16 @@ MAKE_parse              (char a_recd [LEN_RECD], short *b_count, char r_file [LE
    if (r_flag  != NULL)  strcpy (r_flag, "");
    if (r_nada  != NULL)  *r_nada  =  '-';
    /*---(defense)------------------------*/
-   DEBUG_PROG  yLOG_point   ("a_recd"    , a_recd);
+   DEBUG_HFIX  yLOG_point   ("a_recd"    , a_recd);
    --rce;  if (a_recd == NULL) {
-      DEBUG_PROG  yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(quick-out)----------------------*/
    if (strstr (a_recd, "Nothing to be done for 'base'.") == 0) {
       if (r_nada  != NULL)  *r_nada  =  'y';
       if (r_level != NULL)  *r_level =  'm';
-      DEBUG_PROG  yLOG_exit    (__FUNCTION__);
+      DEBUG_HFIX  yLOG_exit    (__FUNCTION__);
       return 0;
    }
    /*---(quick-out)----------------------*/
@@ -104,37 +104,37 @@ MAKE_parse              (char a_recd [LEN_RECD], short *b_count, char r_file [LE
       else if (a_recd [7] == ']')  x_pre = 15;
    }
    if (x_pre <= 0) {
-      DEBUG_PROG  yLOG_exit    (__FUNCTION__);
+      DEBUG_HFIX  yLOG_exit    (__FUNCTION__);
       return 0;
    }
    p = a_recd + x_pre;
    /*---(file)---------------------------*/
    rc  = GCC__file    ('m', p, &n, r_type, r_file);
-   DEBUG_PROG  yLOG_value   ("file"      , rc);
+   DEBUG_HFIX  yLOG_value   ("file"      , rc);
    --rce;  if (rc < 0) {
-      DEBUG_PROG  yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(line)---------------------------*/
    p = n;
    rc  = GCC__num     (p, &n, r_line);
-   DEBUG_PROG  yLOG_value   ("line"      , rc);
+   DEBUG_HFIX  yLOG_value   ("line"      , rc);
    --rce;  if (rc < 0) {
-      DEBUG_PROG  yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(message)------------------------*/
    p = n;
    rc  = MAKE__msg    (*r_type, p, b_count, r_msg, r_flag);
-   DEBUG_PROG  yLOG_value   ("msg/flag"  , rc);
+   DEBUG_HFIX  yLOG_value   ("msg/flag"  , rc);
    --rce;  if (rc < 0) {
-      DEBUG_PROG  yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(save-back)----------------------*/
    if (r_level != NULL)  *r_level = '!';
    /*---(complete)-----------------------*/
-   DEBUG_PROG  yLOG_exit    (__FUNCTION__);
+   DEBUG_HFIX  yLOG_exit    (__FUNCTION__);
    return 1;
 }
 
