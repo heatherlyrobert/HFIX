@@ -481,16 +481,21 @@ endf
 
 function! HFIX_c_recon ()
    call   s:HFIX_prepare ("r")
+   setlo  modifiable
    sil!   exec   ":silent 0,$!HFIX --c_recon_beg"
+   setlo  nomodifiable
    norm   0_
+   redraw
    let    x_rc   = strpart (getline (12), 40,  1)
    while (x_rc != 'Y')
+       setlo  modifiable
        sil!   exec   ":silent 0,$!HFIX_debug @@hfix --c_recon_chk"
+       setlo  nomodifiable
        norm   0_
+       redraw
        let    x_rc   = strpart (getline (12), 40,  1)
    endwhile
    norm  _0
-   setlo nomodifiable
    let   g:hfix_locked = "n"
    call  HFIX_keys()
    call  HBUF_restore()

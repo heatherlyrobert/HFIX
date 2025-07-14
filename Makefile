@@ -23,7 +23,7 @@ NAME_UTIL  =
 # libraries only for the utilities
 LIB_UTIL   =
 # files to be included in editing session (maybe conf, data, ...)
-EDIT_TOO   = HFIX.vim
+EDIT_TOO   = HFIX.vim HFIX_master.sh
 
 
 
@@ -45,8 +45,22 @@ include /usr/local/sbin/zeno_make
 # create a rule for...
 
 install_post       :
-	@cp -f HFIX.vim /home/machine/vim/plugin
-	@sha1sum   /home/machine/vim/plugin/HFIX.vim
+	# add HFIX.vim to plugin directory
+	@cp -f HFIX.vim       /home/machine/vim/plugin
+	@sha1sum              /home/machine/vim/plugin/HFIX.vim
+	# add HFIX_master shell script to install directory
+	@cp -f HFIX_master.sh /usr/local/bin/HFIX_master
+	@chmod +x             /usr/local/bin/HFIX_master
+	@sha1sum              /usr/local/bin/HFIX_master
+	# add HFIX_master links that allow it to be forked
+	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_clean
+	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_bigclean
+	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_reconc
+	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_make
+	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_reconu
+	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_units
+	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_mans
+	# done --------------------------------
 
 #remove_post        :
 

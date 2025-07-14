@@ -90,8 +90,9 @@ MAKE_parse              (char a_recd [LEN_RECD], short *b_count, char r_file [LE
       DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
+   DEBUG_HFIX  yLOG_info    ("a_recd"    , a_recd);
    /*---(quick-out)----------------------*/
-   if (strstr (a_recd, "Nothing to be done for 'base'.") == 0) {
+   if (strstr (a_recd, "Nothing to be done for 'base'.") != NULL) {
       if (r_nada  != NULL)  *r_nada  =  'y';
       if (r_level != NULL)  *r_level =  'm';
       DEBUG_HFIX  yLOG_exit    (__FUNCTION__);
