@@ -36,6 +36,7 @@ long    s_cnt         = 1234567890;
 long    s_beg         = 1234567890;
 long    s_cur         = 1234567890;
 long    s_end         = 1234567890;
+char    s_done        = '-';
 
 
 
@@ -60,6 +61,7 @@ COMP__clear             (char a_ext [LEN_TERSE])
    HFIX_whoami (s_whoami);
    strcpy (s_ext , a_ext);
    s_rpid = s_cnt = s_beg = s_cur = s_end = 0;
+   s_done = '-';
    return 0;
 }
 
@@ -252,6 +254,7 @@ COMP__recon             (void)
    short       c           =    0;
    char        x_name      [LEN_TITLE] = "";
    char       *p           = NULL;
+   char       *q           = NULL;
    char        x_bit       [LEN_TERSE] = "";
    /*---(header)-------------------------*/
    DEBUG_HFIX    yLOG_enter   (__FUNCTION__);
@@ -274,11 +277,40 @@ COMP__recon             (void)
          DEBUG_HFIX  yLOG_note    ("filtered line");
          continue;
       }
-      strlcpy (x_name, x_recd + 88, LEN_TITLE);
-      p = strstr (x_name, ".c     ");
-      if (p == NULL)     continue;
-      p [0] = '\0';
+      p = strstr (x_recd, " -c ");
+      if (p == NULL)  {
+         DEBUG_HFIX  yLOG_note    ("no -c request");
+         continue;
+      }
+      /*---(skip ahead for library)------*/
+      q = strstr (x_recd, " -fPIC ");
+      if (q != NULL)  {
+         DEBUG_HFIX  yLOG_note    ("found -fPIC field");
+         p = q + 7;
+      }
+      /*---(check source type)-----------*/
+      q = strstr (p, ".c ");
+      if (q == NULL)  {
+         DEBUG_HFIX  yLOG_note    ("not a normal .c line");
+         continue;
+      }
+      q [0] = '\0';
+      p     = q;
+      DEBUG_HFIX  yLOG_info    ("p"         , p);
+      /*---(parse)-----------------------*/
+      for (i = -1; i > -30; --i) {
+         --p;
+         DEBUG_HFIX  yLOG_char    ("p [0]"     , p [0]);
+         if (p [0] == ' ') {
+            strlcpy (x_name, p + 1, LEN_TITLE);
+            break;
+         }
+      }
       DEBUG_HFIX  yLOG_info    ("x_name"    , x_name);
+      if (strcmp (x_name, "") == 0) {
+         DEBUG_HFIX  yLOG_note    ("source file name not found");
+         continue;
+      }
       rc = COMP__by_name (x_name, 'n');
       DEBUG_HFIX  yLOG_value   ("marked"    , rc);
       ++c;
@@ -306,13 +338,17 @@ COMP__recon             (void)
    return c;
 }
 
+/*> ····  - RUNNING    0  ····                                                       <*/
+
 char
 COMP_c_recon            (char a_phase)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         =  -10;
    char        rc          =    0;
+   char        x_label     [LEN_LABEL] = "";
    char        rc_final    =    0;
+   char        rc_num      =    1;
    int         i           =    0;
    char        x_bit       [LEN_TERSE] = "";
    /*---(header)-------------------------*/
@@ -325,28 +361,51 @@ COMP_c_recon            (char a_phase)
       DEBUG_HFIX    yLOG_value   ("base"      , rc);
       s_beg  = s_cur  = time (NULL);
       DEBUG_HFIX    yLOG_value   ("s_beg"     , s_beg);
-      s_rpid = yexec_ufork ("bash -c HFIX_recon");
+      s_rpid = yexec_ufork ("bash -c HFIX_reconc");
       DEBUG_HFIX    yLOG_value   ("ufork"     , s_rpid);
-      rc = '-';
+      rc_final = '>';
+      strcpy (x_label, "launched");
    } else if (a_phase == '>') {
       DEBUG_HFIX    yLOG_note    ("c recon update/wait");
       rc = EXIM_import ("");
       DEBUG_HFIX    yLOG_value   ("import"    , rc);
-      /*> usleep (500000);                                                            <*/
-      s_cur  = time (NULL);
-      DEBUG_HFIX    yLOG_value   ("s_cur"     , s_cur);
-      rc     = yexec_uwait (s_rpid);
-      DEBUG_HFIX    yLOG_char    ("uwait"     , rc);
-      ++s_cnt;
+      DEBUG_HFIX    yLOG_value   ("s_rpid"    , s_rpid);
+      if (s_rpid > 0) {
+         usleep (500000);
+         s_cur  = time (NULL);
+         DEBUG_HFIX    yLOG_value   ("s_cur"     , s_cur);
+         rc_final = yexec_uwait (s_rpid, x_label);
+         DEBUG_HFIX    yLOG_char    ("uwait"     , rc_final);
+         COMP__recon ();
+         ++s_cnt;
+      }
    } else {
       DEBUG_HFIX    yLOG_note    ("unknown request");
       DEBUG_HFIX    yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    DEBUG_HFIX    yLOG_value   ("s_cnt"     , s_cnt);
-   /*---(update elapsed)------------------------*/
-   sprintf (x_bit, "  %c %4d  ", rc, s_cur - s_beg);
-   for (i = 0; i < 10; ++i) s_compile [MAX_ENTRY - 2][6 + i] = x_bit [i];
+   /*---(check status)--------------------------*/
+   if (s_rpid > 0) {
+      switch (rc_final) {
+      case '>' :  case 'r' :
+         rc_num = 0;
+         break;
+      case '#' :
+         strcpy (x_label, "DONE");
+      default  :
+         s_rpid = 0;
+         s_end  = time (NULL);
+         s_done = 'Y';
+         strcpy (x_bit, HFIX_age (s_beg, s_end));
+         for (i = 0; i < 3; ++i) s_compile [MAX_ENTRY - 1][23 + i] = x_bit [i];
+         break;
+      }
+      /*---(update elapsed)---------------------*/
+      sprintf (x_bit, "  %c %-8.8s %4d  ", rc_final, x_label, s_cur - s_beg);
+      for (i = 0; i < 18; ++i) s_compile [MAX_ENTRY - 2][4 + i] = x_bit [i];
+      /*---(done)-------------------------------*/
+   }
    /*---(show results)--------------------------*/
    rc = SHOW_vim_action ("r");
    DEBUG_HFIX    yLOG_value   ("title"     , rc);
@@ -354,7 +413,7 @@ COMP_c_recon            (char a_phase)
    DEBUG_HFIX    yLOG_value   ("export"    , rc);
    /*---(complete)------------------------------*/
    DEBUG_HFIX    yLOG_exit    (__FUNCTION__);
-   return rc_final;
+   return rc_num;
 }
 
 char

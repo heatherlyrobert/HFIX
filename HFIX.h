@@ -42,8 +42,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "2.--  moving from awk to c-language"
 #define     P_VERMINOR  "2.0-"
-#define     P_VERNUM    "2.0j"
-#define     P_VERTXT    "divided out export/import code and improved a great deal (unit tested)"
+#define     P_VERNUM    "2.0k"
+#define     P_VERTXT    "c-recon with real-time update is working in actual projects"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -55,20 +55,41 @@
 
 /*······´ ´·················´ ´················································*/
 #define   P_BACKGROUD         "background¦" \
-   "i solely maintain a large (500M+ lines), growing, and evolving c codebase;¦" \
-   "so i must roll-out sometimes sweeping changes and quickly identify and¦" \
-   "resolve issues while weary, under pressure, and in often unfamiliar code.¦"
+   "i solely maintain a large (500M+ lines), growing, and evolving c-language¦" \
+   "codebase; i roll-out frequent and sometimes sweeping changes, and must¦"    \
+   "quickly resolve issues while under pressure and in often unfamiliar code.¦"
+
+/*······´ ´·················´ ´················································*/
+#define   P_COREDRIVE          "core drive¦" \
+   "any speed or accuracy gain in identifying, diagnosing, remediating, and¦"   \
+   "certifying changes is worthy of great pro-active standards and tool¦"       \
+   "building effort.  without this, my codebase withers.¦"
+
+/*······´ ´·················´ ´················································*/
+/*> #define   P_ELEMENTS           "enements¦" \                                        <* 
+ *>    "1) absolutely rock-solid core system (GNU/linux) using gentoo¦"             \   <* 
+ *>    "2) limitless, hyper-efficient programming language (c-language)¦"           \   <* 
+ *>    "3) ubiquitous, technical, and powerful compilier (gcc/make)¦"               \   <* 
+ *>    "4) hyper efficient ascii-text editing (vim)¦"                               \   <* 
+ *>    "5) custom integrated developent environment (IDE)¦"                         \   <* 
+ *>    "¦"                                                                              <*/
+
+
+   /*> "any speed or accuracy gain in identifying, diagnosing, remediating, and¦"   \   <* 
+    *> "certifying changes is worthy of great pro-active standards and tool¦"       \   <* 
+    *> "building effort.  without this, my codebase withers.¦"                          <*/
+
 
 /*······´ ´·················´ ´················································*/
 #define   P_SITUATION         "itch¦" \
-   "in even moderate sized programs; compiler, make, and linker output can¦" \
-   "be overwhelming, especially since many issues, optionally identified¦" \
+   "in even moderate sized programs; compiler, make, and linker output can¦"    \
+   "be overwhelming, especially since many issues, optionally identified¦"      \
    "and ignored, often lead to problems at inconvienent times.¦"
 
 /*······´ ´·················´ ´················································*/
 #define   P_SUMMARY           "summary¦"\
-   "HFIX (heatherly fix) is my VIM/IDE service to accelerate the painful,¦" \
-   "repetitive, tedious, and error-prone cycle of compiling, linking,¦" \
+   "HFIX (heatherly fix) is my VIM/IDE service to accelerate the painful,¦"     \
+   "repetitive, tedious, and error-prone cycle of compiling, linking,¦"         \
    "debugging, and installing software into a more smooth and targeted one.¦"
 
 #define   P_HARDREQS          "hard requirements¦"\
@@ -131,6 +152,7 @@ extern long   s_cnt;
 extern long   s_beg;
 extern long   s_cur;
 extern long   s_end;
+extern char   s_done;
 
 extern char   g_action;
 extern char   g_phase;
@@ -198,12 +220,12 @@ char        COMP_u_recon            (void);
 /*===[[ HFIX_exim ]]==========================================================*/
 /*········´ ´·····················´ ´·········································*/
 char        EXIM__import_time       (char a_line [LEN_FULL], long *r_rpid, long *r_cnt, long *r_beg, long *r_cur, long *r_end);
-char        EXIM__import_whoami     (char a_line [LEN_FULL], char r_whoami [LEN_LABEL], char r_ext [LEN_TERSE]);
+char        EXIM__import_whoami     (char a_line [LEN_FULL], char r_whoami [LEN_LABEL], char r_ext [LEN_TERSE], char *r_done);
 char        EXIM__import_entries    (char a_line [LEN_FULL], char a_row, char r_table [MAX_ENTRY][LEN_DESC], char *b_count);
 char        EXIM_import             (char a_file [LEN_PATH]);
 /*········´ ´·····················´ ´·········································*/
 char*       EXIM__export_time       (long a_rpid, long a_cnt, long a_beg, long a_cur, long a_end);
-char*       EXIM__export_whoami     (char a_whoami [LEN_LABEL], char a_ext [LEN_TERSE]);
+char*       EXIM__export_whoami     (char a_whoami [LEN_LABEL], char a_ext [LEN_TERSE], char a_done);
 char        EXIM_export             (char a_file [LEN_PATH]);
 /*········´ ´·····················´ ´·········································*/
 
@@ -254,6 +276,7 @@ char        LD_parse                (char a_recd [LEN_RECD], short *b_count, cha
 /*===[[ HFIX_ld ]]============================================================*/
 /*········´ ´·····················´ ´·········································*/
 char        HFIX_whoami             (char r_name [LEN_LABEL]);
+char*       HFIX_age                (long a_beg, long a_cur);
 /*········´ ´·····················´ ´·········································*/
 
 

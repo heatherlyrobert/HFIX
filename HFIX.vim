@@ -315,7 +315,7 @@ func! HFIX_keys()
    nmap  <buffer>   I      :call HFIX_compile ("I")<cr>
    nmap  <buffer>   u      :call HFIX_compile ("u")<cr>
    nmap  <buffer>   m      :call HFIX_compile ("m")<cr>
-   nmap  <buffer>   r      :call HFIX_compile ("r")<cr>
+   nmap  <buffer>   r      :call HFIX_c_recon ()<cr>
    "---(presentation/size)---------------------------#
    nmap  <buffer>   -      :call HFIX_resize  ("-")<cr>
    nmap  <buffer>   +      :call HFIX_resize  ("+")<cr>
@@ -370,8 +370,8 @@ func! HFIX_unkeys()
    "---(other)---------------------------------------#
    nmap  <buffer>   Z      :call HFIX_keys  ()<cr>
    nunm  <buffer>   ?
-   nunm  <buffer>   !
-      "---(complete)------------------------------------#
+      nunm  <buffer>   !
+   "---(complete)------------------------------------#
    setlo  nomodifiable
    retu
 endf
@@ -479,6 +479,23 @@ endf
 func! s:o___SPECIFIC________o()
 endf
 
+function! HFIX_c_recon ()
+   call   s:HFIX_prepare ("r")
+   sil!   exec   ":silent 0,$!HFIX --c_recon_beg"
+   norm   0_
+   let    x_rc   = strpart (getline (12), 40,  1)
+   while (x_rc != 'Y')
+       sil!   exec   ":silent 0,$!HFIX_debug @@hfix --c_recon_chk"
+       norm   0_
+       let    x_rc   = strpart (getline (12), 40,  1)
+   endwhile
+   norm  _0
+   setlo nomodifiable
+   let   g:hfix_locked = "n"
+   call  HFIX_keys()
+   call  HBUF_restore()
+endfunction
+
 func! s:HFIX_prefix  ()
    setlo  modifiable
    " sil!   exec   ":silent 0,$d"
@@ -501,11 +518,11 @@ func! s:HFIX_clean   (a_opt)
    if     (stridx ("w", a:a_opt) >= 0)
       sil!   exec   ":silent 0,$!HFIX --clean"
       norm  0_
-      " sil!   exec   ":!make --silent clean"
-      " sil!   exec   printf ("normal _o%s", "small clean done >> erased primary working files (will cause FULL recompile later)                                                                           [?]")
-      " sil!   exec   ":0,$!uwait "
-      " norm   _0
-      " redraw!
+   " sil!   exec   ":!make --silent clean"
+   " sil!   exec   printf ("normal _o%s", "small clean done >> erased primary working files (will cause FULL recompile later)                                                                           [?]")
+   " sil!   exec   ":0,$!uwait "
+   " norm   _0
+   " redraw!
    elseif (stridx ("b", a:a_opt) >= 0)
       sil!   exec   ":!make -silent bigclean"
       sil!   exec   printf ("normal _o%s\n", "big clean done >> erased ALL working files (will cause FULL recompile later)                                                                                 [?]")
@@ -538,7 +555,7 @@ func! s:HFIX_make     (a_opt)
       sil!   exec   ":silent 0,$!HFIX gcc.out"
       redraw!
    elseif (stridx ("r"  , a:a_opt) >= 0)
-      sil!   exec   ":silent 0,$!HFIX --reconc"
+      sil!   exec   ":silent 0,$!HFIX --c_recon_beg"
       norm  0_
    endi
 endf

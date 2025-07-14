@@ -47,4 +47,43 @@ HFIX_whoami              (char r_name [LEN_LABEL])
    return 0;
 }
 
-
+char*
+HFIX_age                 (long a_beg, long a_cur)
+{
+   /*---(locals)-------------------------*/
+   long        x_age       =    0;
+   char        x_unit      =  's';
+   static char x_pretty    [LEN_SHORT] = "  ·";
+   /*---(defense)------------------------*/
+   if (a_beg <= 0) return "#/n";   /* negative beginning */
+   x_age = a_cur - a_beg;
+   if (x_age <  0) return "#/f";   /* negative age       */
+   /*---(figure age)---------------------*/
+   if (x_age == 0) return " <s";   /* less than a second */
+   if (x_age >= 60) {
+      x_age /= 60; x_unit = 'm';
+      if (x_age >= 60) {
+         x_age /= 60; x_unit = 'h';
+         if (x_age >= 24) {
+            x_age /= 24; x_unit = 'd';
+            if (x_age >= 30) {                /* months avg 30 days, close ;) */
+               x_age /= 30; x_unit = 'o';
+               if (x_age >= 12) {
+                  x_age /= 12; x_unit = 'y';
+                  if (x_age >= 100) {
+                     x_age /= 100; x_unit = 'c';
+                     if (x_age >= 100) {
+                        return "#/h";   /* huge date 100+ centuries */
+                     }
+                  }
+               }
+            }
+         }
+      }
+   }
+   /*---(save-back)----------------------*/
+   sprintf (x_pretty, "%2d%c", x_age, x_unit);
+   if (x_pretty [0] == ' ')  x_pretty [0] = '·';
+   /*---(complete)-----------------------*/
+   return x_pretty;
+}

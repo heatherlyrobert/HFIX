@@ -66,18 +66,20 @@ EXIM__import_time       (char a_line [LEN_FULL], long *r_rpid, long *r_cnt, long
 }
 
 char
-EXIM__import_whoami     (char a_line [LEN_FULL], char r_whoami [LEN_LABEL], char r_ext [LEN_TERSE])
+EXIM__import_whoami     (char a_line [LEN_FULL], char r_whoami [LEN_LABEL], char r_ext [LEN_TERSE], char *r_done)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    int         l           =    0;
    char        x_whoami    [LEN_LABEL] = "";
    char        x_ext       [LEN_TERSE] = "";
+   char        x_done      =  '·';
    char       *p           = NULL;
    int         i           =    0;
    /*---(default)------------------------*/
    if (r_whoami != NULL)     strcpy (r_whoami, "");
    if (r_ext    != NULL)     strcpy (r_ext   , "");
+   if (r_done   != NULL)    *r_done  = '·';
    /*---(defense)------------------------*/
    --rce;  if (a_line == NULL)                          return rce;
    l = strlen (a_line);
@@ -102,9 +104,14 @@ EXIM__import_whoami     (char a_line [LEN_FULL], char r_whoami [LEN_LABEL], char
    --rce; if (strcmp (x_ext, ".c"       ) == 0)   ;
    else if   (strcmp (x_ext, ".unit"    ) == 0)   ;
    else                                                 return rce;
+   /*---(done)---------------------------*/
+   --rce;  if (strncmp (a_line + 36, "don=",  4) != 0)  return rce;
+   x_done = a_line [40];
+   --rce;  if (strchr  ("-Y", x_done) == NULL)          return rce;
    /*---(save-back)----------------------*/
    if (r_whoami != NULL)     strlcpy (r_whoami, x_whoami, LEN_LABEL);
    if (r_ext    != NULL)     strlcpy (r_ext   , x_ext   , LEN_TERSE);
+   if (r_done   != NULL)    *r_done  = x_done;
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -116,6 +123,7 @@ EXIM__import_entries    (char a_line [LEN_FULL], char a_row, char r_table [MAX_E
    char        rce         =  -10;
    int         l           =    0;
    char        x_col, x_pos;
+   int         x_off       =    0;
    char        x_entry     [LEN_DESC]  = "";
    char        c           =    0;
    char        x_bad       =  '-';
@@ -159,11 +167,18 @@ EXIM__import_entries    (char a_line [LEN_FULL], char a_row, char r_table [MAX_E
     *> rce += 21;                                                                     <*/
    /*---(handle entries)-----------------*/
    DEBUG_HFIX  yLOG_note    ("parse entries");
+   DEBUG_HFIX  yLOG_value   ("a_row"     , a_row);
    for (x_col = 0; x_col < 3; ++x_col) {
+      DEBUG_HFIX  yLOG_value   ("x_col"     , x_col);
+      x_off = x_col * 30;
+      DEBUG_HFIX  yLOG_value   ("x_off"     , x_off);
       strlcpy (x_entry, a_line + (x_col * 30), 31);
+      DEBUG_HFIX  yLOG_info    ("x_entry"   , x_entry);
       x_pos = (a_row * 3) + x_col;
+      DEBUG_HFIX  yLOG_value   ("x_pos"     , x_pos);
       strcpy (r_table [x_pos], x_entry);
       if (x_pos < MAX_ENTRY - 1 && x_entry [0] != '·') ++c;
+      DEBUG_HFIX  yLOG_value   ("c"         , c);
    }
    /*---(save-back)----------------------*/
    if (b_count != NULL)  *b_count = c;
@@ -180,7 +195,9 @@ EXIM_import             (char a_file [LEN_PATH])
    char        rc          =    0;
    char        i           =    0;
    int         n           =    0;
-   char        x_col, x_row, x_pos;
+   char        x_row       =    0;
+   char        x_col       =    0;
+   char        x_pos       =    0;
    char        x_line      [LEN_FULL]  = "";
    int         l           =    0;
    char        x_entry     [LEN_DESC]  = "";
@@ -188,6 +205,7 @@ EXIM_import             (char a_file [LEN_PATH])
    char        c           =    0;
    FILE       *f           = NULL;
    char       *p           = NULL;
+   char        x_top       =    9;
    /*---(header)-------------------------*/
    DEBUG_HFIX   yLOG_enter   (__FUNCTION__);
    /*---(defenses)-----------------------*/
@@ -210,7 +228,7 @@ EXIM_import             (char a_file [LEN_PATH])
       DEBUG_HFIX  yLOG_note    ("using stdin");
    }
    /*---(walk-records)-------------------*/
-   for (i = 0; i < 10; ++i) {
+   for (i = 0; i < x_top; ++i) {
       if (f == NULL)  p = fgets (x_line, LEN_FULL, stdin);
       else            p = fgets (x_line, LEN_FULL, f);
       DEBUG_HFIX  yLOG_point   ("fgets"     , p);
@@ -230,6 +248,7 @@ EXIM_import             (char a_file [LEN_PATH])
       }
       if (strncmp (x_line, "HFIX·gcc/make·", 14) == 0) {
          DEBUG_HFIX  yLOG_note    ("ignore header");
+         x_top = 10;
          continue;
       }
       rc = EXIM__import_entries (x_line, x_row, s_compile, &c);
@@ -251,8 +270,8 @@ EXIM_import             (char a_file [LEN_PATH])
    DEBUG_HFIX  yLOG_point   ("fgets"     , p);
    if (p != NULL) {
       DEBUG_HFIX  yLOG_info    ("fgets"     , p);
-      rc = EXIM__import_whoami (x_line, s_whoami, s_ext );
-      DEBUG_HFIX  yLOG_char    ("whoami"    , rc);
+      rc = EXIM__import_whoami (x_line, s_whoami, s_ext , &s_done);
+      DEBUG_HFIX  yLOG_complex ("time"      , "%4drc, %10.10s, %10.10s, %c", rc, s_whoami, s_ext, s_done);
    }
    /*---(close-file)---------------------*/
    if (strcmp (a_file, "") != 0) {
@@ -283,9 +302,9 @@ EXIM__export_time       (long a_rpid, long a_cnt, long a_beg, long a_cur, long a
 }
 
 char*
-EXIM__export_whoami     (char a_whoami [LEN_LABEL], char a_ext [LEN_TERSE])
+EXIM__export_whoami     (char a_whoami [LEN_LABEL], char a_ext [LEN_TERSE], char a_done)
 {
-   sprintf  (g_print, "who=%-10.10s    ext=%-10.10s                                                                                                                             [?]", a_whoami, a_ext);
+   sprintf  (g_print, "who=%-10.10s    ext=%-10.10s    don=%c                                                                                                                    [?]", a_whoami, a_ext, a_done);
    return g_print;
 }
 
@@ -340,9 +359,9 @@ EXIM_export             (char a_file [LEN_PATH])
    }
    /*---(identity)-----------------------*/
    if (f == NULL) {
-      printf  (   "%s\n", EXIM__export_whoami (s_whoami, s_ext ));
+      printf  (   "%s\n", EXIM__export_whoami (s_whoami, s_ext , s_done));
    } else {
-      fprintf (f, "%s\n", EXIM__export_whoami (s_whoami, s_ext ));
+      fprintf (f, "%s\n", EXIM__export_whoami (s_whoami, s_ext , s_done));
    }
    /*---(close-file)---------------------*/
    if (strcmp (a_file, "") != 0) {
