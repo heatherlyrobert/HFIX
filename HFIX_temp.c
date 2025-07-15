@@ -2,6 +2,78 @@
 
 
 
+static short   s_comp = 0;
+static short   s_swap = 0;
+
+char
+HFIX__sort_mods         (char a_phase)
+{
+   int         i           =    0;
+   int         j           =    0;
+   char        x_ch        =  '·';
+   for (i = 0; i < s_ncount; ++i) {
+      for (j = 0; j < 18; ++j) {
+         x_ch = s_compile [i][j];
+         if (a_phase == 'b' && x_ch == '·')  x_ch = ' ';
+         if (a_phase == 'a' && x_ch == ' ')  x_ch = '·';
+         s_compile [i][j] = x_ch;
+      }
+   }
+   return 0;
+}
+
+char
+HFIX_sort               (void)
+{
+   /*---(locals)-----------+-----------+-*//*---------------------------------*/
+   int         i           =  0;            /* loop iterator -- entry         */
+   char       *a           = NULL;          /* comparison entry one           */
+   char       *b           = NULL;          /* comparison entry two           */
+   char        t           [LEN_DESC]  = "";
+   int         tele        = -1;            /* teleport point to speed sort   */
+   /*---(header)-------------------------*/
+   DEBUG_HFIX    yLOG_enter   (__FUNCTION__);
+   /*---(prepare)------------------------*/
+   HFIX__sort_mods ('b');
+   /*---(sort)---------------------------*/
+   s_comp = s_swap = 0;
+   i = 1;
+   while (i < s_ncount) {
+      /*---(load vars)-------------------*/
+      a = s_compile [i - 1];
+      b = s_compile [i];
+      DEBUG_HFIX    yLOG_complex ("current"   , "compare %3d (%3d)  %-100.100s vs %-100.100s", i, tele, a, b);
+      /*---(compare)---------------------*/
+      ++s_comp;
+      if (i == 0 || strcmp (a, b) <= 0) {
+         if (tele >= 0) {
+            i    = tele;
+            tele = -1;
+         } else {
+            ++i;
+         }
+         continue;
+      }
+      /*---(swap)------------------------*/
+      ++s_swap;
+      strlcpy (t, a, LEN_DESC);
+      strlcpy (a, b, LEN_DESC);
+      strlcpy (b, t, LEN_DESC);
+      a = s_compile [i - 1];
+      b = s_compile [i];
+      DEBUG_HFIX    yLOG_complex ("swapped"   , "now     %3d (%3d)  %-100.100s    %-100.100s", i, tele, a, b);
+      /*---(update)----------------------*/
+      if (tele < 0) tele = i;
+      if (i > 1) --i;
+   }
+   DEBUG_HFIX    yLOG_complex ("stats"     , "count = %3d, comps = %5d, swaps = %5d", s_ncount, s_comp, s_swap);
+   /*---(prepare)------------------------*/
+   HFIX__sort_mods ('a');
+   /*---(complete)------------------------------*/
+   DEBUG_HFIX    yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
 char
 HFIX_whoami              (char r_name [LEN_LABEL])
 {
@@ -14,7 +86,7 @@ HFIX_whoami              (char r_name [LEN_LABEL])
    char       *q           = NULL;
    int         l           =    0;
    /*---(default)------------------------*/
-   if (r_name == NULL)   strcpy (r_name, "");
+   if (r_name != NULL)   strlcpy (r_name, "", LEN_LABEL);
    /*---(get the home)-------------------*/
    p = getcwd (x_home, LEN_HUND);
    --rce;  if (p == NULL)   return rce;
@@ -23,7 +95,6 @@ HFIX_whoami              (char r_name [LEN_LABEL])
    /*---(check valid areas)--------------*/
    --rce; if (l > 16 && strncmp ("/home/system/"         , x_home, 13) == 0) ;
    else if   (l > 19 && strncmp ("/home/keepsake/"       , x_home, 15) == 0) ;
-   else if   (l > 25 && strncmp ("/home/member/p_gvskav/", x_home, 22) == 0) ;
    else if   (l >  8 && strncmp ("/tmp/"                 , x_home,  5) == 0) ;
    else return rce;
    /*---(prepare name)-------------------*/
@@ -48,33 +119,32 @@ HFIX_whoami              (char r_name [LEN_LABEL])
 }
 
 char*
-HFIX_age                 (long a_beg, long a_cur)
+HFIX_age                 (long a_beg, long a_end)
 {
    /*---(locals)-------------------------*/
    long        x_age       =    0;
    char        x_unit      =  's';
    static char x_pretty    [LEN_SHORT] = "  ·";
    /*---(defense)------------------------*/
-   if (a_beg <= 0) return "#/n";   /* negative beginning */
-   x_age = a_cur - a_beg;
-   if (x_age <  0) return "#/f";   /* negative age       */
+   if (a_beg <= 0) return "#/b";   /* negative beginning */
+   if (a_end <= 0) return "#/e";   /* negative ending */
+   x_age = a_end - a_beg;
+   if (x_age <  0) return "#/p";   /* cur < beg (past)   */
+   /*---(handle tiny)--------------------*/
+   if (x_age == 0) return "·<s";   /* less than a second */
    /*---(figure age)---------------------*/
-   if (x_age == 0) return " <s";   /* less than a second */
-   if (x_age >= 60) {
+   if (x_age >  90) {
       x_age /= 60; x_unit = 'm';
       if (x_age >= 60) {
          x_age /= 60; x_unit = 'h';
          if (x_age >= 24) {
             x_age /= 24; x_unit = 'd';
             if (x_age >= 30) {                /* months avg 30 days, close ;) */
-               x_age /= 30; x_unit = 'o';
+               x_age /= 30; x_unit = 'M';
                if (x_age >= 12) {
-                  x_age /= 12; x_unit = 'y';
+                  x_age /= 12; x_unit = 'Y';
                   if (x_age >= 100) {
-                     x_age /= 100; x_unit = 'c';
-                     if (x_age >= 100) {
-                        return "#/h";   /* huge date 100+ centuries */
-                     }
+                     return "#/h";   /* huge date 100 years */
                   }
                }
             }
@@ -87,3 +157,6 @@ HFIX_age                 (long a_beg, long a_cur)
    /*---(complete)-----------------------*/
    return x_pretty;
 }
+
+
+

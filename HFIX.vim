@@ -488,12 +488,12 @@ function! HFIX_c_recon ()
    redraw
    let    x_rc   = strpart (getline (12), 40,  1)
    while (x_rc != 'Y')
-       setlo  modifiable
-       sil!   exec   ":silent 0,$!HFIX_debug @@hfix --c_recon_chk"
-       setlo  nomodifiable
-       norm   0_
-       redraw
-       let    x_rc   = strpart (getline (12), 40,  1)
+      setlo  modifiable
+      sil!   exec   ":silent 0,$!HFIX --c_recon_chk"
+      setlo  nomodifiable
+      norm   0_
+      redraw
+      let    x_rc   = strpart (getline (12), 40,  1)
    endwhile
    norm  _0
    let   g:hfix_locked = "n"
@@ -539,7 +539,7 @@ func! s:HFIX_make     (a_opt)
    let    x_msg   = ""
    normal GG
    if     (stridx ("qcaCEW*", a:a_opt) >= 0)
-      sil!   exec   ":!make  > gcc.out  2>&1"
+      sil!   exec   ":!make  > HFIX_OUT  2>&1"
       if     (a:a_opt == 'q')
          let   x_msg  = "--errors"
       elseif (a:a_opt == 'c')
@@ -553,11 +553,11 @@ func! s:HFIX_make     (a_opt)
       elseif (a:a_opt == '*')
          let   x_msg  = "--all"
       endif
-      sil!   exec   ":silent 0,$!HFIX gcc.out ".x_msg
+      sil!   exec   ":silent 0,$!HFIX HFIX_OUT ".x_msg
       redraw!
    elseif (stridx ("u"  , a:a_opt) >= 0)
-      sil!   exec   ":!make units > gcc.out  2>&1"
-      sil!   exec   ":silent 0,$!HFIX gcc.out"
+      sil!   exec   ":!make units > HFIX_OUT  2>&1"
+      sil!   exec   ":silent 0,$!HFIX HFIX_OUT"
       redraw!
    elseif (stridx ("r"  , a:a_opt) >= 0)
       sil!   exec   ":silent 0,$!HFIX --c_recon_beg"

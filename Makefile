@@ -60,6 +60,7 @@ install_post       :
 	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_reconu
 	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_units
 	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_mans
+	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_unittest
 	# done --------------------------------
 
 #remove_post        :

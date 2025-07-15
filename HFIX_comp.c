@@ -24,6 +24,7 @@
  */
 
 
+
 char    s_compile     [MAX_ENTRY][LEN_DESC];
 char    s_ncount      =   0;
 int     s_pos         =   0;
@@ -161,7 +162,7 @@ COMP__base         (char a_base [LEN_LABEL], char a_ext [LEN_TERSE])
    rc = closedir (x_dir);
    DEBUG_HFIX   yLOG_value   ("close_rc"  , rc);
    /*---(sort-it)------------------------*/
-   COMP__sort ();
+   HFIX_sort ();
    /*---(update total)-------------------*/
    sprintf (x_bit, "%2d", s_ncount);
    if (x_bit [0] == ' ')  x_bit [0] = '·';
@@ -175,70 +176,25 @@ COMP__base         (char a_base [LEN_LABEL], char a_ext [LEN_TERSE])
    return s_ncount;
 }
 
-static short   s_comp = 0;
-static short   s_swap = 0;
-
-char
-COMP__sort              (void)
-{
-   /*---(locals)-----------+-----------+-*//*---------------------------------*/
-   int         i           =  0;            /* loop iterator -- entry         */
-   char       *a           = NULL;          /* comparison entry one           */
-   char       *b           = NULL;          /* comparison entry two           */
-   char        t           [LEN_DESC]  = "";
-   int         tele        = -1;            /* teleport point to speed sort   */
-   /*---(header)-------------------------*/
-   DEBUG_HFIX    yLOG_enter   (__FUNCTION__);
-   /*---(sort)---------------------------*/
-   s_comp = s_swap = 0;
-   i = 1;
-   while (i < s_ncount) {
-      /*---(load vars)-------------------*/
-      a = s_compile [i - 1];
-      b = s_compile [i];
-      DEBUG_HFIX    yLOG_complex ("current"   , "compare %3d (%3d)  %-100.100s vs %-100.100s", i, tele, a, b);
-      /*---(compare)---------------------*/
-      ++s_comp;
-      if (i == 0 || strcmp (a, b) <= 0) {
-         if (tele >= 0) {
-            i    = tele;
-            tele = -1;
-         } else {
-            ++i;
-         }
-         continue;
-      }
-      /*---(swap)------------------------*/
-      ++s_swap;
-      strlcpy (t, a, LEN_DESC);
-      strlcpy (a, b, LEN_DESC);
-      strlcpy (b, t, LEN_DESC);
-      a = s_compile [i - 1];
-      b = s_compile [i];
-      DEBUG_HFIX    yLOG_complex ("swapped"   , "now     %3d (%3d)  %-100.100s    %-100.100s", i, tele, a, b);
-      /*---(update)----------------------*/
-      if (tele < 0) tele = i;
-      if (i > 1) --i;
-   }
-   DEBUG_HFIX    yLOG_complex ("stats"     , "count = %3d, comps = %5d, swaps = %5d", s_ncount, s_comp, s_swap);
-   /*---(complete)------------------------------*/
-   DEBUG_HFIX    yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
 char
 COMP__by_name           (char a_name [LEN_TITLE], char a_type)
 {
    char        i           =    0;
-   char        l           =    0;
-   l = strlen (a_name);
+   char        x_name      [LEN_LABEL] = "";
+   DEBUG_HFIX    yLOG_enter   (__FUNCTION__);
+   DEBUG_HFIX   yLOG_info    ("a_name"    , a_name);
+   snprintf (x_name, LEN_LABEL - 1, "%s······························", a_name);
+   DEBUG_HFIX   yLOG_info    ("x_name"    , x_name);
    for (i = 0; i < MAX_ENTRY; ++i) {
-      if (strncmp (s_compile [i], a_name, l) != 0)  continue;
+      if (strncmp (s_compile [i], x_name, 18) != 0)  continue;
       if      (a_type == 'n')  s_compile [i][19] = '³';
       else if (a_type == 'c')  s_compile [i][21] = ' ';
       else if (a_type == 'd')  s_compile [i][21] = 'Ï';
+      DEBUG_HFIX    yLOG_note    ("found it");
+      DEBUG_HFIX    yLOG_exit    (__FUNCTION__);
       return 1;
    }
+   DEBUG_HFIX    yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -259,7 +215,7 @@ COMP__recon             (void)
    /*---(header)-------------------------*/
    DEBUG_HFIX    yLOG_enter   (__FUNCTION__);
    /*---(open)---------------------------*/
-   rc = BASE__open  ("HFIX.out", NULL, NULL, &f);
+   rc = BASE__open  (HFIX_OUT, NULL, NULL, &f);
    DEBUG_HFIX  yLOG_value   ("open"      , rc);
    DEBUG_HFIX  yLOG_point   ("f"         , f);
    --rce;  if (rc < 1 || f == NULL) {
@@ -273,25 +229,25 @@ COMP__recon             (void)
       DEBUG_HFIX  yLOG_value   ("read"      , rc);
       if (rc == 0)   break;
       /*---(filter)----------------------*/
-      if (strncmp ("gcc -c -std=", x_recd, 12) != 0) {
-         DEBUG_HFIX  yLOG_note    ("filtered line");
+      if (strncmp ("gcc -std=", x_recd,  9) != 0) {
+         DEBUG_HFIX  yLOG_note    ("does not start with ¶gcc -std=¶");
          continue;
       }
       p = strstr (x_recd, " -c ");
       if (p == NULL)  {
-         DEBUG_HFIX  yLOG_note    ("no -c request");
+         DEBUG_HFIX  yLOG_note    ("no ¶-c¶ option request");
          continue;
       }
       /*---(skip ahead for library)------*/
       q = strstr (x_recd, " -fPIC ");
       if (q != NULL)  {
-         DEBUG_HFIX  yLOG_note    ("found -fPIC field");
+         DEBUG_HFIX  yLOG_note    ("found ¶-fPIC¶ field");
          p = q + 7;
       }
       /*---(check source type)-----------*/
       q = strstr (p, ".c ");
       if (q == NULL)  {
-         DEBUG_HFIX  yLOG_note    ("not a normal .c line");
+         DEBUG_HFIX  yLOG_note    ("source extension is not ¶.c¶");
          continue;
       }
       q [0] = '\0';
@@ -338,7 +294,36 @@ COMP__recon             (void)
    return c;
 }
 
-/*> ····  - RUNNING    0  ····                                                       <*/
+char
+COMP__beg               (void)
+{
+   char        rc          =    0;
+   DEBUG_HFIX    yLOG_enter   (__FUNCTION__);
+   rc = yENV_rm  (HFIX_LOG);
+   DEBUG_HFIX    yLOG_char    ("HFIX_LOG"  , rc);
+   rc = yENV_rm  (HFIX_OUT);
+   DEBUG_HFIX    yLOG_char    ("HFIX_OUT"  , rc);
+   DEBUG_HFIX    yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+COMP__chk               (void)
+{
+   char        rc          =    0;
+   int         c           =    0;
+   DEBUG_HFIX    yLOG_enter   (__FUNCTION__);
+   rc = yENV_exists (HFIX_LOG);
+   DEBUG_HFIX    yLOG_char    ("HFIX_LOG"  , rc);
+   c  = yENV_lines  (HFIX_LOG);
+   DEBUG_HFIX    yLOG_value   ("HFIX_LOG"  , c);
+   rc = yENV_exists (HFIX_OUT);
+   DEBUG_HFIX    yLOG_char    ("HFIX_OUT"  , rc);
+   c  = yENV_lines  (HFIX_OUT);
+   DEBUG_HFIX    yLOG_value   ("HFIX_LOG"  , c);
+   DEBUG_HFIX    yLOG_exit    (__FUNCTION__);
+   return 0;
+}
 
 char
 COMP_c_recon            (char a_phase)
@@ -355,14 +340,30 @@ COMP_c_recon            (char a_phase)
    DEBUG_HFIX    yLOG_enter   (__FUNCTION__);
    if (a_phase == '[') {
       DEBUG_HFIX    yLOG_note    ("c recon request/fork");
+      rc = COMP__beg ();
       rc = COMP__clear (".c");
       DEBUG_HFIX    yLOG_value   ("clear"     , rc);
       rc = COMP__base  (s_whoami, s_ext );
       DEBUG_HFIX    yLOG_value   ("base"      , rc);
       s_beg  = s_cur  = time (NULL);
       DEBUG_HFIX    yLOG_value   ("s_beg"     , s_beg);
-      s_rpid = yexec_ufork ("bash -c HFIX_reconc");
+      s_rpid = yexec_ufork ("/bin/bash -c HFIX_reconc");
       DEBUG_HFIX    yLOG_value   ("ufork"     , s_rpid);
+      rc_final = yexec_uwait (s_rpid, x_label);
+      DEBUG_HFIX    yLOG_char    ("uwait"     , rc_final);
+      COMP__chk ();
+      /*> /+  DEBUGGING STUFF +/                                                      <* 
+       *> usleep (500000);                                                            <* 
+       *> rc_final = yexec_uwait (s_rpid, x_label);                                   <* 
+       *> DEBUG_HFIX    yLOG_char    ("uwait"     , rc_final);                        <* 
+       *> usleep (500000);                                                            <* 
+       *> rc_final = yexec_uwait (s_rpid, x_label);                                   <* 
+       *> DEBUG_HFIX    yLOG_char    ("uwait"     , rc_final);                        <* 
+       *> usleep (500000);                                                            <* 
+       *> rc_final = yexec_uwait (s_rpid, x_label);                                   <* 
+       *> DEBUG_HFIX    yLOG_char    ("uwait"     , rc_final);                        <* 
+       *> COMP__chk ();                                                               <*/
+      /*  DEBUGGING STUFF */
       rc_final = '>';
       strcpy (x_label, "launched");
    } else if (a_phase == '>') {
@@ -373,6 +374,7 @@ COMP_c_recon            (char a_phase)
       if (s_rpid > 0) {
          usleep (500000);
          s_cur  = time (NULL);
+         COMP__chk ();
          DEBUG_HFIX    yLOG_value   ("s_cur"     , s_cur);
          rc_final = yexec_uwait (s_rpid, x_label);
          DEBUG_HFIX    yLOG_char    ("uwait"     , rc_final);
@@ -474,7 +476,7 @@ COMP_running       (void)
    /*---(header)-------------------------*/
    DEBUG_HFIX    yLOG_enter   (__FUNCTION__);
    /*---(open)---------------------------*/
-   rc = BASE__open  ("HFIX.out", NULL, NULL, &f);
+   rc = BASE__open  (HFIX_OUT, NULL, NULL, &f);
    DEBUG_HFIX  yLOG_value   ("open"      , rc);
    DEBUG_HFIX  yLOG_point   ("f"         , f);
    --rce;  if (rc < 1 || f == NULL) {

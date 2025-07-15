@@ -42,8 +42,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "2.--  moving from awk to c-language"
 #define     P_VERMINOR  "2.0-"
-#define     P_VERNUM    "2.0l"
-#define     P_VERTXT    "added HFIX_master into project and update makefile to handle it"
+#define     P_VERNUM    "2.0m"
+#define     P_VERTXT    "caught horrible, tragic, stupid mistake in my yexec_ufork call :E"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -137,6 +137,9 @@ typedef     struct      stat        tSTAT;
 #include <yCOLOR_solo.h>
 
 
+#define   HFIX_LOG       "HFIX.log"
+#define   HFIX_OUT       "HFIX.out"
+#define   HFIX_BUF       "HFIX.buf"
 
 extern char   g_print  [LEN_RECD];
 extern char   g_file   [LEN_HUND];
@@ -163,6 +166,7 @@ extern char   g_data   [LEN_FULL];
 #define MAX_ENTRY     27
 #define MAX_LINES     12
 extern char   s_compile     [MAX_ENTRY][LEN_DESC];
+extern char   s_ncount;
 
 
 
@@ -202,13 +206,14 @@ char        BASE_pass               (char c_pass, char c_filter [LEN_LABEL], cha
 /*········´ ´·····················´ ´·········································*/
 char        COMP__clear             (char a_ext [LEN_TERSE]);
 char        COMP__base              (char a_base [LEN_LABEL], char a_ext [LEN_TERSE]);
-char        COMP__sort              (void);
 char        COMP__by_name           (char a_name [LEN_TITLE], char a_type);
 char        COMP__recon             (void);
 /*········´ ´·····················´ ´·········································*/
 char        COMP_clean_0            (void);
 char        COMP_clean_n            (void);
 /*········´ ´·····················´ ´·········································*/
+char        COMP__beg               (void);
+char        COMP__chk               (void);
 char        COMP_c_recon            (char a_phase);
 /*········´ ´·····················´ ´·········································*/
 char        COMP_u_prep             (void);
@@ -276,7 +281,9 @@ char        LD_parse                (char a_recd [LEN_RECD], short *b_count, cha
 /*===[[ HFIX_ld ]]============================================================*/
 /*········´ ´·····················´ ´·········································*/
 char        HFIX_whoami             (char r_name [LEN_LABEL]);
-char*       HFIX_age                (long a_beg, long a_cur);
+char*       HFIX_age                (long a_beg, long a_end);
+char        HFIX__sort_mods         (char a_phase);
+char        HFIX_sort               (void);
 /*········´ ´·····················´ ´·········································*/
 
 
