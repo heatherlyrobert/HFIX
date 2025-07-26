@@ -119,10 +119,10 @@ HFIX_whoami              (char r_name [LEN_LABEL])
 }
 
 char*
-HFIX_age                 (long a_beg, long a_end)
+HFIX_age                 (ullong a_beg, ullong a_end)
 {
    /*---(locals)-------------------------*/
-   long        x_age       =    0;
+   ullong      x_age       =    0;
    char        x_unit      =  's';
    static char x_pretty    [LEN_SHORT] = "  ·";
    /*---(defense)------------------------*/
@@ -134,17 +134,26 @@ HFIX_age                 (long a_beg, long a_end)
    if (x_age == 0) return "·<s";   /* less than a second */
    /*---(figure age)---------------------*/
    if (x_age >  90) {
-      x_age /= 60; x_unit = 'm';
+      x_age /= 60; x_unit = 'm';  /* minutes */
       if (x_age >= 60) {
-         x_age /= 60; x_unit = 'h';
+         x_age /= 60; x_unit = 'h';  /* hours */
          if (x_age >= 24) {
-            x_age /= 24; x_unit = 'd';
-            if (x_age >= 30) {                /* months avg 30 days, close ;) */
-               x_age /= 30; x_unit = 'M';
+            x_age /= 24; x_unit = 'd';  /* days */
+            if (x_age >= 30) {
+               x_age /= 30; x_unit = 'M';  /* months avg 30 days */
                if (x_age >= 12) {
-                  x_age /= 12; x_unit = 'Y';
+                  x_age /= 12; x_unit = 'Y';  /* year */
                   if (x_age >= 100) {
-                     return "#/h";   /* huge date 100 years */
+                     x_age /= 100; x_unit = 'ì';  /* century */
+                     if (x_age >= 100) {
+                        x_age /= 100; x_unit = 'ê';   /* myriad 10,000 */
+                        if (x_age >= 100) {
+                           x_age /= 100; x_unit = 'ò';   /* millions */
+                           if (x_age >= 100) {
+                              return "#/h";   /* huge date 100 years */
+                           }
+                        }
+                     }
                   }
                }
             }
@@ -154,6 +163,58 @@ HFIX_age                 (long a_beg, long a_end)
    /*---(save-back)----------------------*/
    sprintf (x_pretty, "%2d%c", x_age, x_unit);
    if (x_pretty [0] == ' ')  x_pretty [0] = '·';
+   /*---(complete)-----------------------*/
+   return x_pretty;
+}
+
+char*
+HFIX_size                (ullong a_bytes)
+{
+   /*---(locals)-------------------------*/
+   ullong      x_size      =    0;
+   char        x_unit      =  '´';
+   int         x_mult      = 1000;
+   static char x_pretty    [LEN_SHORT] = "··-·";
+   /*---(weird byte number)--------------*/
+   if (a_bytes <  0) {
+      strcpy (x_pretty, "#/ne");
+      return x_pretty;
+   }
+   x_size  = a_bytes;
+   /*---(check trival size)--------------*/
+   if (x_size == 0) {
+      strcpy (x_pretty, "··<´");
+      return x_pretty;
+   }
+   /*---(figure size)--------------------*/
+   if (x_size >= x_mult) {
+      x_size /= x_mult; x_unit  = 'k';
+      if (x_size >= x_mult) {
+         x_size /= x_mult; x_unit  = 'm';
+         if (x_size >= x_mult) {
+            x_size /= x_mult; x_unit  = 'g';
+            if (x_size >= x_mult) {
+               x_size /= x_mult; x_unit  = 't';
+               if (x_size >= x_mult) {
+                  x_size /= x_mult; x_unit  = 'p';
+                  if (x_size >= x_mult) {
+                     x_size /= x_mult; x_unit  = 'e';
+                     if (x_size >= 10) {
+                        strcpy (x_pretty, "#/hu");  /* 1,000+ exabytes */
+                        return x_pretty;
+                     }
+                  }
+               }
+            }
+
+         }
+      }
+   }
+   /*---(save-back)----------------------*/
+   sprintf (x_pretty, "%3d%c", x_size, x_unit);
+   /*---(check for fill)-----------------*/
+   if (x_pretty [0] == ' ')  x_pretty [0] = '·';
+   if (x_pretty [1] == ' ')  x_pretty [1] = '·';
    /*---(complete)-----------------------*/
    return x_pretty;
 }

@@ -1,5 +1,5 @@
-declare  s_logger="HFIX.log"
-declare  s_output="HFIX.out"
+declare  s_logger="/tmp/HFIX.log"
+declare  s_output="/tmp/HFIX.out"
 
 
 echo "who  HFIX_master"                               >  "$s_logger"
@@ -37,7 +37,7 @@ fi
 if   [[ "$0" == "/usr/local/bin/HFIX_make"   ]]; then
    echo "dtl  recompile c-language files"             >> "$s_logger"
    echo "beg  $(date)"                                >> "$s_logger"
-   make                              > "$s_output" 2>&1
+   make  base                        > "$s_output" 2>&1
    echo "rcc  $?"                                     >> "$s_logger"
    echo "end  $(date)"                                >> "$s_logger"
    exit

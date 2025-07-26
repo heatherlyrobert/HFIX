@@ -42,8 +42,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "2.--  moving from awk to c-language"
 #define     P_VERMINOR  "2.0-"
-#define     P_VERNUM    "2.0m"
-#define     P_VERTXT    "caught horrible, tragic, stupid mistake in my yexec_ufork call :E"
+#define     P_VERNUM    "2.0n"
+#define     P_VERTXT    "wipe/WIPE are working stunningly (but very custom to me) ;))"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -105,7 +105,7 @@
 
 
 
-
+typedef     unsigned long long      ullong;
 typedef     struct      dirent      tDIRENT;
 typedef     struct      stat        tSTAT;
 
@@ -137,9 +137,19 @@ typedef     struct      stat        tSTAT;
 #include <yCOLOR_solo.h>
 
 
-#define   HFIX_LOG       "HFIX.log"
-#define   HFIX_OUT       "HFIX.out"
-#define   HFIX_BUF       "HFIX.buf"
+
+#define     HFIX_LOG       "/tmp/HFIX.log"
+#define     HFIX_OUT       "/tmp/HFIX.out"
+#define     HFIX_BUF       "/tmp/HFIX.buf"
+#define     HFIX_LST       "/tmp/HFIX.lst"
+
+#define     HFIX_SUPERS    "wWcCiIuUrRmMqQfF"
+#define     HFIX_ACTION    "wWcCuUiIrRmM"
+#define     HFIX_BEG       '['
+#define     HFIX_CHK       '>'
+#define     HFIX_PHASES    "[>"
+
+
 
 extern char   g_print  [LEN_RECD];
 extern char   g_file   [LEN_HUND];
@@ -148,14 +158,19 @@ extern char   g_color;
 extern char   g_break  [LEN_FULL];
 extern char   g_ylog;
 
-extern char   s_whoami      [LEN_LABEL];
-extern char   s_ext         [LEN_TERSE];
 extern long   s_rpid;
 extern long   s_cnt;
 extern long   s_beg;
 extern long   s_cur;
 extern long   s_end;
+
+extern char   s_whoami      [LEN_LABEL];
+extern char   s_ext         [LEN_TERSE];
 extern char   s_done;
+extern char   s_status;
+extern char   s_label       [LEN_LABEL];
+extern char   s_result;
+extern char   s_error;
 
 extern char   g_action;
 extern char   g_phase;
@@ -192,6 +207,20 @@ char        PROG_handler            (char a_action);
 
 
 
+/*===[[ HFIX_acts ]]==========================================================*/
+/*········´ ´·····················´ ´·········································*/
+char        ACTS__begin             (char c_super, char c_action, char c_phase, char c_unit, int a_rpid);
+char        ACTS__result            (char a_done, char a_status, char a_error, char *r_result, char b_label [LEN_LABEL]);
+char        ACTS__find_ends         (char c_action, char a_recd [LEN_RECD]);
+char        ACTS__filter_gcc        (char a_action, char a_recd [LEN_RECD], char **r_namish);
+char        ACTS__progress          (char a_action);
+char        ACTS__check             (char c_super, char c_action, char c_phase, char c_unit, char a_status, char a_label [LEN_LABEL]);
+char        ACTS__filename          (char c_action, char *a_start, char r_name [LEN_TITLE], char *r_style, char *r_type);
+char        ACTS_single             (char c_super, char c_action, char c_phase);
+/*········´ ´·····················´ ´·········································*/
+
+
+
 /*===[[ HFIX_base ]]==========================================================*/
 /*········´ ´·····················´ ´·········································*/
 char        BASE__open              (char a_name [LEN_HUND], short *r_lines, short *r_accept, FILE **r_file);
@@ -205,9 +234,10 @@ char        BASE_pass               (char c_pass, char c_filter [LEN_LABEL], cha
 /*===[[ HFIX_comp ]]==========================================================*/
 /*········´ ´·····················´ ´·········································*/
 char        COMP__clear             (char a_ext [LEN_TERSE]);
-char        COMP__base              (char a_base [LEN_LABEL], char a_ext [LEN_TERSE]);
-char        COMP__by_name           (char a_name [LEN_TITLE], char a_type);
-char        COMP__recon             (void);
+char        COMP__base              (void);
+char        COMP__exist             (char c_type, char a_name [LEN_TITLE]);
+char        COMP__mark              (char a_name [LEN_TITLE], char a_mark);
+char        COMP__mark_done         (char a_status, char a_label [LEN_LABEL], int a_cnt);
 /*········´ ´·····················´ ´·········································*/
 char        COMP_clean_0            (void);
 char        COMP_clean_n            (void);
@@ -225,13 +255,15 @@ char        COMP_u_recon            (void);
 /*===[[ HFIX_exim ]]==========================================================*/
 /*········´ ´·····················´ ´·········································*/
 char        EXIM__import_time       (char a_line [LEN_FULL], long *r_rpid, long *r_cnt, long *r_beg, long *r_cur, long *r_end);
-char        EXIM__import_whoami     (char a_line [LEN_FULL], char r_whoami [LEN_LABEL], char r_ext [LEN_TERSE], char *r_done);
+char        EXIM__import_whoami     (char a_line [LEN_FULL], char r_whoami [LEN_LABEL], char r_ext [LEN_TERSE], char *r_done, char *r_status, char *r_result, char *r_error);
 char        EXIM__import_entries    (char a_line [LEN_FULL], char a_row, char r_table [MAX_ENTRY][LEN_DESC], char *b_count);
 char        EXIM_import             (char a_file [LEN_PATH]);
 /*········´ ´·····················´ ´·········································*/
-char*       EXIM__export_time       (long a_rpid, long a_cnt, long a_beg, long a_cur, long a_end);
-char*       EXIM__export_whoami     (char a_whoami [LEN_LABEL], char a_ext [LEN_TERSE], char a_done);
-char        EXIM_export             (char a_file [LEN_PATH]);
+char*       EXIM__export_time       (long a_rpid, long a_cnt, long a_beg, long a_cur, long a_end, char a_result);
+char*       EXIM__export_whoami     (char a_whoami [LEN_LABEL], char a_ext [LEN_TERSE], char a_done, char a_status, char a_result, char a_error);
+char        EXIM__export_list       (FILE *b_buf);
+char        EXIM_export             (char a_super, char a_result, char a_file [LEN_PATH]);
+char        EXIM_trouble            (char a_file [LEN_PATH], char a_message [LEN_HUND]);
 /*········´ ´·····················´ ´·········································*/
 
 
@@ -254,8 +286,7 @@ char*       SHOW_hint               (int n);
 char        SHOW_num                (int a_num, int a_max, char r_out [LEN_TERSE]);
 char*       SHOW_line               (char a_color, short a_shown, char a_type, char a_file [LEN_HUND], short a_line, short a_col, char a_level, char a_msg [LEN_RECD], char a_flag [LEN_HUND]);
 char*       SHOW_totals             (char c_pass, char c_color, short a_show, short a_fail, short a_errs, short a_warn, short a_waste, short a_msgs, short a_total);
-char        SHOW_vim_simple         (void);
-char        SHOW_vim_action         (char a_opt [LEN_TERSE]);
+char*       SHOW_action             (char a_opt, char a_result);
 char        SHOW_vim_help           (void);
 /*········´ ´··(done))············´ ´·········································*/
 
@@ -281,9 +312,26 @@ char        LD_parse                (char a_recd [LEN_RECD], short *b_count, cha
 /*===[[ HFIX_ld ]]============================================================*/
 /*········´ ´·····················´ ´·········································*/
 char        HFIX_whoami             (char r_name [LEN_LABEL]);
-char*       HFIX_age                (long a_beg, long a_end);
+char*       HFIX_age                (ullong a_beg, ullong a_end);
+char*       HFIX_size               (ullong a_bytes);
 char        HFIX__sort_mods         (char a_phase);
 char        HFIX_sort               (void);
+/*········´ ´·····················´ ´·········································*/
+
+
+
+/*===[[ HFIX_wipe ]]==========================================================*/
+/*········´ ´·····················´ ´·········································*/
+char        WIPE__base              (void);
+char        WIPE__inc_single        (char n, char a_slot, char a_off);
+char        WIPE__increment         (char a_name [LEN_TITLE], char a_slot);
+char        WIPE__prefix            (char a_name [LEN_TITLE], char a_whoami [LEN_LABEL], char a_prefix [LEN_LABEL]);
+char        WIPE__suffix            (char a_name [LEN_TITLE], char a_suffix [LEN_LABEL]);
+char        WIPE__expect            (char a_name [LEN_TITLE], char a_whoami [LEN_LABEL], char a_expect [LEN_TITLE]);
+char        WIPE__identify          (char a_name [LEN_TITLE], char a_whoami [LEN_LABEL], char r_rule [LEN_LABEL]);
+char        WIPE__prepare           (char c_super, char c_action, char *r_export, FILE **b_file);
+char        WIPE__finalize          (char c_super, char c_action, int a_total, int a_count, int x_caution, llong a_all, llong a_wipe, char c_unit, char a_export, FILE **b_file);
+char        WIPE_pass               (char c_super, char c_action, char c_unit);
 /*········´ ´·····················´ ´·········································*/
 
 

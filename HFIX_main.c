@@ -14,7 +14,9 @@ main               (int a_argc, char *a_argv [])
    DEBUG_HFIX  yLOG_value   ("args"      , rc);
    /*---(run)----------------------------*/
    rc = PROG_handler (g_action);
+   DEBUG_HFIX    yLOG_value   ("handler"   , rc);
+   DEBUG_HFIX    yLOG_char    ("handler"   , rc);
    /*---(complete)-----------------------*/
    DEBUG_HFIX  yLOG_exit    (__FUNCTION__);
-   return 0;
+   return rc;
 }

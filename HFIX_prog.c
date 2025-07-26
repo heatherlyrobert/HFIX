@@ -39,24 +39,38 @@ PROG__args              (int a_argc, char *a_argv[])
       if (i < a_argc - 1)  b = a_argv [i + 1];
       else                 b = NULL;
       /*---(simple)----------------------*/
-      if      (strcmp  (a, "--criticals"    ) == 0)  { g_action = 'c';  strcpy (g_filter, HFIX_CRITICAL);   }
-      else if (strcmp  (a, "--errors"       ) == 0)  { g_action = 'c';  strcpy (g_filter, HFIX_ERRORS);     }
-      else if (strcmp  (a, "--error-only"   ) == 0)  { g_action = 'c';  strcpy (g_filter, HFIX_ERROR);      }
-      else if (strcmp  (a, "--warnings"     ) == 0)  { g_action = 'c';  strcpy (g_filter, HFIX_WARNINGS);   }
-      else if (strcmp  (a, "--waste-only"   ) == 0)  { g_action = 'c';  strcpy (g_filter, HFIX_WASTE);      }
-      else if (strcmp  (a, "--all"          ) == 0)  { g_action = 'c';  strcpy (g_filter, HFIX_EVERYTHING); }
-      else if (strcmp  (a, "--color"        ) == 0)    g_color  = 'y';
-      else if (strcmp  (a, "--ylog"         ) == 0)    g_ylog   = 'y';
-      else if (strcmp  (a, "--vim-help"     ) == 0)    g_action = '?';
-      else if (strcmp  (a, "--vim-action"   ) == 0)  { g_action = 'a';  strlcpy (g_data, b, LEN_FULL);      }
-      else if (strcmp  (a, "--vim-simple"   ) == 0)  { g_action = 's'; }
-      else if (strcmp  (a, "--clean"        ) == 0)  { g_action = 'w'; }
-      else if (strcmp  (a, "--c_recon_beg"  ) == 0)  { g_action = 'r'; g_phase = '[';  }
-      else if (strcmp  (a, "--c_recon_chk"  ) == 0)  { g_action = 'r'; g_phase = '>';  }
+      if      (strcmp  (a, "--help"         ) == 0)  {  g_action = '?';  }
+      else if (strcmp  (a, "--reset"        ) == 0)  {  g_action = '!';  }
+      else if (strcmp  (a, "--vim-action"   ) == 0)  {  g_action = 'a';  strlcpy (g_data, b, LEN_FULL);      }
+      /*> if      (strcmp  (a, "--criticals"    ) == 0)  { g_action = 'c';  strcpy (g_filter, HFIX_CRITICAL);   }   <* 
+       *> else if (strcmp  (a, "--errors"       ) == 0)  { g_action = 'c';  strcpy (g_filter, HFIX_ERRORS);     }   <* 
+       *> else if (strcmp  (a, "--error-only"   ) == 0)  { g_action = 'c';  strcpy (g_filter, HFIX_ERROR);      }   <* 
+       *> else if (strcmp  (a, "--warnings"     ) == 0)  { g_action = 'c';  strcpy (g_filter, HFIX_WARNINGS);   }   <* 
+       *> else if (strcmp  (a, "--waste-only"   ) == 0)  { g_action = 'c';  strcpy (g_filter, HFIX_WASTE);      }   <* 
+       *> else if (strcmp  (a, "--all"          ) == 0)  { g_action = 'c';  strcpy (g_filter, HFIX_EVERYTHING); }   <* 
+       *> else if (strcmp  (a, "--color"        ) == 0)    g_color  = 'y';                                          <* 
+       *> else if (strcmp  (a, "--ylog"         ) == 0)    g_ylog   = 'y';                                          <*/
+      /*---(wipe)------------------------*/
+      else if (strcmp  (a, "--w_wipe"       ) == 0)  {  g_action = 'w';  }
+      else if (strcmp  (a, "--W_WIPE"       ) == 0)  {  g_action = 'W';  }
+      /*---(c-language)------------------*/
+      else if (strcmp  (a, "--c_reco_beg"   ) == 0)  {  g_action = 'c';  g_phase = '[';  }
+      else if (strcmp  (a, "--c_reco_chk"   ) == 0)  {  g_action = 'c';  g_phase = '>';  }
+      else if (strcmp  (a, "--c_make_beg"   ) == 0)  {  g_action = 'C';  g_phase = '[';  }
+      else if (strcmp  (a, "--c_make_chk"   ) == 0)  {  g_action = 'C';  g_phase = '>';  }
+      /*---(unit-test)-------------------*/
+      else if (strcmp  (a, "--u_reco_beg"   ) == 0)  {  g_action = 'u';  g_phase = '[';  }
+      else if (strcmp  (a, "--u_reco_chk"   ) == 0)  {  g_action = 'u';  g_phase = '>';  }
+      else if (strcmp  (a, "--u_make_beg"   ) == 0)  {  g_action = 'U';  g_phase = '[';  }
+      else if (strcmp  (a, "--u_make_chk"   ) == 0)  {  g_action = 'U';  g_phase = '>';  }
+      /*---(files)-----------------------*/
       else if (strncmp (a, "--"          , 2) != 0)   strlcpy (g_file, a, LEN_FULL);
+      /*---(done)------------------------*/
    }
    DEBUG_HFIX  yLOG_value  ("entries"   , x_total);
    DEBUG_HFIX  yLOG_value  ("arguments" , x_args);
+   DEBUG_HFIX  yLOG_char   ("g_action"  , g_action);
+   DEBUG_HFIX  yLOG_char   ("g_phase"   , g_phase);
    if (x_args == 0) {
       DEBUG_HFIX  yLOG_note   ("no arguments identified");
    }
@@ -74,24 +88,62 @@ PROG_handler            (char a_action)
    /*---(select handler)-----------------*/
    switch (a_action) {
    case '?' :
+      DEBUG_HFIX  yLOG_note   ("handling ? help");
       rc = SHOW_vim_help ();
       break;
-   case 'a' :
-      rc = SHOW_vim_action (g_data);
+   case '!' :
+      DEBUG_HFIX  yLOG_note   ("handling ! reset");
+      printf ("%s\n", SHOW_action ('!', '?'));
       break;
-   case 's' :
-      rc = SHOW_vim_simple ();
+   case 'c' : case 'u' :
+      DEBUG_HFIX  yLOG_note   ("handling wcu recon");
+      rc = ACTS_single (a_action, a_action, g_phase);
+      DEBUG_HFIX    yLOG_char    ("single"    , rc);
+      if (rc < 0) {
+         DEBUG_HFIX  yLOG_note   ("marking internal error");
+         COMP__mark_done ('R', "RCE", s_cnt);
+      }
       break;
-   case 'r' :
-      rc = COMP_c_recon  (g_phase);
+   case 'C' : case 'U' :
+      DEBUG_HFIX  yLOG_note   ("handling WCU make");
+      rc = ACTS_single (a_action, a_action, g_phase);
+      DEBUG_HFIX    yLOG_char    ("single"    , rc);
+      if (rc < 0) {
+         DEBUG_HFIX  yLOG_note   ("marking internal error");
+         COMP__mark_done ('R', "RCE", s_cnt);
+      }
       break;
    case 'w' :
-      /*> rc = COMP_clean    (0);                                                     <*/
+      DEBUG_HFIX  yLOG_note   ("handling wipe");
+      rc = WIPE_pass ('w', 'r', '-');
+      DEBUG_HFIX    yLOG_char    ("recon"     , rc);
+      if (rc < 0) {
+         DEBUG_HFIX  yLOG_note   ("marking internal error");
+         COMP__mark_done ('R', "RCE", s_cnt);
+      }
       break;
-   case 'c' :
-      rc = BASE_pass (0, g_filter, g_color);
-      rc = BASE_pass (1, g_filter, g_color);
+   case 'W' :
+      DEBUG_HFIX  yLOG_note   ("handling WIPE");
+      rc = WIPE_pass ('W', 'r', '-');
+      DEBUG_HFIX    yLOG_char    ("recon"     , rc);
+      if (rc < 0) {
+         DEBUG_HFIX  yLOG_note   ("marking internal error");
+         COMP__mark_done ('R', "RCE", s_cnt);
+      }
+      rc = WIPE_pass ('W', 'w', '-');
+      DEBUG_HFIX    yLOG_char    ("wipe"      , rc);
+      if (rc < 0) {
+         DEBUG_HFIX  yLOG_note   ("marking internal error");
+         COMP__mark_done ('R', "RCE", s_cnt);
+      }
       break;
+   case 'a' :
+      printf ("%s\n", SHOW_action (g_data [0], '?'));
+      break;
+      /*> case 'c' :                                                                     <* 
+       *>    rc = BASE_pass (0, g_filter, g_color);                                      <* 
+       *>    rc = BASE_pass (1, g_filter, g_color);                                      <* 
+       *>    break;                                                                      <*/
    }
    /*---(complete)-----------------------*/
    DEBUG_HFIX  yLOG_exit  (__FUNCTION__);

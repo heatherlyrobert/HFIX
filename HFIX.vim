@@ -282,7 +282,7 @@ endf
 function! HFIX_help  ()
    call   HFIX_unkeys()
    setlo  modifiable
-   sil!   exec   ":silent 0,$!HFIX --vim-help"
+   sil!   exec   ":silent 0,$!HFIX --help"
    normal _0
    setlo  nomodifiable
    call   HFIX_keys()
@@ -301,21 +301,25 @@ func! HFIX_keys()
    setlo  modifiable
    "---(compile)-------------------------------------#
    nmap            ,q      :call HFIX_show    ()<cr>
+
+   nmap  <buffer>   w      :call HFIX_wipe    ("w")<cr>
+   nmap  <buffer>   W      :call HFIX_wipe    ("W")<cr>
+
+   nmap  <buffer>   c      :call HFIX_handler ("c_reco")<cr>
+   nmap  <buffer>   u      :call HFIX_handler ("u_reco")<cr>
+   nmap  <buffer>   C      :call HFIX_handler ("c_make")<cr>
+   nmap  <buffer>   U      :call HFIX_handler ("u_make")<cr>
+
    nmap  <buffer>   q      :call HFIX_compile ("q")<cr>
    nmap  <buffer>   f      :call HFIX_compile ("f")<cr>
-   nmap  <buffer>   w      :call HFIX_compile ("w")<cr>
    nmap  <buffer>   b      :call HFIX_compile ("b")<cr>
    nmap  <buffer>   a      :call HFIX_compile ("a")<cr>
-   nmap  <buffer>   c      :call HFIX_compile ("c")<cr>
-   nmap  <buffer>   C      :call HFIX_compile ("C")<cr>
    nmap  <buffer>   E      :call HFIX_compile ("E")<cr>
-   nmap  <buffer>   W      :call HFIX_compile ("W")<cr>
    nmap  <buffer>   *      :call HFIX_compile ("*")<cr>
    nmap  <buffer>   i      :call HFIX_compile ("i")<cr>
    nmap  <buffer>   I      :call HFIX_compile ("I")<cr>
-   nmap  <buffer>   u      :call HFIX_compile ("u")<cr>
    nmap  <buffer>   m      :call HFIX_compile ("m")<cr>
-   nmap  <buffer>   r      :call HFIX_c_recon ()<cr>
+   "---(NEW)-----------------------------------------#
    "---(presentation/size)---------------------------#
    nmap  <buffer>   -      :call HFIX_resize  ("-")<cr>
    nmap  <buffer>   +      :call HFIX_resize  ("+")<cr>
@@ -344,20 +348,23 @@ func! HFIX_unkeys()
    setlo  modifiable
    "---(compile)-------------------------------------#
    nunm  <buffer>   q
-   nunm  <buffer>   f
+
    nunm  <buffer>   w
+   nunm  <buffer>   W
+
+   nunm  <buffer>   c
+   nunm  <buffer>   u
+   nunm  <buffer>   C
+   nunm  <buffer>   U
+
+   nunm  <buffer>   f
    nunm  <buffer>   b
    nunm  <buffer>   a
-   nunm  <buffer>   c
-   nunm  <buffer>   C
    nunm  <buffer>   E
-   nunm  <buffer>   W
    nunm  <buffer>   *
       nunm  <buffer>   i
    nunm  <buffer>   I
-   nunm  <buffer>   u
    nunm  <buffer>   m
-   nunm  <buffer>   r
    "---(presentation/size)---------------------------#
    nunm  <buffer>   +
       nunm  <buffer>   -
@@ -467,6 +474,9 @@ func! HFIX_resize(height)
    endi
    ""---(resize)---------------------------------#
    sil!  exec  "resize ".s:hfix_size
+   " sil!  exec  "set  winheight=".s:hfix_size
+   " sil!  exec  "setl winfixheight"
+   " sil!  exec  "set  noequalalways"
    ""---(complete)-------------------------------#
    return
 endf
@@ -479,17 +489,17 @@ endf
 func! s:o___SPECIFIC________o()
 endf
 
-function! HFIX_c_recon ()
-   call   s:HFIX_prepare ("r")
+function! HFIX_handler (a_action)
+   call   HFIX_unkeys()
    setlo  modifiable
-   sil!   exec   ":silent 0,$!HFIX --c_recon_beg"
+   sil!   exec   ":silent 0,$!HFIX --".a:a_action."_beg"
    setlo  nomodifiable
    norm   0_
    redraw
    let    x_rc   = strpart (getline (12), 40,  1)
    while (x_rc != 'Y')
       setlo  modifiable
-      sil!   exec   ":silent 0,$!HFIX --c_recon_chk"
+      sil!   exec   ":silent 0,$!HFIX --".a:a_action."_chk"
       setlo  nomodifiable
       norm   0_
       redraw
@@ -501,11 +511,24 @@ function! HFIX_c_recon ()
    call  HBUF_restore()
 endfunction
 
+function! HFIX_wipe (a_action)
+   call   HFIX_unkeys()
+   setlo  modifiable
+   if (a:a_action == "w")
+      sil!   exec   ":silent 0,$!HFIX --w_wipe"
+   else
+      sil!   exec   ":silent 0,$!HFIX --W_WIPE"
+   endif
+   setlo  nomodifiable
+   norm   0_
+   let   g:hfix_locked = "n"
+   call  HFIX_keys()
+   call  HBUF_restore()
+endfunction
+
 func! s:HFIX_prefix  ()
    setlo  modifiable
-   " sil!   exec   ":silent 0,$d"
-   " sil!   exec   printf ("normal i%s", "HFIX·gcc/make·····,qw·wipe··,qc·comp··,qi·inst··,qu·unit··,qm·manu··,q?·help······HFIX·······································································[?]")
-   sil!   exec   ":silent 0,$!HFIX --vim-simple"
+   sil!   exec   ":silent 0,$!HFIX --reset"
    normal _0
    setlo  nomodifiable
 endf
