@@ -53,17 +53,25 @@ install_post       :
 	@chmod +x             /usr/local/bin/HFIX_master
 	@sha1sum              /usr/local/bin/HFIX_master
 	# add HFIX_master links that allow it to be forked
-	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_clean
-	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_bigclean
-	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_reconc
-	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_make
-	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_reconu
-	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_units
+	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_wipe
+	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_WIPE
+	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_comp
+	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_COMP
+	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_inst
+	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_INST
+	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_unit
+	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_UNIT
+	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_remv
+	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_REMV
 	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_mans
+	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_MANS
 	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_unittest
 	# done --------------------------------
 
-#remove_post        :
+remove_post        :
+	rm -f  /usr/local/bin/HFIX
+	rm -f  /usr/local/bin/HFIX_*
+	rm -f  /home/machine/vim/plugin/HFIX.vim
 
 
 

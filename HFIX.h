@@ -41,9 +41,9 @@
 #define     P_CREATED   "2009-06"
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "2.--  moving from awk to c-language"
-#define     P_VERMINOR  "2.0-"
-#define     P_VERNUM    "2.0n"
-#define     P_VERTXT    "wipe/WIPE are working stunningly (but very custom to me) ;))"
+#define     P_VERMINOR  "2.1-"
+#define     P_VERNUM    "2.1a"
+#define     P_VERTXT    "massive updates (forgot uploading for a while)"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -143,11 +143,11 @@ typedef     struct      stat        tSTAT;
 #define     HFIX_BUF       "/tmp/HFIX.buf"
 #define     HFIX_LST       "/tmp/HFIX.lst"
 
-#define     HFIX_SUPERS    "wWcCiIuUrRmMqQfF"
-#define     HFIX_ACTION    "wWcCuUiIrRmM"
+#define     HFIX_SUPERS    "wWcCiIuUrRmMgGqQfF"
+#define     HFIX_ACTION    "wWcCiIuUrRmMgG"
 #define     HFIX_BEG       '['
 #define     HFIX_CHK       '>'
-#define     HFIX_PHASES    "[>"
+#define     HFIX_PHASES    "[>-·"
 
 
 
@@ -172,6 +172,7 @@ extern char   s_label       [LEN_LABEL];
 extern char   s_result;
 extern char   s_error;
 
+extern char   g_super;
 extern char   g_action;
 extern char   g_phase;
 extern char   g_data   [LEN_FULL];
@@ -209,6 +210,8 @@ char        PROG_handler            (char a_action);
 
 /*===[[ HFIX_acts ]]==========================================================*/
 /*········´ ´·····················´ ´·········································*/
+char        ACTS__precheck          (char c_super, char c_action, char c_phase, char c_unit);
+char        ACTS__which             (char c_action, char r_cmd [LEN_HUND], char r_ext [LEN_TERSE], char c_unit);
 char        ACTS__begin             (char c_super, char c_action, char c_phase, char c_unit, int a_rpid);
 char        ACTS__result            (char a_done, char a_status, char a_error, char *r_result, char b_label [LEN_LABEL]);
 char        ACTS__find_ends         (char c_action, char a_recd [LEN_RECD]);
@@ -320,16 +323,25 @@ char        HFIX_sort               (void);
 
 
 
-/*===[[ HFIX_wipe ]]==========================================================*/
+/*===[[ HFIX_maint ]]=========================================================*/
 /*········´ ´·····················´ ´·········································*/
-char        WIPE__base              (void);
-char        WIPE__inc_single        (char n, char a_slot, char a_off);
-char        WIPE__increment         (char a_name [LEN_TITLE], char a_slot);
-char        WIPE__prefix            (char a_name [LEN_TITLE], char a_whoami [LEN_LABEL], char a_prefix [LEN_LABEL]);
-char        WIPE__suffix            (char a_name [LEN_TITLE], char a_suffix [LEN_LABEL]);
-char        WIPE__expect            (char a_name [LEN_TITLE], char a_whoami [LEN_LABEL], char a_expect [LEN_TITLE]);
-char        WIPE__identify          (char a_name [LEN_TITLE], char a_whoami [LEN_LABEL], char r_rule [LEN_LABEL]);
-char        WIPE__prepare           (char c_super, char c_action, char *r_export, FILE **b_file);
+/*---(base)-----------------*/
+char        MAINT__base             (char c_type);
+/*---(count)----------------*/
+char        MAINT__inc_single       (char n, char a_slot, char a_off);
+char        MAINT__increment        (char c_type, char a_name [LEN_TITLE], char a_slot);
+/*---(matching)-------------*/
+char        MAINT__not              (char a_name [LEN_TITLE], char a_not [LEN_LABEL]);
+char        MAINT__prefix           (char a_name [LEN_TITLE], char a_whoami [LEN_LABEL], char a_prefix [LEN_LABEL]);
+char        MAINT__suffix           (char a_name [LEN_TITLE], char a_suffix [LEN_LABEL]);
+char        MAINT__expect           (char a_name [LEN_TITLE], char a_whoami [LEN_LABEL], char a_expect [LEN_TITLE]);
+char        MAINT__identify         (char c_type, char a_name [LEN_TITLE], char a_whoami [LEN_LABEL], char r_rule [LEN_LABEL]);
+
+
+
+/*===[[ HFIX_maint ]]=========================================================*/
+/*········´ ´·····················´ ´·········································*/
+char        WIPE__prepare           (char c_super, char c_action, char *r_export, char *r_style, FILE **b_file);
 char        WIPE__finalize          (char c_super, char c_action, int a_total, int a_count, int x_caution, llong a_all, llong a_wipe, char c_unit, char a_export, FILE **b_file);
 char        WIPE_pass               (char c_super, char c_action, char c_unit);
 /*········´ ´·····················´ ´·········································*/

@@ -75,6 +75,9 @@ COMP__clear             (char a_ext [LEN_TERSE])
    --rce; if (strcmp (a_ext, ".c")    == 0)  strcpy (x_title, "clang");
    else if   (strcmp (a_ext, ".unit") == 0)  strcpy (x_title, "UNITS");
    else if   (strcmp (a_ext, "wipe")  == 0)  strcpy (x_title, "wipe");
+   else if   (strcmp (a_ext, "inst")  == 0)  strcpy (x_title, "inst");
+   else if   (strcmp (a_ext, "remo")  == 0)  strcpy (x_title, "remo");
+   else if   (strcmp (a_ext, "mans")  == 0)  strcpy (x_title, "mans");
    else {
       DEBUG_HFIX   yLOG_exitr   (__FUNCTION__, rce);
       return  rce;
@@ -232,9 +235,14 @@ COMP__exist             (char c_type, char a_name [LEN_TITLE])
       return  rce;
    }
    /*---(prepare lookup)-----------------*/
+   DEBUG_HFIX   yLOG_char    ("c_type"    , c_type);
    switch (c_type) {
-   case 'w' : l = 14;  break;
-   default  : l = 18;  break;
+   case 'w' : case 'i' : case 'r' :
+      l = 14; 
+      break;
+   default  :
+      l = 18;
+      break;
    }
    DEBUG_HFIX   yLOG_value   ("l"         , l);
    snprintf (x_name, LEN_LABEL - 1, "%s······························", a_name);

@@ -302,8 +302,11 @@ func! HFIX_keys()
    "---(compile)-------------------------------------#
    nmap            ,q      :call HFIX_show    ()<cr>
 
-   nmap  <buffer>   w      :call HFIX_wipe    ("w")<cr>
-   nmap  <buffer>   W      :call HFIX_wipe    ("W")<cr>
+   nmap  <buffer>   w      :call HFIX_wipe    ("wipe")<cr>
+   nmap  <buffer>   W      :call HFIX_wipe    ("WIPE")<cr>
+
+   nmap  <buffer>   i      :call HFIX_wipe    ("inst")<cr>
+   nmap  <buffer>   I      :call HFIX_wipe    ("INST")<cr>
 
    nmap  <buffer>   c      :call HFIX_handler ("c_reco")<cr>
    nmap  <buffer>   u      :call HFIX_handler ("u_reco")<cr>
@@ -316,8 +319,6 @@ func! HFIX_keys()
    nmap  <buffer>   a      :call HFIX_compile ("a")<cr>
    nmap  <buffer>   E      :call HFIX_compile ("E")<cr>
    nmap  <buffer>   *      :call HFIX_compile ("*")<cr>
-   nmap  <buffer>   i      :call HFIX_compile ("i")<cr>
-   nmap  <buffer>   I      :call HFIX_compile ("I")<cr>
    nmap  <buffer>   m      :call HFIX_compile ("m")<cr>
    "---(NEW)-----------------------------------------#
    "---(presentation/size)---------------------------#
@@ -352,6 +353,9 @@ func! HFIX_unkeys()
    nunm  <buffer>   w
    nunm  <buffer>   W
 
+   nunm  <buffer>   i
+   nunm  <buffer>   I
+
    nunm  <buffer>   c
    nunm  <buffer>   u
    nunm  <buffer>   C
@@ -361,9 +365,6 @@ func! HFIX_unkeys()
    nunm  <buffer>   b
    nunm  <buffer>   a
    nunm  <buffer>   E
-   nunm  <buffer>   *
-      nunm  <buffer>   i
-   nunm  <buffer>   I
    nunm  <buffer>   m
    "---(presentation/size)---------------------------#
    nunm  <buffer>   +
@@ -514,11 +515,7 @@ endfunction
 function! HFIX_wipe (a_action)
    call   HFIX_unkeys()
    setlo  modifiable
-   if (a:a_action == "w")
-      sil!   exec   ":silent 0,$!HFIX --w_wipe"
-   else
-      sil!   exec   ":silent 0,$!HFIX --W_WIPE"
-   endif
+   sil!   exec   ":silent 0,$!HFIX_debug @@hfix --".a:a_action
    setlo  nomodifiable
    norm   0_
    let   g:hfix_locked = "n"

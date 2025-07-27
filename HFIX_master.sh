@@ -43,6 +43,24 @@ if   [[ "$0" == "/usr/local/bin/HFIX_make"   ]]; then
    exit
 fi
 
+##===[[ INSTALL ]]=============================================================#
+if   [[ "$0" == "/usr/local/bin/HFIX_inst"   ]]; then
+   echo "dtl  conduct recon on install"               >> "$s_logger"
+   echo "beg  $(date)"                                >> "$s_logger"
+   make --recon  install             > "$s_output" 2>&1
+   echo "rcc  $?"                                     >> "$s_logger"
+   echo "end  $(date)"                                >> "$s_logger"
+   exit
+fi
+if   [[ "$0" == "/usr/local/bin/HFIX_INST"   ]]; then
+   echo "dtl  recompile install"                      >> "$s_logger"
+   echo "beg  $(date)"                                >> "$s_logger"
+   make  install                     > "$s_output" 2>&1
+   echo "rcc  $?"                                     >> "$s_logger"
+   echo "end  $(date)"                                >> "$s_logger"
+   exit
+fi
+
 ##===[[ UNIT TESTING ]]========================================================#
 if   [[ "$0" == "/usr/local/bin/HFIX_reconu" ]]; then
    echo "dtl  conduct recon on unit-test recomp"      >> "$s_logger"

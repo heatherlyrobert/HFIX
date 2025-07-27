@@ -11,6 +11,7 @@ char        g_ylog     =  '-';
 
 char        g_break    [LEN_FULL]  = "";
 
+char        g_super    =  '-';
 char        g_action   =  '-';
 char        g_phase    =  '0';
 char        g_data     [LEN_FULL]  = "";

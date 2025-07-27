@@ -3,6 +3,136 @@
 #include "yEXEC_uver.h"
 
 
+
+char
+ACTS__precheck          (char c_super, char c_action, char c_phase, char c_unit)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -10;
+   char        x_fail      =  '-';
+   /*---(header)-------------------------*/
+   DEBUG_HFIX    yLOG_enter   (__FUNCTION__);
+   /*---(singular)-----------------------*/
+   DEBUG_HFIX    yLOG_char    ("c_super"   , c_super);
+   --rce;  if (c_super   == 0 || strchr (HFIX_SUPERS, c_super) == NULL) {
+      if (c_unit == 'y')     EXIM_trouble (HFIX_BUF, "c_super is not understood");
+      else                   EXIM_trouble (""      , "c_super is not understood");
+      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_HFIX    yLOG_char    ("c_action"  , c_action);
+   --rce;  if (c_action  == 0 || strchr (HFIX_ACTION "ÿ", c_action) == NULL) {
+      if (c_unit == 'y')     EXIM_trouble (HFIX_BUF, "c_action is not understood");
+      else                   EXIM_trouble (""      , "c_action is not understood");
+      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_HFIX    yLOG_char    ("c_phase"   , c_phase);
+   --rce;  if (c_phase == 0 || strchr (HFIX_PHASES, c_phase) == NULL) {
+      if (c_unit == 'y')     EXIM_trouble (HFIX_BUF, "c_phase is not understood");
+      else                   EXIM_trouble (""      , "c_phase is not understood");
+      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_HFIX    yLOG_char    ("c_unit"    , c_unit);
+   --rce;  if (c_unit  == 0 || strchr ("y-", c_unit) == NULL) {
+      if (c_unit == 'y')     EXIM_trouble (HFIX_BUF, "c_unit is not understood");
+      else                   EXIM_trouble (""      , "c_unit is not understood");
+      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(super/action)-------------------*/
+   switch (c_super) {
+   case 'w'  :  if (strchr ("w"    , c_action) == NULL)  x_fail = 'y';   break;
+   case 'W'  :  if (strchr ("wW"   , c_action) == NULL)  x_fail = 'y';   break;
+   case 'c'  :  if (strchr ("c"    , c_action) == NULL)  x_fail = 'y';   break;
+   case 'C'  :  if (strchr ("cC"   , c_action) == NULL)  x_fail = 'y';   break;
+   case 'i'  :  if (strchr ("i"    , c_action) == NULL)  x_fail = 'y';   break;
+   case 'I'  :  if (strchr ("iI"   , c_action) == NULL)  x_fail = 'y';   break;
+   case 'u'  :  if (strchr ("u"    , c_action) == NULL)  x_fail = 'y';   break;
+   case 'U'  :  if (strchr ("uU"   , c_action) == NULL)  x_fail = 'y';   break;
+   case 'r'  :  if (strchr ("r"    , c_action) == NULL)  x_fail = 'y';   break;
+   case 'R'  :  if (strchr ("rR"   , c_action) == NULL)  x_fail = 'y';   break;
+   case 'm'  :  if (strchr ("m"    , c_action) == NULL)  x_fail = 'y';   break;
+   case 'M'  :  if (strchr ("mM"   , c_action) == NULL)  x_fail = 'y';   break;
+   case 'g'  :  if (strchr ("g"    , c_action) == NULL)  x_fail = 'y';   break;
+   case 'G'  :  if (strchr ("gG"   , c_action) == NULL)  x_fail = 'y';   break;
+   }
+   DEBUG_HFIX    yLOG_char    ("combos"    , x_fail);
+   --rce;  if (x_fail == 'y') {
+      if (c_unit == 'y')     EXIM_trouble (HFIX_BUF, "bad combination of c_super and c_action");
+      else                   EXIM_trouble (""      , "bad combination of c_super and c_action");
+      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(phases with c_actions)----------*/
+   switch (c_action) {
+   case 'w'  :  case 'W'  :  if (strchr ("-"    , c_phase) == NULL)  x_fail = 'y';   break;
+   case 'c'  :  case 'C'  :  if (strchr ("[>"   , c_phase) == NULL)  x_fail = 'y';   break;
+   case 'i'  :  case 'I'  :  if (strchr ("-"    , c_phase) == NULL)  x_fail = 'y';   break;
+   case 'u'  :  case 'U'  :  if (strchr ("[>"   , c_phase) == NULL)  x_fail = 'y';   break;
+   case 'r'  :  case 'R'  :  if (strchr ("-"    , c_phase) == NULL)  x_fail = 'y';   break;
+   case 'm'  :  case 'M'  :  if (strchr ("-"    , c_phase) == NULL)  x_fail = 'y';   break;
+   case 'g'  :  case 'G'  :  if (strchr ("[>"   , c_phase) == NULL)  x_fail = 'y';   break;
+   }
+   DEBUG_HFIX    yLOG_char    ("phases"    , x_fail);
+   --rce;  if (x_fail == 'y') {
+      if (c_unit == 'y')     EXIM_trouble (HFIX_BUF, "bad combination of c_action and c_phase");
+      else                   EXIM_trouble (""      , "bad combination of c_action and c_phase");
+      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_HFIX    yLOG_exit    (__FUNCTION__);
+   return 1;
+}
+
+char
+ACTS__which             (char c_action, char r_cmd [LEN_HUND], char r_ext [LEN_TERSE], char c_unit)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -10;
+   char        x_cmd       [LEN_HUND]  = "";
+   char        x_ext       [LEN_TERSE] = "";
+   /*---(header)-------------------------*/
+   DEBUG_HFIX    yLOG_enter   (__FUNCTION__);
+   /*---(default)------------------------*/
+   if (r_cmd   != NULL)   strcpy (r_cmd, "");
+   if (r_ext   != NULL)   strcpy (r_ext, "");
+   /*---(set values)---------------------*/
+   --rce;  switch (c_action) {
+   case 'w'  :  strlcpy (x_cmd, "/bin/bash -c HFIX_wipe"     , LEN_HUND);  strcpy (x_ext, "wipe");   break;
+   case 'W'  :  strlcpy (x_cmd, "/bin/bash -c HFIX_WIPE"     , LEN_HUND);  strcpy (x_ext, "WIPE");   break;
+   case 'c'  :  strlcpy (x_cmd, "/bin/bash -c HFIX_comp"     , LEN_HUND);  strcpy (x_ext, ".c");     break;
+   case 'C'  :  strlcpy (x_cmd, "/bin/bash -c HFIX_COMP"     , LEN_HUND);  strcpy (x_ext, ".c");     break;
+   case 'i'  :  strlcpy (x_cmd, "/bin/bash -c HFIX_inst"     , LEN_HUND);  strcpy (x_ext, "inst");   break;
+   case 'I'  :  strlcpy (x_cmd, "/bin/bash -c HFIX_INST"     , LEN_HUND);  strcpy (x_ext, "INST");   break;
+   case 'u'  :  strlcpy (x_cmd, "/bin/bash -c HFIX_unit"     , LEN_HUND);  strcpy (x_ext, ".unit");  break;
+   case 'U'  :  strlcpy (x_cmd, "/bin/bash -c HFIX_UNIT"     , LEN_HUND);  strcpy (x_ext, ".unit");  break;
+   case 'r'  :  strlcpy (x_cmd, "/bin/bash -c HFIX_remv"     , LEN_HUND);  strcpy (x_ext, "remv");   break;
+   case 'R'  :  strlcpy (x_cmd, "/bin/bash -c HFIX_REMV"     , LEN_HUND);  strcpy (x_ext, "REMV");   break;
+   case 'm'  :  strlcpy (x_cmd, "/bin/bash -c HFIX_mans"     , LEN_HUND);  strcpy (x_ext, "mans");   break;
+   case 'M'  :  strlcpy (x_cmd, "/bin/bash -c HFIX_MANS"     , LEN_HUND);  strcpy (x_ext, "MANS");   break;
+   case 'g'  :  strlcpy (x_cmd, "/bin/bash -c HFIX_git"      , LEN_HUND);  strcpy (x_ext, "git");    break;
+   case 'G'  :  strlcpy (x_cmd, "/bin/bash -c HFIX_GIT"      , LEN_HUND);  strcpy (x_ext, "GIT");    break;
+   case 'ÿ'  :  strlcpy (x_cmd, "boomy     -c HFIX_testing"  , LEN_HUND);  strcpy (x_ext, ".c");     break;
+   default   :
+                DEBUG_HFIX  yLOG_note    ("c_action code not found");
+                if (c_unit == 'y')     EXIM_trouble (HFIX_BUF, "c_action is not understood");
+                else                   EXIM_trouble (""      , "c_action is not understood");
+                DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
+                return rce;
+   }
+   DEBUG_HFIX    yLOG_info    ("x_cmd"     , x_cmd);
+   DEBUG_HFIX    yLOG_info    ("x_ext"     , x_ext);
+   /*---(save-back)----------------------*/
+   if (r_cmd   != NULL)   strlcpy (r_cmd, x_cmd, LEN_HUND);
+   if (r_ext   != NULL)   strlcpy (r_ext, x_ext, LEN_TERSE);
+   /*---(complete)-----------------------*/
+   DEBUG_HFIX    yLOG_exit    (__FUNCTION__);
+   return 1;
+}
+
 char
 ACTS__begin             (char c_super, char c_action, char c_phase, char c_unit, int a_rpid)
 {
@@ -38,44 +168,12 @@ ACTS__begin             (char c_super, char c_action, char c_phase, char c_unit,
       return rce;
    }
    /*---(master data)--------------------*/
-   --rce;  switch (c_action) {
-   case 'w'  :
-      strlcpy (x_cmd, "/bin/bash -c HFIX_clean"    , LEN_HUND);
-      strcpy  (x_ext, ".c");
-      break;
-   case 'W'  :
-      strlcpy (x_cmd, "/bin/bash -c HFIX_bigclean" , LEN_HUND);
-      strcpy  (x_ext, ".c");
-      break;
-   case 'c'  :
-      strlcpy (x_cmd, "/bin/bash -c HFIX_reconc"   , LEN_HUND);
-      strcpy  (x_ext, ".c");
-      break;
-   case 'C'  :
-      strlcpy (x_cmd, "/bin/bash -c HFIX_make"     , LEN_HUND);
-      strcpy  (x_ext, ".c");
-      break;
-   case 'u'  :
-      strlcpy (x_cmd, "/bin/bash -c HFIX_reconu"   , LEN_HUND);
-      strcpy  (x_ext, ".unit");
-      break;
-   case 'U'  :
-      strlcpy (x_cmd, "/bin/bash -c HFIX_units"    , LEN_HUND);
-      strcpy  (x_ext, ".unit");
-      break;
-   case 'ÿ'  :
-      strlcpy (x_cmd, "boomy     -c HFIX_units"    , LEN_HUND);
-      strcpy  (x_ext, ".c");
-      break;
-   default   :
-      DEBUG_HFIX  yLOG_note    ("c_action code not found");
-      if (c_unit == 'y')     EXIM_trouble (HFIX_BUF, "c_action is not understood");
-      else                   EXIM_trouble (""      , "c_action is not understood");
+   rc = ACTS__which (c_action, x_cmd, x_ext, c_unit);
+   DEBUG_HFIX    yLOG_value   ("which"     , rc);
+   --rce;  if (rc < 0) {
       DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_HFIX    yLOG_info    ("x_cmd"     , x_cmd);
-   DEBUG_HFIX    yLOG_info    ("x_ext"     , x_ext);
    /*---(clear files)--------------------*/
    rc = yENV_rm  (HFIX_LOG);
    DEBUG_HFIX    yLOG_char    ("HFIX_LOG"  , rc);

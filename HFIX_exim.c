@@ -480,12 +480,6 @@ EXIM_import             (char a_file [LEN_PATH])
          return rce;
       }
    }
-   /*---(wipe out list)------------------*/
-   /*> while (1) {                                                                    <* 
-    *>    if (f == NULL)  p = fgets (x_line, LEN_FULL, stdin);                        <* 
-    *>    else            p = fgets (x_line, LEN_FULL, f);                            <* 
-    *>    if (p == NULL)  break;                                                      <* 
-    *> }                                                                              <*/
    /*---(close-file)---------------------*/
    --rce;  if (strcmp (a_file, "") != 0) {
       rc = fclose (f);

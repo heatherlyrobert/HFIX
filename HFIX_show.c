@@ -167,22 +167,22 @@ SHOW_action             (char a_opt, char a_result)
    case '!' :  sprintf (g_print, "HFIX·gcc/make·····,qw·wipe··,qC·comp··,qi·inst··,qU·unit··,qM·manu··,q?·help····(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
    case '?' :  sprintf (g_print, "HFIX·gcc/make·(help)············································quick·reminders·(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
 
-   case 'w' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(w:wipe)·=·recon·files·to·be·cleared··············(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
+   case 'w' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(w:wipe)·=·recon·of·files·to·be·cleared···········(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
    case 'W' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(W:WIPE)·=·deep·clean·(all·temp/waste)············(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
 
-   case 'c' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(c:reco)·=·recon·c-files·to·be·compilied··········(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
+   case 'c' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(c:reco)·=·recon·of·c-files·to·be·compilied·······(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
    case 'C' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(C:COMP)·=·compile·c-files,·show·critical·only····(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
 
-   case 'u' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(u:reco)·=·recon·units·to·be·compilied············(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
+   case 'u' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(u:reco)·=·recon·of·units·to·be·compilied·········(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
    case 'U' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(U:COMP)·=·compile·units,·show·critical·only······(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
 
-   case 'i' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(i:inst)·=·install·code·only······················(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
+   case 'i' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(i:inst)·=·recon·of·files·to·be·installed·········(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
    case 'I' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(I:INST)·=·install·everything·····················(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
 
-   case 'r' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(r:remo)·=·removel·executables·only···············(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
+   case 'r' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(r:remo)·=·recon·of·files·to·be·removed···········(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
    case 'R' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(R:KILL)·=·remove·everything······················(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
 
-   case 'm' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(m:mans)·=·recon·manuals··························(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
+   case 'm' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(m:mans)·=·recon·of·manuals·to·be·installed·······(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
    case 'M' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(M:MANS)·=·install·manuals·only···················(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
 
    case 'q' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(q:quik)·=·compile·and·install·c-filess···········(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;

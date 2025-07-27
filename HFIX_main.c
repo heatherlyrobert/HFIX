@@ -13,7 +13,7 @@ main               (int a_argc, char *a_argv [])
    rc = PROG__args (a_argc, a_argv);
    DEBUG_HFIX  yLOG_value   ("args"      , rc);
    /*---(run)----------------------------*/
-   rc = PROG_handler (g_action);
+   rc = PROG_handler (g_super);
    DEBUG_HFIX    yLOG_value   ("handler"   , rc);
    DEBUG_HFIX    yLOG_char    ("handler"   , rc);
    /*---(complete)-----------------------*/
