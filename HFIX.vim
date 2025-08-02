@@ -299,28 +299,32 @@ endfunction
 
 func! HFIX_keys()
    setlo  modifiable
-   "---(compile)-------------------------------------#
+   "---(open HFIX window)----------------------------#
    nmap            ,q      :call HFIX_show    ()<cr>
-
-   nmap  <buffer>   w      :call HFIX_wipe    ("wipe")<cr>
-   nmap  <buffer>   W      :call HFIX_wipe    ("WIPE")<cr>
-
-   nmap  <buffer>   i      :call HFIX_wipe    ("inst")<cr>
-   nmap  <buffer>   I      :call HFIX_wipe    ("INST")<cr>
-
-   nmap  <buffer>   c      :call HFIX_handler ("c_reco")<cr>
-   nmap  <buffer>   u      :call HFIX_handler ("u_reco")<cr>
-   nmap  <buffer>   C      :call HFIX_handler ("c_make")<cr>
-   nmap  <buffer>   U      :call HFIX_handler ("u_make")<cr>
-
-   nmap  <buffer>   q      :call HFIX_compile ("q")<cr>
-   nmap  <buffer>   f      :call HFIX_compile ("f")<cr>
-   nmap  <buffer>   b      :call HFIX_compile ("b")<cr>
-   nmap  <buffer>   a      :call HFIX_compile ("a")<cr>
-   nmap  <buffer>   E      :call HFIX_compile ("E")<cr>
-   nmap  <buffer>   *      :call HFIX_compile ("*")<cr>
-   nmap  <buffer>   m      :call HFIX_compile ("m")<cr>
-   "---(NEW)-----------------------------------------#
+   "---(wipe)----------------------------------------#
+   nmap  <buffer>   w      :call HFIX_single  ("wipe")<cr>
+   nmap  <buffer>   W      :call HFIX_single  ("WIPE")<cr>
+   "---(compile)-------------------------------------#
+   nmap  <buffer>   c      :call HFIX_double  ("comp")<cr>
+   nmap  <buffer>   C      :call HFIX_combo   ("COMP")<cr>
+   "---(install)-------------------------------------#
+   nmap  <buffer>   i      :call HFIX_single  ("inst")<cr>
+   nmap  <buffer>   I      :call HFIX_single  ("INST")<cr>
+   "---(unit-test)-----------------------------------#
+   nmap  <buffer>   u      :call HFIX_double  ("unit")<cr>
+   nmap  <buffer>   U      :call HFIX_combo   ("UNIT")<cr>
+   "---(remove)--------------------------------------#
+   nmap  <buffer>   r      :call HFIX_single  ("remv")<cr>
+   nmap  <buffer>   R      :call HFIX_single  ("REMV")<cr>
+   "---(manuals)-------------------------------------#
+   nmap  <buffer>   m      :call HFIX_single  ("mans")<cr>
+   nmap  <buffer>   M      :call HFIX_single  ("MANS")<cr>
+   "---(git)-----------------------------------------#
+   nmap  <buffer>   g      :call HFIX_double  ("git")<cr>
+   nmap  <buffer>   G      :call HFIX_combo   ("GIT")<cr>
+   "---(test-exec)-----------------------------------#
+   nmap  <buffer>   t      :call HFIX_double  ("test")<cr>
+   nmap  <buffer>   T      :call HFIX_combo   ("TEST")<cr>
    "---(presentation/size)---------------------------#
    nmap  <buffer>   -      :call HFIX_resize  ("-")<cr>
    nmap  <buffer>   +      :call HFIX_resize  ("+")<cr>
@@ -331,10 +335,6 @@ func! HFIX_keys()
    nmap  <buffer>   .      :call HFIX_cursor  (".")<cr>
    nmap  <buffer>   <      :call HFIX_cursor  ("<")<cr>
    nmap  <buffer>   ]      :call HFIX_cursor  ("]")<cr>
-   "---(configuration)-------------------------------#
-   " nmap  <buffer>   E      :call HFIX_config  ("E")<cr>
-   " nmap  <buffer>   W      :call HFIX_config  ("W")<cr>
-   " nmap  <buffer>   U      :call HFIX_config  ("U")<cr>
    "---(other)---------------------------------------#
    nmap  <buffer>   Z      :call HFIX_unkeys  ()<cr>
    nmap  <buffer>   ?      :call HFIX_help    ()<cr>
@@ -347,38 +347,43 @@ endf
 
 func! HFIX_unkeys()
    setlo  modifiable
-   "---(compile)-------------------------------------#
-   nunm  <buffer>   q
-
+   "---(wipe)----------------------------------------#
    nunm  <buffer>   w
    nunm  <buffer>   W
-
+   "---(compile)-------------------------------------#
+   nunm  <buffer>   c
+   nunm  <buffer>   C
+   "---(install)-------------------------------------#
    nunm  <buffer>   i
    nunm  <buffer>   I
-
-   nunm  <buffer>   c
+   "---(unit-test)-----------------------------------#
    nunm  <buffer>   u
-   nunm  <buffer>   C
    nunm  <buffer>   U
-
-   nunm  <buffer>   f
-   nunm  <buffer>   b
-   nunm  <buffer>   a
-   nunm  <buffer>   E
+   "---(remove)--------------------------------------#
+   nunm  <buffer>   r
+   nunm  <buffer>   R
+   "---(manuals)-------------------------------------#
    nunm  <buffer>   m
+   nunm  <buffer>   M
+   "---(git)-----------------------------------------#
+   nunm  <buffer>   g
+   nunm  <buffer>   G
+   "---(test-exec)-----------------------------------#
+   nunm  <buffer>   t
+   nunm  <buffer>   T
    "---(presentation/size)---------------------------#
    nunm  <buffer>   +
-      nunm  <buffer>   -
-      nunm  <buffer>   h
+   nunm  <buffer>   -
+   nunm  <buffer>   h
    "---(moves)---------------------------------------#
    nunm  <buffer>   [
-      nunm  <buffer>   >
-      nunm  <buffer>   <
-      nunm  <buffer>   ]
+   nunm  <buffer>   >
+   nunm  <buffer>   <
+   nunm  <buffer>   ]
    "---(other)---------------------------------------#
    nmap  <buffer>   Z      :call HFIX_keys  ()<cr>
    nunm  <buffer>   ?
-      nunm  <buffer>   !
+   nunm  <buffer>   !
    "---(complete)------------------------------------#
    setlo  nomodifiable
    retu
@@ -490,17 +495,28 @@ endf
 func! s:o___SPECIFIC________o()
 endf
 
-function! HFIX_handler (a_action)
+function! HFIX_single (a_action)
    call   HFIX_unkeys()
    setlo  modifiable
-   sil!   exec   ":silent 0,$!HFIX --".a:a_action."_beg"
+   sil!   exec   ":silent 0,$!HFIX --".a:a_action
+   setlo  nomodifiable
+   norm   0_
+   let   g:hfix_locked = "n"
+   call  HFIX_keys()
+   call  HBUF_restore()
+endfunction
+
+function! HFIX_double  (a_action)
+   call   HFIX_unkeys()
+   setlo  modifiable
+   sil!   exec   ":silent 0,$!HFIX --".a:a_action."1"
    setlo  nomodifiable
    norm   0_
    redraw
    let    x_rc   = strpart (getline (12), 40,  1)
    while (x_rc != 'Y')
       setlo  modifiable
-      sil!   exec   ":silent 0,$!HFIX --".a:a_action."_chk"
+      sil!   exec   ":silent 0,$!HFIX --".a:a_action."2"
       setlo  nomodifiable
       norm   0_
       redraw
@@ -512,15 +528,9 @@ function! HFIX_handler (a_action)
    call  HBUF_restore()
 endfunction
 
-function! HFIX_wipe (a_action)
-   call   HFIX_unkeys()
-   setlo  modifiable
-   sil!   exec   ":silent 0,$!HFIX_debug @@hfix --".a:a_action
-   setlo  nomodifiable
-   norm   0_
-   let   g:hfix_locked = "n"
-   call  HFIX_keys()
-   call  HBUF_restore()
+function! HFIX_combo   (a_action)
+   call HFIX_double  (tolower (a:a_action))
+   call HFIX_double  (a:a_action)
 endfunction
 
 func! s:HFIX_prefix  ()

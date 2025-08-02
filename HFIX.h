@@ -42,8 +42,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "2.--  moving from awk to c-language"
 #define     P_VERMINOR  "2.1-"
-#define     P_VERNUM    "2.1a"
-#define     P_VERTXT    "massive updates (forgot uploading for a while)"
+#define     P_VERNUM    "2.1b"
+#define     P_VERTXT    "new super/major/minor encoding; base, exim, and wrap working again"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -75,9 +75,9 @@
  *>    "¦"                                                                              <*/
 
 
-   /*> "any speed or accuracy gain in identifying, diagnosing, remediating, and¦"   \   <* 
-    *> "certifying changes is worthy of great pro-active standards and tool¦"       \   <* 
-    *> "building effort.  without this, my codebase withers.¦"                          <*/
+/*> "any speed or accuracy gain in identifying, diagnosing, remediating, and¦"   \   <* 
+ *> "certifying changes is worthy of great pro-active standards and tool¦"       \   <* 
+ *> "building effort.  without this, my codebase withers.¦"                          <*/
 
 
 /*······´ ´·················´ ´················································*/
@@ -135,47 +135,103 @@ typedef     struct      stat        tSTAT;
 #include <yENV.h>
 #include <ySTR_solo.h>
 #include <yCOLOR_solo.h>
+#include <yEXEC_solo.h>
 
 
 
+/*---(locations)------------*/
 #define     HFIX_LOG       "/tmp/HFIX.log"
 #define     HFIX_OUT       "/tmp/HFIX.out"
 #define     HFIX_BUF       "/tmp/HFIX.buf"
 #define     HFIX_LST       "/tmp/HFIX.lst"
-
-#define     HFIX_SUPERS    "wWcCiIuUrRmMgGqQfF"
-#define     HFIX_ACTION    "wWcCiIuUrRmMgG"
+/*---(supers/actions)-------*/
+#define     HFIX_HELP      '?'
+#define     HFIX_RESET     '!'
+#define     HFIX_WIPE      'w'
+#define     HFIX_WIPEF     'W'
+#define     HFIX_COMP      'c'
+#define     HFIX_COMPF     'C'
+#define     HFIX_INST      'i'
+#define     HFIX_INSTF     'I'
+#define     HFIX_UNIT      'u'
+#define     HFIX_UNITF     'U'
+#define     HFIX_REMV      'r'
+#define     HFIX_REMVF     'R'
+#define     HFIX_MANS      'm'
+#define     HFIX_MANSF     'M'
+#define     HFIX_GITV      'g'
+#define     HFIX_GITVF     'G'
+#define     HFIX_TEST      't'
+#define     HFIX_TESTF     'T'
+#define     HFIX_QUIK      'q'
+#define     HFIX_QUIKF     'Q'
+#define     HFIX_FULL      'f'
+#define     HFIX_FULLF     'F'
+#define     HFIX_SUPERS    "wWcCiIuUrRmMgGtTqQfF"
+#define     HFIX_ACTIONS   "wWcCiIuUrRmMgGtT"
+#define     HFIX_MAINTS    "wWiIrRmM"
+/*---(layouts)--------------*/
+#define     HFIX_COUNT     '#'
+#define     HFIX_MARKS     '´'
+/*---(phases)---------------*/
 #define     HFIX_BEG       '['
 #define     HFIX_CHK       '>'
+#define     HFIX_NONE      '-'
 #define     HFIX_PHASES    "[>-·"
+/*---(passes)---------------*/
+#define     HFIX_RECON     '¢'
+#define     HFIX_EXEC      '¡'
+#define     HFIX_VERIFY    '¤'
+#define     HFIX_PASSES    "¢¡¤"
+#define     HFIX_TRECON    'r'
+#define     HFIX_TEXEC     'e'
+#define     HFIX_TVERIFY   'v'
+#define     HFIX_SLOTS     "¢¡¤"
+/*---(done)-----------------*/
 
+
+typedef struct cMY tMY;
+struct cMY {
+   /*---(master conf)--------------------*/
+   char     m_super;                 /* guiding action of entire effort   */
+   char     m_major;                 /* current major action              */
+   char     m_minor;                 /* action underway                   */
+   char     m_phase;                 /* beg vs check, or none             */
+   char     m_desc      [LEN_TERSE]; /* short description of super        */
+   char     m_theme;                 /* groups actions into themes w:wipe and W:WIPE are wipe */
+   char     m_layout;                /* count actions vs marked ones      */
+   char     m_pass;                  /* recon vs execution                */
+   char     m_export;                /* when to export back to vim        */
+   char     m_set;                   /* wipe vs inst/remv/mans            */
+   char     m_unit;                  /* run as unit-test or production    */
+   /*---(process)------------------------*/
+   int      m_rpid;                  /* forked subprocess                 */
+   int      m_cnt;                   /* count of wait/checks              */
+   long     m_beg;                   /* start time                        */
+   long     m_cur;                   /* current time                      */
+   long     m_end;                   /* finish time                       */
+   /*---(context)------------------------*/
+   char     m_whoami    [LEN_LABEL];
+   char     m_ext       [LEN_TERSE];
+   char     m_done;
+   char     m_status;
+   char     m_label     [LEN_LABEL];
+   char     m_result;
+   char     m_error;
+   /*---(other config)-------------------*/
+   char     m_file      [LEN_HUND];
+   char     m_filter    [LEN_LABEL];
+   char     m_color;
+   char     m_break     [LEN_FULL];
+   char     m_ylog;
+   /*---(depricated)---------------------*/
+   char     m_data      [LEN_FULL];
+   /*---(done)---------------------------*/
+};
+extern tMY my;
 
 
 extern char   g_print  [LEN_RECD];
-extern char   g_file   [LEN_HUND];
-extern char   g_filter [LEN_LABEL];
-extern char   g_color;
-extern char   g_break  [LEN_FULL];
-extern char   g_ylog;
-
-extern long   s_rpid;
-extern long   s_cnt;
-extern long   s_beg;
-extern long   s_cur;
-extern long   s_end;
-
-extern char   s_whoami      [LEN_LABEL];
-extern char   s_ext         [LEN_TERSE];
-extern char   s_done;
-extern char   s_status;
-extern char   s_label       [LEN_LABEL];
-extern char   s_result;
-extern char   s_error;
-
-extern char   g_super;
-extern char   g_action;
-extern char   g_phase;
-extern char   g_data   [LEN_FULL];
 
 
 
@@ -201,16 +257,26 @@ extern char   s_ncount;
 
 /*===[[ HFIX_prog ]]==========================================================*/
 /*········´ ´·····················´ ´·········································*/
-char        PROG__urgs              (int argc, char *argv[]);
+/*---(debugging)------------*/
+char        PROG_debugging          (int a_argc, char *a_argv[]);
+/*---(startup)--------------*/
+char        PROG__init              (int a_argc, char *a_argv[]);
 char        PROG__args              (int a_argc, char *a_argv[]);
-char        PROG_handler            (char a_action);
+char        PROG__begin             (void);
+char        PROG_startup            (int a_argc, char *a_argv[]);
+/*---(shutdown)-------------*/
+char        PROG__end               (void);
+char        PROG_shutdown           (void);
+/*---(driver)---------------*/
+char        PROG_handler            (char c_super, char c_unit);
+/*---(psuedo)---------------*/
+char        PROG_psuedo             (int a_argc, char *a_argv []);
 /*········´ ´··(done))············´ ´·········································*/
 
 
 
 /*===[[ HFIX_acts ]]==========================================================*/
 /*········´ ´·····················´ ´·········································*/
-char        ACTS__precheck          (char c_super, char c_action, char c_phase, char c_unit);
 char        ACTS__which             (char c_action, char r_cmd [LEN_HUND], char r_ext [LEN_TERSE], char c_unit);
 char        ACTS__begin             (char c_super, char c_action, char c_phase, char c_unit, int a_rpid);
 char        ACTS__result            (char a_done, char a_status, char a_error, char *r_result, char b_label [LEN_LABEL]);
@@ -226,9 +292,46 @@ char        ACTS_single             (char c_super, char c_action, char c_phase);
 
 /*===[[ HFIX_base ]]==========================================================*/
 /*········´ ´·····················´ ´·········································*/
-char        BASE__open              (char a_name [LEN_HUND], short *r_lines, short *r_accept, FILE **r_file);
-char        BASE__close             (FILE **r_file);
-char        BASE__read              (FILE *f, short *b_lines, short *b_accept, char r_recd [LEN_RECD]);
+/*---(defense)--------------*/
+char        BASE__legal             (char c_super, char c_major, char c_minor, char c_phase, char c_unit, char r_msg [LEN_HUND]);
+char        BASE__super_major_minor (char c_super, char c_major, char c_minor, char r_desc [LEN_TERSE], char r_msg [LEN_HUND]);
+char        BASE__minor_phase       (char c_minor, char c_phase, char a_ephase, char r_msg [LEN_HUND]);
+char        BASE__export            (char c_major, char c_minor, char *r_theme, char *r_layout, char *r_pass, char r_ext [LEN_TERSE], char *r_export, char *r_maintset);
+char        BASE_precheck           (char c_super, char c_major, char c_minor, char c_phase, char a_ephase, char r_whoami [LEN_LABEL], char r_desc [LEN_TERSE], char *r_theme, char *r_layout, char *r_pass, char r_ext [LEN_TERSE], char *r_export, char *r_maintset, char c_unit);
+char        BASE_ready              (char c_super, char c_major, char c_minor, char c_phase, char c_unit);
+/*---(base)-----------------*/
+char        BASE_clear              (char a_desc [LEN_TERSE]);
+char        BASE_entry              (char a_type, char n, char a_name [LEN_TITLE]);
+char        BASE_exist              (char c_theme, char a_name [LEN_TITLE]);
+char        BASE_recon_done         (char c_super);
+/*---(mark)-----------------*/
+char        BASE_mark               (char c_theme, char a_name [LEN_TITLE], char a_mark);
+char        BASE_result             (uchar a_status, char a_label [LEN_LABEL], int a_cnt);
+/*---(count)----------------*/
+char        BASE__inc_single        (char n, char a_slot, char a_off);
+char        BASE_increment          (char c_theme, char a_name [LEN_TITLE], char a_slot);
+char        BASE_matching           (char n, char *b_result);
+/*---(summary)--------------*/
+char        BASE_total              (char c_type, int a_value);
+char        BASE_size               (char c_type, int a_value, llong a_size);;
+/*---(support)--------------*/
+char        BASE__duration          (long a_beg, long a_end);
+char        BASE__time              (char a_type, long a_epoch);
+char        BASE_starting           (void);
+char        BASE_finishing          (void);
+/*········´ ´·····················´ ´·········································*/
+
+
+
+/*===[[ HFIX_base ]]==========================================================*/
+/*········´ ´·····················´ ´·········································*/
+char        FILE_open               (char a_name [LEN_HUND], short *r_lines, short *r_accept, FILE **r_file);
+char        FILE_close              (FILE **r_file);
+char        FILE_read               (FILE *f, short *b_lines, short *b_accept, char r_recd [LEN_RECD]);
+/*········´ ´·····················´ ´·········································*/
+
+
+
 char        BASE__handle            (char c_pass, char c_filter [LEN_LABEL], char c_color, char a_recd [LEN_RECD], short *b_handled, short *b_shown, short *b_hidden, char *r_level, char r_show [LEN_FULL]);
 char        BASE_pass               (char c_pass, char c_filter [LEN_LABEL], char c_color);
 
@@ -236,11 +339,7 @@ char        BASE_pass               (char c_pass, char c_filter [LEN_LABEL], cha
 
 /*===[[ HFIX_comp ]]==========================================================*/
 /*········´ ´·····················´ ´·········································*/
-char        COMP__clear             (char a_ext [LEN_TERSE]);
 char        COMP__base              (void);
-char        COMP__exist             (char c_type, char a_name [LEN_TITLE]);
-char        COMP__mark              (char a_name [LEN_TITLE], char a_mark);
-char        COMP__mark_done         (char a_status, char a_label [LEN_LABEL], int a_cnt);
 /*········´ ´·····················´ ´·········································*/
 char        COMP_clean_0            (void);
 char        COMP_clean_n            (void);
@@ -265,7 +364,7 @@ char        EXIM_import             (char a_file [LEN_PATH]);
 char*       EXIM__export_time       (long a_rpid, long a_cnt, long a_beg, long a_cur, long a_end, char a_result);
 char*       EXIM__export_whoami     (char a_whoami [LEN_LABEL], char a_ext [LEN_TERSE], char a_done, char a_status, char a_result, char a_error);
 char        EXIM__export_list       (FILE *b_buf);
-char        EXIM_export             (char a_super, char a_result, char a_file [LEN_PATH]);
+char        EXIM_export             (char c_super, char a_result, char a_file [LEN_PATH]);
 char        EXIM_trouble            (char a_file [LEN_PATH], char a_message [LEN_HUND]);
 /*········´ ´·····················´ ´·········································*/
 
@@ -289,7 +388,7 @@ char*       SHOW_hint               (int n);
 char        SHOW_num                (int a_num, int a_max, char r_out [LEN_TERSE]);
 char*       SHOW_line               (char a_color, short a_shown, char a_type, char a_file [LEN_HUND], short a_line, short a_col, char a_level, char a_msg [LEN_RECD], char a_flag [LEN_HUND]);
 char*       SHOW_totals             (char c_pass, char c_color, short a_show, short a_fail, short a_errs, short a_warn, short a_waste, short a_msgs, short a_total);
-char*       SHOW_action             (char a_opt, char a_result);
+char*       SHOW_title              (char a_opt, char a_result);
 char        SHOW_vim_help           (void);
 /*········´ ´··(done))············´ ´·········································*/
 
@@ -319,6 +418,7 @@ char*       HFIX_age                (ullong a_beg, ullong a_end);
 char*       HFIX_size               (ullong a_bytes);
 char        HFIX__sort_mods         (char a_phase);
 char        HFIX_sort               (void);
+char*       HFIX_chrvisible         (uchar a_ch);
 /*········´ ´·····················´ ´·········································*/
 
 
@@ -326,10 +426,7 @@ char        HFIX_sort               (void);
 /*===[[ HFIX_maint ]]=========================================================*/
 /*········´ ´·····················´ ´·········································*/
 /*---(base)-----------------*/
-char        MAINT__base             (char c_type);
-/*---(count)----------------*/
-char        MAINT__inc_single       (char n, char a_slot, char a_off);
-char        MAINT__increment        (char c_type, char a_name [LEN_TITLE], char a_slot);
+char        MAINT__base             (char c_maintset);
 /*---(matching)-------------*/
 char        MAINT__not              (char a_name [LEN_TITLE], char a_not [LEN_LABEL]);
 char        MAINT__prefix           (char a_name [LEN_TITLE], char a_whoami [LEN_LABEL], char a_prefix [LEN_LABEL]);
@@ -341,9 +438,9 @@ char        MAINT__identify         (char c_type, char a_name [LEN_TITLE], char 
 
 /*===[[ HFIX_maint ]]=========================================================*/
 /*········´ ´·····················´ ´·········································*/
-char        WIPE__prepare           (char c_super, char c_action, char *r_export, char *r_style, FILE **b_file);
-char        WIPE__finalize          (char c_super, char c_action, int a_total, int a_count, int x_caution, llong a_all, llong a_wipe, char c_unit, char a_export, FILE **b_file);
-char        WIPE_pass               (char c_super, char c_action, char c_unit);
+char        WIPE__prepare           (char c_pass, char c_desc [LEN_TERSE], char c_export, char c_maintset, FILE **b_file);
+char        WIPE__finalize          (char c_super, char c_pass, int a_total, int a_count, int a_caution, llong a_all, llong a_wipe, char c_export, char c_unit, FILE **b_file);
+char        WIPE_pass               (char c_super, char c_major, char c_minor, char c_phase, char c_unit);
 /*········´ ´·····················´ ´·········································*/
 
 

@@ -1,91 +1,7 @@
 #include "HFIX.h"
-#include "yEXEC_solo.h"
 #include "yEXEC_uver.h"
 
 
-
-char
-ACTS__precheck          (char c_super, char c_action, char c_phase, char c_unit)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         =  -10;
-   char        x_fail      =  '-';
-   /*---(header)-------------------------*/
-   DEBUG_HFIX    yLOG_enter   (__FUNCTION__);
-   /*---(singular)-----------------------*/
-   DEBUG_HFIX    yLOG_char    ("c_super"   , c_super);
-   --rce;  if (c_super   == 0 || strchr (HFIX_SUPERS, c_super) == NULL) {
-      if (c_unit == 'y')     EXIM_trouble (HFIX_BUF, "c_super is not understood");
-      else                   EXIM_trouble (""      , "c_super is not understood");
-      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_HFIX    yLOG_char    ("c_action"  , c_action);
-   --rce;  if (c_action  == 0 || strchr (HFIX_ACTION "ÿ", c_action) == NULL) {
-      if (c_unit == 'y')     EXIM_trouble (HFIX_BUF, "c_action is not understood");
-      else                   EXIM_trouble (""      , "c_action is not understood");
-      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_HFIX    yLOG_char    ("c_phase"   , c_phase);
-   --rce;  if (c_phase == 0 || strchr (HFIX_PHASES, c_phase) == NULL) {
-      if (c_unit == 'y')     EXIM_trouble (HFIX_BUF, "c_phase is not understood");
-      else                   EXIM_trouble (""      , "c_phase is not understood");
-      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_HFIX    yLOG_char    ("c_unit"    , c_unit);
-   --rce;  if (c_unit  == 0 || strchr ("y-", c_unit) == NULL) {
-      if (c_unit == 'y')     EXIM_trouble (HFIX_BUF, "c_unit is not understood");
-      else                   EXIM_trouble (""      , "c_unit is not understood");
-      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(super/action)-------------------*/
-   switch (c_super) {
-   case 'w'  :  if (strchr ("w"    , c_action) == NULL)  x_fail = 'y';   break;
-   case 'W'  :  if (strchr ("wW"   , c_action) == NULL)  x_fail = 'y';   break;
-   case 'c'  :  if (strchr ("c"    , c_action) == NULL)  x_fail = 'y';   break;
-   case 'C'  :  if (strchr ("cC"   , c_action) == NULL)  x_fail = 'y';   break;
-   case 'i'  :  if (strchr ("i"    , c_action) == NULL)  x_fail = 'y';   break;
-   case 'I'  :  if (strchr ("iI"   , c_action) == NULL)  x_fail = 'y';   break;
-   case 'u'  :  if (strchr ("u"    , c_action) == NULL)  x_fail = 'y';   break;
-   case 'U'  :  if (strchr ("uU"   , c_action) == NULL)  x_fail = 'y';   break;
-   case 'r'  :  if (strchr ("r"    , c_action) == NULL)  x_fail = 'y';   break;
-   case 'R'  :  if (strchr ("rR"   , c_action) == NULL)  x_fail = 'y';   break;
-   case 'm'  :  if (strchr ("m"    , c_action) == NULL)  x_fail = 'y';   break;
-   case 'M'  :  if (strchr ("mM"   , c_action) == NULL)  x_fail = 'y';   break;
-   case 'g'  :  if (strchr ("g"    , c_action) == NULL)  x_fail = 'y';   break;
-   case 'G'  :  if (strchr ("gG"   , c_action) == NULL)  x_fail = 'y';   break;
-   }
-   DEBUG_HFIX    yLOG_char    ("combos"    , x_fail);
-   --rce;  if (x_fail == 'y') {
-      if (c_unit == 'y')     EXIM_trouble (HFIX_BUF, "bad combination of c_super and c_action");
-      else                   EXIM_trouble (""      , "bad combination of c_super and c_action");
-      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(phases with c_actions)----------*/
-   switch (c_action) {
-   case 'w'  :  case 'W'  :  if (strchr ("-"    , c_phase) == NULL)  x_fail = 'y';   break;
-   case 'c'  :  case 'C'  :  if (strchr ("[>"   , c_phase) == NULL)  x_fail = 'y';   break;
-   case 'i'  :  case 'I'  :  if (strchr ("-"    , c_phase) == NULL)  x_fail = 'y';   break;
-   case 'u'  :  case 'U'  :  if (strchr ("[>"   , c_phase) == NULL)  x_fail = 'y';   break;
-   case 'r'  :  case 'R'  :  if (strchr ("-"    , c_phase) == NULL)  x_fail = 'y';   break;
-   case 'm'  :  case 'M'  :  if (strchr ("-"    , c_phase) == NULL)  x_fail = 'y';   break;
-   case 'g'  :  case 'G'  :  if (strchr ("[>"   , c_phase) == NULL)  x_fail = 'y';   break;
-   }
-   DEBUG_HFIX    yLOG_char    ("phases"    , x_fail);
-   --rce;  if (x_fail == 'y') {
-      if (c_unit == 'y')     EXIM_trouble (HFIX_BUF, "bad combination of c_action and c_phase");
-      else                   EXIM_trouble (""      , "bad combination of c_action and c_phase");
-      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(complete)-----------------------*/
-   DEBUG_HFIX    yLOG_exit    (__FUNCTION__);
-   return 1;
-}
 
 char
 ACTS__which             (char c_action, char r_cmd [LEN_HUND], char r_ext [LEN_TERSE], char c_unit)
@@ -113,8 +29,10 @@ ACTS__which             (char c_action, char r_cmd [LEN_HUND], char r_ext [LEN_T
    case 'R'  :  strlcpy (x_cmd, "/bin/bash -c HFIX_REMV"     , LEN_HUND);  strcpy (x_ext, "REMV");   break;
    case 'm'  :  strlcpy (x_cmd, "/bin/bash -c HFIX_mans"     , LEN_HUND);  strcpy (x_ext, "mans");   break;
    case 'M'  :  strlcpy (x_cmd, "/bin/bash -c HFIX_MANS"     , LEN_HUND);  strcpy (x_ext, "MANS");   break;
-   case 'g'  :  strlcpy (x_cmd, "/bin/bash -c HFIX_git"      , LEN_HUND);  strcpy (x_ext, "git");    break;
-   case 'G'  :  strlcpy (x_cmd, "/bin/bash -c HFIX_GIT"      , LEN_HUND);  strcpy (x_ext, "GIT");    break;
+   case 'g'  :  strlcpy (x_cmd, "/bin/bash -c HFIX_git"      , LEN_HUND);  strcpy (x_ext, "gitv");   break;
+   case 'G'  :  strlcpy (x_cmd, "/bin/bash -c HFIX_GITV"     , LEN_HUND);  strcpy (x_ext, "GITV");   break;
+   case 't'  :  strlcpy (x_cmd, "/bin/bash -c HFIX_test"     , LEN_HUND);  strcpy (x_ext, "test");   break;
+   case 'T'  :  strlcpy (x_cmd, "/bin/bash -c HFIX_TEST"     , LEN_HUND);  strcpy (x_ext, "TEST");   break;
    case 'ÿ'  :  strlcpy (x_cmd, "boomy     -c HFIX_testing"  , LEN_HUND);  strcpy (x_ext, ".c");     break;
    default   :
                 DEBUG_HFIX  yLOG_note    ("c_action code not found");
@@ -146,24 +64,9 @@ ACTS__begin             (char c_super, char c_action, char c_phase, char c_unit,
    /*---(header)-------------------------*/
    DEBUG_HFIX    yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
-   DEBUG_HFIX    yLOG_char    ("c_super"   , c_super);
-   --rce;  if (c_super   == 0 || strchr (HFIX_SUPERS, c_super) == NULL) {
-      if (c_unit == 'y')     EXIM_trouble (HFIX_BUF, "c_super is not understood");
-      else                   EXIM_trouble (""      , "c_super is not understood");
-      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_HFIX    yLOG_char    ("c_action"  , c_action);
-   --rce;  if (c_action  == 0 || strchr (HFIX_ACTION "ÿ", c_action) == NULL) {
-      if (c_unit == 'y')     EXIM_trouble (HFIX_BUF, "c_action is not understood");
-      else                   EXIM_trouble (""      , "c_action is not understood");
-      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_HFIX    yLOG_char    ("c_phase"   , c_phase);
-   --rce;  if (c_phase != HFIX_BEG) {
-      if (c_unit == 'y')     EXIM_trouble (HFIX_BUF, "c_phase is not begin ([)");
-      else                   EXIM_trouble (""      , "c_phase is not begin ([)");
+   rc = BASE_precheck (c_super, c_super, c_action, c_phase, HFIX_BEG, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, c_unit);
+   DEBUG_HFIX    yLOG_value   ("precheck"  , rc);
+   --rce;  if (rc < 0) {
       DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
@@ -187,38 +90,38 @@ ACTS__begin             (char c_super, char c_action, char c_phase, char c_unit,
       if (c_unit == 'y')     rc = EXIM_import     (HFIX_BUF);
       else                   rc = EXIM_import     ("");
       DEBUG_HFIX    yLOG_value   ("import"    , rc);
-      s_rpid = s_cur = s_end = 0;
-      s_done = s_status = s_result = s_error = '-';
-      s_result = '?';
-      strcpy (s_label, "");
-      ++s_cnt;
+      my.m_rpid = my.m_cur = my.m_end = 0;
+      my.m_done = my.m_status = my.m_result = my.m_error = '-';
+      my.m_result = '?';
+      strcpy (my.m_label, "");
+      ++my.m_cnt;
    } else {
       DEBUG_HFIX    yLOG_note    ("starting fresh");
-      rc = COMP__clear (x_ext);
+      rc = BASE_clear (my.m_desc);
       DEBUG_HFIX    yLOG_value   ("clear"     , rc);
       rc = COMP__base  ();
       DEBUG_HFIX    yLOG_value   ("base"      , rc);
       /*---(log time)-----------------------*/
-      s_beg  = time (NULL);
-      DEBUG_HFIX    yLOG_value   ("s_beg"     , s_beg);
+      my.m_beg  = time (NULL);
+      DEBUG_HFIX    yLOG_value   ("my.m_beg"     , my.m_beg);
    }
    /*---(fork)---------------------------*/
    --rce; if (c_unit == 'y') {
       DEBUG_HFIX    yLOG_note    ("unit-test version, no fork/launch");
-      s_rpid = a_rpid;
+      my.m_rpid = a_rpid;
    } else {
       DEBUG_HFIX    yLOG_note    ("production version, fork/launch");
-      s_rpid = yexec_ufork (x_cmd);
-      if (s_rpid < 0) {
+      my.m_rpid = yexec_ufork (x_cmd);
+      if (my.m_rpid < 0) {
          DEBUG_HFIX    yLOG_note    ("fork/launch was unsuccessful");
          if (c_action == 'ÿ')   EXIM_trouble (HFIX_BUF, "fork/launch failed");
          else                   EXIM_trouble (""      , "fork/launch failed");
          DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
          return rce;
       }
-      DEBUG_HFIX    yLOG_value   ("ufork"     , s_rpid);
+      DEBUG_HFIX    yLOG_value   ("ufork"     , my.m_rpid);
       usleep (100000);  /*  0.1 second */
-      rc     = yexec_uwait (s_rpid, s_label);
+      rc     = yexec_uwait (my.m_rpid, my.m_label);
       DEBUG_HFIX    yLOG_char    ("uwait"     , rc);
       if      (rc == 0)                   ;
       else if (strchr ("r" , rc) != NULL) ;
@@ -233,7 +136,7 @@ ACTS__begin             (char c_super, char c_action, char c_phase, char c_unit,
       DEBUG_HFIX    yLOG_note    ("successful fook/launch");
    }
    /*---(add progress label)-------------*/
-   rc = COMP__mark_done ('[', "launched", 0);
+   rc = BASE_result ('[', "launched", 0);
    /*---(show results)-------------------*/
    if (c_unit == 'y')     rc = EXIM_export     (c_super, '?', HFIX_BUF);
    else                   rc = EXIM_export     (c_super, '?', "");
@@ -297,24 +200,9 @@ ACTS__check             (char c_super, char c_action, char c_phase, char c_unit,
    /*---(header)-------------------------*/
    DEBUG_HFIX    yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
-   DEBUG_HFIX    yLOG_char    ("c_super"   , c_super);
-   --rce;  if (c_super   == 0 || strchr (HFIX_SUPERS, c_super) == NULL) {
-      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
-      if (c_unit == 'y')     EXIM_trouble (HFIX_BUF, "c_super is not understood");
-      else                   EXIM_trouble (""      , "c_super is not understood");
-      return rce;
-   }
-   DEBUG_HFIX    yLOG_char    ("c_action"  , c_action);
-   --rce;  if (c_action  == 0 || strchr (HFIX_ACTION, c_action) == NULL) {
-      if (c_unit == 'y')     EXIM_trouble (HFIX_BUF, "c_action is not understood");
-      else                   EXIM_trouble (""      , "c_action is not understood");
-      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_HFIX    yLOG_char    ("c_phase"   , c_phase);
-   --rce;  if (c_phase != HFIX_CHK) {
-      if (c_unit == 'y')     EXIM_trouble (HFIX_BUF, "c_phase is not check (>)");
-      else                   EXIM_trouble (""      , "c_phase is not check (>)");
+   rc = BASE_precheck (c_super, c_super, c_action, c_phase, HFIX_CHK, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, c_unit);
+   DEBUG_HFIX    yLOG_value   ("precheck"  , rc);
+   --rce;  if (rc < 0) {
       DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
@@ -324,57 +212,57 @@ ACTS__check             (char c_super, char c_action, char c_phase, char c_unit,
       DEBUG_HFIX    yLOG_value   ("import"    , rc);
    }
    /*---(new loop)-----------------------*/
-   ++s_cnt;
-   DEBUG_HFIX    yLOG_value   ("s_cnt"     , s_cnt);
+   ++my.m_cnt;
+   DEBUG_HFIX    yLOG_value   ("my.m_cnt"     , my.m_cnt);
    /*---(log time)-----------------------*/
    usleep (500000);  /* 0.5s */
    /*> sleep (1);                                                                     <*/
-   s_cur  = time (NULL);
-   DEBUG_HFIX    yLOG_value   ("s_cur"     , s_cur);
+   my.m_cur  = time (NULL);
+   DEBUG_HFIX    yLOG_value   ("my.m_cur"     , my.m_cur);
    /*---(check)--------------------------*/
-   DEBUG_HFIX    yLOG_char    ("s_done"    , s_done);
-   DEBUG_HFIX    yLOG_value   ("s_rpid"    , s_rpid);
-   if (s_rpid > 0 && strchr ("Yy", s_done) == NULL) {
+   DEBUG_HFIX    yLOG_char    ("my.m_done"    , my.m_done);
+   DEBUG_HFIX    yLOG_value   ("my.m_rpid"    , my.m_rpid);
+   if (my.m_rpid > 0 && strchr ("Yy", my.m_done) == NULL) {
       /*---(check files)-----------------*/
       COMP__chk ();
       /*---(check process)---------------*/
       if (c_unit == 'y') {
-         s_status = a_status;
-         strlcpy (s_label, a_label, LEN_LABEL);
+         my.m_status = a_status;
+         strlcpy (my.m_label, a_label, LEN_LABEL);
       } else  {
-         s_status = yexec_uwait (s_rpid, s_label);
+         my.m_status = yexec_uwait (my.m_rpid, my.m_label);
       }
-      DEBUG_HFIX    yLOG_char    ("uwait"     , s_status);
-      DEBUG_HFIX    yLOG_info    ("s_label"   , s_label);
+      DEBUG_HFIX    yLOG_char    ("uwait"     , my.m_status);
+      DEBUG_HFIX    yLOG_info    ("my.m_label"   , my.m_label);
       /*---(relabel updates)-------------*/
-      if (s_status == '#') strcpy (s_label, "DONE");
+      if (my.m_status == '#') strcpy (my.m_label, "DONE");
       /*---(handle compelete)------------*/
-      if (s_status != 'r') {
-         s_done   = 'y';
-         s_rpid   =  0;
+      if (my.m_status != 'r') {
+         my.m_done   = 'y';
+         my.m_rpid   =  0;
       }
       /*---(result assignment)-----------*/
-      rc = ACTS__result  (s_done, s_status, s_error, &s_result, s_label);
-      /*> if      (strchr ("r" , s_status) != NULL)         s_result = '?';           <* 
-       *> else if (strchr ("n#", s_status) != NULL)         s_result = 'p';           <* 
-       *> else if (strchr (YEXEC_FAILS, s_status) != NULL)  s_result = 'E';           <* 
-       *> else if (strchr (YEXEC_BADDS, s_status) != NULL)  s_result = 'W';           <* 
-       *> else if (strchr (YEXEC_BOOMS, s_status) != NULL)  s_result = 'W';           <* 
-       *> else if (strchr (YEXEC_KILLS, s_status) != NULL)  s_result = 'W';           <* 
-       *> else                                              s_result = 'X';           <*/
-      DEBUG_HFIX    yLOG_char    ("s_result"  , s_result);
+      rc = ACTS__result  (my.m_done, my.m_status, my.m_error, &my.m_result, my.m_label);
+      /*> if      (strchr ("r" , my.m_status) != NULL)         my.m_result = '?';           <* 
+       *> else if (strchr ("n#", my.m_status) != NULL)         my.m_result = 'p';           <* 
+       *> else if (strchr (YEXEC_FAILS, my.m_status) != NULL)  my.m_result = 'E';           <* 
+       *> else if (strchr (YEXEC_BADDS, my.m_status) != NULL)  my.m_result = 'W';           <* 
+       *> else if (strchr (YEXEC_BOOMS, my.m_status) != NULL)  my.m_result = 'W';           <* 
+       *> else if (strchr (YEXEC_KILLS, my.m_status) != NULL)  my.m_result = 'W';           <* 
+       *> else                                              my.m_result = 'X';           <*/
+      DEBUG_HFIX    yLOG_char    ("my.m_result"  , my.m_result);
       /*---(update elapsed)--------------*/
-      rc = COMP__mark_done (s_status, s_label, s_cnt);
+      rc = BASE_result (my.m_status, my.m_label, my.m_cnt);
       /*---(done)------------------------*/
    }
    /*---(show results)-------------------*/
    if (c_unit == 'y') {
-      rc = EXIM_export     (c_super, s_result, HFIX_BUF);
+      rc = EXIM_export     (c_super, my.m_result, HFIX_BUF);
       DEBUG_HFIX    yLOG_value   ("export"    , rc);
    }
    /*---(complete)-----------------------*/
    DEBUG_HFIX    yLOG_exit    (__FUNCTION__);
-   return s_done;
+   return my.m_done;
 }
 
 char
@@ -525,7 +413,7 @@ ACTS__filter_gcc        (char c_action, char a_recd [LEN_RECD], char **r_namish)
    }
    DEBUG_HFIX    yLOG_info    ("a_recd"    , a_recd);
    /*---(prepare)---------------------*/
-   strlcpy (x_whoami, s_whoami, LEN_LABEL);
+   strlcpy (x_whoami, my.m_whoami, LEN_LABEL);
    DEBUG_HFIX    yLOG_info    ("x_whoami"  , x_whoami);
    l = strlen (x_whoami);
    if (x_whoami [l - 1] == '_')  x_whoami [l - 1] = '\0';
@@ -687,7 +575,6 @@ ACTS__progress          (char c_action)
    /*---(locals)-----------+-----------+-*/
    char        rce         =  -10;
    char        rc          =    0;
-   char        x_ch        =  '-';
    FILE       *f           = NULL;
    char        x_recd      [LEN_RECD]  = "";
    char        x_check     =  '-';
@@ -709,15 +596,14 @@ ACTS__progress          (char c_action)
    /*---(update style of run)------------*/
    if (strchr ("CU", c_action) != NULL)  x_style = 'm';
    /*---(quick-out)----------------------*/
-   x_ch = s_compile [MAX_ENTRY - 1][13];
-   DEBUG_HFIX  yLOG_char    ("recon"     , x_ch);
-   --rce;  if (x_style == 'm' && x_ch == '-') {
-      DEBUG_HFIX  yLOG_note    ("recon has not run first");
+   rc = BASE_recon_done (my.m_super);
+   DEBUG_HFIX  yLOG_char    ("recon"     , rc);
+   --rce;  if (rc == '-') {
       DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(open)---------------------------*/
-   rc = BASE__open  (HFIX_OUT, NULL, NULL, &f);
+   rc = FILE_open  (HFIX_OUT, NULL, NULL, &f);
    DEBUG_HFIX  yLOG_value   ("open"      , rc);
    DEBUG_HFIX  yLOG_point   ("f"         , f);
    --rce;  if (rc < 1 || f == NULL) {
@@ -727,7 +613,7 @@ ACTS__progress          (char c_action)
    /*---(handle lines)-------------------*/
    while (1) {
       /*---(read)------------------------*/
-      rc = BASE__read (f, NULL, NULL, x_recd);
+      rc = FILE_read (f, NULL, NULL, x_recd);
       DEBUG_HFIX  yLOG_value   ("read"      , rc);
       if (rc == 0) {
          DEBUG_HFIX  yLOG_note    ("hit end-of-file");
@@ -747,9 +633,9 @@ ACTS__progress          (char c_action)
       }
       if (rc == 'e' || rc == 'E') {
          DEBUG_HFIX  yLOG_note    ("found end line, completed");
-         s_done = 'Y';
-         if (rc == 'E')  s_error = 'y';
-         ;
+         my.m_done = 'Y';
+         if (rc == 'E')  my.m_error = 'y';
+         break;
       }
       DEBUG_HFIX  yLOG_char    ("x_check"   , x_check);
       if (rc == 1 || x_check == '-') {
@@ -769,7 +655,7 @@ ACTS__progress          (char c_action)
       }
       if (rc == 'e') {
          DEBUG_HFIX  yLOG_note    ("found end line, completed");
-         s_done = 'Y';
+         my.m_done = 'Y';
          break;
       }
       /*---(file name)-------------------*/
@@ -784,15 +670,15 @@ ACTS__progress          (char c_action)
          continue;
       }
       /*---(capture)---------------------*/
-      rc = COMP__mark (x_name, x_type);
+      rc = BASE_mark (my.m_theme, x_name, x_type);
       DEBUG_HFIX  yLOG_value   ("marked"    , rc);
       if (x_type != 'b')  ++c;
       /*---(done)------------------------*/
    }
-   DEBUG_HFIX  yLOG_char    ("s_done"    , s_done);
+   DEBUG_HFIX  yLOG_char    ("my.m_done"    , my.m_done);
    DEBUG_HFIX  yLOG_value   ("c"         , c);
    /*---(close)--------------------------*/
-   rc = BASE__close (&f);
+   rc = FILE_close (&f);
    DEBUG_HFIX  yLOG_value   ("close"     , rc);
    DEBUG_HFIX  yLOG_point   ("f"         , f);
    --rce;  if (rc < 1 || f != NULL) {
@@ -810,174 +696,6 @@ ACTS__progress          (char c_action)
    s_compile [MAX_ENTRY - 1][x_off + 1] = x_bit [1];
    if (x_style == 'r')  s_compile [MAX_ENTRY - 1][x_off + 2] = 'n';
    else                 s_compile [MAX_ENTRY - 1][x_off + 2] = 'c';
-   /*---(complete)-----------------------*/
-   DEBUG_HFIX    yLOG_exit    (__FUNCTION__);
-   return c;
-}
-
-char
-ACTS__progress_OLD      (char c_action)
-{
-   /*---(locals)-----------+-----------+-*/
-   char        rce         =  -10;
-   char        rc          =    0;
-   char        x_ch        =  '-';
-   FILE       *f           = NULL;
-   char        x_recd      [LEN_RECD]  = "";
-   int         i           =    0;
-   short       c           =    0;
-   char        x_name      [LEN_TITLE] = "";
-   char       *p           = NULL;
-   char       *q           = NULL;
-   char        x_off       =    0;
-   char        x_bit       [LEN_TERSE] = "";
-   char        x_type      =  '-';
-   char        x_style     =  'r';
-   char        x_beg       [LEN_LABEL] = "";
-   char        x_end       [LEN_LABEL] = "";
-   char        x_done      =  '-';
-   /*---(header)-------------------------*/
-   DEBUG_HFIX    yLOG_enter   (__FUNCTION__);
-   /*---(defense)------------------------*/
-   DEBUG_HFIX  yLOG_char    ("c_action"  , c_action);
-   --rce;  if (c_action  == 0 || strchr ("cCuU", c_action) == NULL) {
-      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   switch (c_action) {
-   case 'c' : case 'u' :  x_style = 'r';  break;  /* recon */
-   case 'C' : case 'U' :  x_style = 'm';  break;  /* make  */
-   }
-   switch (c_action) {
-   case 'c' : case 'C' :  /* c-sources    */
-      strcpy (x_beg, ".c   ");
-      strcpy (x_end, ".cs   ");
-      break;
-   case 'u' : case 'U' :  /* unit testing */
-      strcpy (x_beg, "_unit.c   ");
-      strcpy (x_end, "_unit.cs   ");
-      break;
-   }
-   x_ch = s_compile [MAX_ENTRY - 1][13];
-   DEBUG_HFIX  yLOG_char    ("recon"     , x_ch);
-   --rce;  if (x_style == 'm' && x_ch == '-') {
-      DEBUG_HFIX  yLOG_note    ("recon has not run first");
-      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(open)---------------------------*/
-   rc = BASE__open  (HFIX_OUT, NULL, NULL, &f);
-   DEBUG_HFIX  yLOG_value   ("open"      , rc);
-   DEBUG_HFIX  yLOG_point   ("f"         , f);
-   --rce;  if (rc < 1 || f == NULL) {
-      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(handle lines)-------------------*/
-   while (1) {
-      /*---(read)------------------------*/
-      rc = BASE__read (f, NULL, NULL, x_recd);
-      DEBUG_HFIX  yLOG_value   ("read"      , rc);
-      if (rc == 0) {
-         DEBUG_HFIX  yLOG_note    ("hit end-of-file");
-         break;
-      }
-      /*---(check for done)--------------*/
-      if (strncmp ("make", x_recd, 4) == 0 && strstr  (x_recd, "Leaving directory ") != 0) {
-         DEBUG_HFIX  yLOG_note    ("hit final gcc/make line in file");
-         x_done = 'Y';
-         break;
-      }
-      if (strncmp ("make", x_recd, 4) == 0 && strstr  (x_recd, " Error ")!= 0) {
-         DEBUG_HFIX  yLOG_note    ("hit final fatal make error in file");
-         x_done = 'Y';
-         break;
-      }
-      /*---(filter)----------------------*/
-      if (strncmp ("gcc -std=", x_recd,  9) != 0) {
-         DEBUG_HFIX  yLOG_note    ("does not start with ¶gcc -std=¶");
-         continue;
-      }
-      p = strstr (x_recd, " -c ");
-      if (p == NULL)  {
-         DEBUG_HFIX  yLOG_note    ("no ¶-c¶ option request");
-         continue;
-      }
-      /*---(skip ahead for library)------*/
-      q = strstr (x_recd, " -fPIC ");
-      if (q != NULL)  {
-         DEBUG_HFIX  yLOG_note    ("found ¶-fPIC¶ field");
-         p = q + 7;
-      }
-      /*---(check source type)-----------*/
-      x_type = '-';
-      q = strstr (p, x_beg);
-      if (q != NULL)  {
-         DEBUG_HFIX  yLOG_note    ("found ¶.c¶ or ¶_unit.c¶ compile beginning line");
-         x_type = 'b';
-      } else {
-         q = strstr (p, x_end);
-         if (q != NULL)  {
-            DEBUG_HFIX  yLOG_note    ("found ¶.cs¶ or ¶_unit.cs¶ compile ending line");
-            x_type = 'e';
-         } else {
-            DEBUG_HFIX  yLOG_note    ("source extension is not ¶.c¶ or ¶.cs¶");
-            continue;
-         }
-      }
-      q [0] = '\0';
-      p     = q;
-      DEBUG_HFIX  yLOG_info    ("p"         , p);
-      if (x_type == 'e' && x_style == 'r') {
-         DEBUG_HFIX  yLOG_note    ("recon does not care about ends");
-         continue;
-      }
-      /*---(parse)-----------------------*/
-      for (i = -1; i > -30; --i) {
-         --p;
-         DEBUG_HFIX  yLOG_char    ("p [0]"     , p [0]);
-         if (p [0] == ' ') {
-            strlcpy (x_name, p + 1, LEN_TITLE);
-            break;
-         }
-      }
-      DEBUG_HFIX  yLOG_info    ("x_name"    , x_name);
-      if (strcmp (x_name, "") == 0) {
-         DEBUG_HFIX  yLOG_note    ("source file name not found");
-         continue;
-      }
-      if (x_style == 'r')  x_type = 'n';
-      rc = COMP__mark (x_name, x_type);
-      DEBUG_HFIX  yLOG_value   ("marked"    , rc);
-      if (x_type != 'b')  ++c;
-      /*---(done)------------------------*/
-   }
-   DEBUG_HFIX  yLOG_value   ("c"         , c);
-   /*---(close)--------------------------*/
-   rc = BASE__close (&f);
-   DEBUG_HFIX  yLOG_value   ("close"     , rc);
-   DEBUG_HFIX  yLOG_point   ("f"         , f);
-   --rce;  if (rc < 1 || f != NULL) {
-      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(update total)-------------------*/
-   sprintf (x_bit, "%2d", c);
-   if (x_bit [0] == ' ')  x_bit [0] = '·';
-   if (x_bit [1] == ' ')  x_bit [1] = '·';
-   if (c == 0)            x_bit [1] = '/';
-   if (x_style == 'm')  x_off = 17;
-   else                 x_off = 12;
-   s_compile [MAX_ENTRY - 1][x_off + 0] = x_bit [0];
-   s_compile [MAX_ENTRY - 1][x_off + 1] = x_bit [1];
-   if (x_style == 'r')  s_compile [MAX_ENTRY - 1][x_off + 2] = 'n';
-   else                 s_compile [MAX_ENTRY - 1][x_off + 2] = 'c';
-   /*---(real done)----------------------*/
-   if (x_done == 'Y') {
-      DEBUG_HFIX  yLOG_note    ("all data read including end marker");
-      DEBUG_HFIX    yLOG_exit    (__FUNCTION__);
-      return 'Y';
-   }
    /*---(complete)-----------------------*/
    DEBUG_HFIX    yLOG_exit    (__FUNCTION__);
    return c;
@@ -1000,7 +718,7 @@ ACTS_single             (char c_super, char c_action, char c_phase)
       return rce;
    }
    DEBUG_HFIX    yLOG_char    ("c_action"  , c_action);
-   --rce;  if (c_action  == 0 || strchr (HFIX_ACTION, c_action) == NULL) {
+   --rce;  if (c_action  == 0 || strchr (HFIX_ACTIONS, c_action) == NULL) {
       DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
@@ -1023,17 +741,17 @@ ACTS_single             (char c_super, char c_action, char c_phase)
    else if (c_phase == HFIX_CHK) {
       DEBUG_HFIX    yLOG_note    ("running a check/progress");
       /*---(quick-out)-------------------*/
-      DEBUG_HFIX    yLOG_char    ("s_done"    , s_done);
-      if (s_done == 'Y') {
+      DEBUG_HFIX    yLOG_char    ("my.m_done"    , my.m_done);
+      if (my.m_done == 'Y') {
          DEBUG_HFIX    yLOG_note    ("nothing to do, already done");
          DEBUG_HFIX    yLOG_exit    (__FUNCTION__);
-         return s_done;
+         return my.m_done;
       }
       /*---(import)----------------------*/
       rc = EXIM_import     ("");
       DEBUG_HFIX    yLOG_value   ("import"    , rc);
       /*---(check process)---------------*/
-      if (s_done != 'y') {
+      if (my.m_done != 'y') {
          DEBUG_HFIX    yLOG_note    ("process not complete, must check");
          rc = ACTS__check (c_super, c_action, c_phase, '-', '-', "");
          DEBUG_HFIX    yLOG_value   ("check"     , rc);
@@ -1043,11 +761,11 @@ ACTS_single             (char c_super, char c_action, char c_phase)
          }
       } else {
          DEBUG_HFIX    yLOG_note    ("process complete, do not check");
-         s_cur  = time (NULL);
-         DEBUG_HFIX    yLOG_value   ("s_cur"     , s_cur);
+         my.m_cur  = time (NULL);
+         DEBUG_HFIX    yLOG_value   ("my.m_cur"     , my.m_cur);
          usleep (500000);  /* 0.5s */
-         ++s_cnt;
-         DEBUG_HFIX    yLOG_value   ("s_cnt"     , s_cnt);
+         ++my.m_cnt;
+         DEBUG_HFIX    yLOG_value   ("my.m_cnt"     , my.m_cnt);
       }
       /*---(check results)---------------*/
       rc = ACTS__progress (c_action);
@@ -1057,18 +775,16 @@ ACTS_single             (char c_super, char c_action, char c_phase)
          return rce;
       }
       /*---(finalize)--------------------*/
-      if (s_done == 'Y') {
-         s_end  = time (NULL);
-         strcpy (x_bit, HFIX_age (s_beg, s_end));
-         for (i = 0; i < 3; ++i) s_compile [MAX_ENTRY - 1][23 + i] = x_bit [i];
-         strcpy (s_label, "DONE");
-      } else if (s_done == 'y') {
-         strcpy (s_label, "processing");
+      if (my.m_done == 'Y') {
+         rc = BASE_finishing ();
+         strcpy (my.m_label, "DONE");
+      } else if (my.m_done == 'y') {
+         strcpy (my.m_label, "processing");
       }
-      rc = ACTS__result    (s_done, s_status, s_error, &s_result, s_label);
-      rc = COMP__mark_done (s_status, s_label, s_cnt);
+      rc = ACTS__result    (my.m_done, my.m_status, my.m_error, &my.m_result, my.m_label);
+      rc = BASE_result (my.m_status, my.m_label, my.m_cnt);
       /*---(export)----------------------*/
-      rc = EXIM_export     (c_super, s_result, "");
+      rc = EXIM_export     (c_super, my.m_result, "");
       DEBUG_HFIX    yLOG_value   ("export"    , rc);
       /*---(done)------------------------*/
    }
@@ -1080,7 +796,7 @@ ACTS_single             (char c_super, char c_action, char c_phase)
    }
    /*---(complete)------------------------------*/
    DEBUG_HFIX    yLOG_exit    (__FUNCTION__);
-   return s_done;
+   return my.m_done;
 }
 
 

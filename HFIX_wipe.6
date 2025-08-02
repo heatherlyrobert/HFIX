@@ -1,0 +1,355 @@
+.TH HFIX_wipe· 6 2009-jun "linux" "interactive system usage and navigation"
+
+.SH NAME
+HFIX \- better integrate gcc/make into VIM/IDE to accelerate debugging
+
+.SH PATRON
+hephaestus-klytotekhnes (blacksmith) olympian god of technology
+
+.SH IMAGERY
+muscular, lame-footed, usually shown seated with a hammer and an anvil
+
+.SH SUMMARY
+HFIX (heatherly fix) is my VIM/IDE (VIDE/see) service to accelerate the painful,
+repetitive, tedious, and error-prone cycle of compiling, linking, debugging,
+and installing software into a more smooth and targeted one.
+
+.SH SERIOUS FOREWARNING
+i am a crazy, selfish, dog-fooding c-programmer.  my code tends to be
+experimental and constantly evolving.  my point is NOT to be the best, it is
+to challenge myself, build from scratch, and allow fast problem solving.
+
+.SH DOCUMENTATION (see also) ========================================================#
+.nf
+HFIX (6)           overview of HFIX
+.B HFIX_wipe (6)·´´´´·managing wipe/clean of files
+HFIX_comp (6)      managing c-source compilation
+HFIX_inst (6)      managing installing executables
+HFIX_unit (6)      managing unit-test compilation
+HFIX_reov (6)      managing removing installed files
+HFIX_mans (6)      managing installation of manuals
+HFIX_git (6)       managing simple git versioning
+HFIX_test (6)      managing execuation of unit tests
+HFIX_combo (6)     managing combination actions
+HFIX (7)           purpose and reasoning for HFIX
+
+.SH TABLE OF CONTENTS ===============================================================#
+.nf  
+A) overview        quick summary
+B) requirements    what software is required to run
+C) visual          shows how wipe looks to the end-user
+D) recon           determining which files "should" be wiped
+E) unit test       unit test related summary
+F) execuable       executable related summary
+G) working         working filne related summary
+H) totals          wiping totals
+I) critical        critical process data for debugging
+I) list            list of actual files to be deletet
+K) wiping          executing the actual wipe
+
+to go to section E), just search for E) its in the section title.
+
+.SH A) == [[ OVERVIEW ]] == == == == == == == == == == == == == == == == == == == == #
+HFIX wipe clears out created and wasteful files from the programs source code
+directory in order to take up less space or force full recompilation.
+
+123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456
+
+wiping is a two stage process.  first, determining what coult be wiped,
+witch is called (w), "wipe", or "wipe recon".  and, second, wiping the files
+themselves, which is called (W), "WIPE", or "wipe execution".
+
+WARNING> there is no undo ;)  backup, use git, and pray.  oh, and always
+run recon before a full wipe.
+
+.SH B) == [[ REQUIREMENTS ]]== == == == == == == == == == == == == == == == == == == #
+VIDE and HFIX both require gnu/linux and gcc/make (obviously).  additionally, then both use...
+   ´ phoenicia, my personal character set (ASCII + 128 special chars)
+   ´ zenodotus, my make system and shared Makefile
+   ´ vim configuration, at least portions of by .vimrc and syntax files
+   ´ yLOG and yURG, as i will not build without logging and tracing
+   ´ yUNIT and koios, as i will not create software without unit testing
+   ´ yENV, filesystem access library
+   ´ yEXEC_uver, for stable forking and waiting
+   ´ yCOLOR_solo, terminal color definitions
+
+.SH C) == [[ VISUAL PRESENTATION ]]= == == == == == == == == == == == == == == == == #
+the actions of wipe obviously reduce the number of files in the programs
+directory; but, to understand, value, and trust the impect, you need to see
+what is happening.
+
+HFIX always appears as a ten (10) line window directly below the main editing
+window.  HFIX is shown by typing ",q" in an editing window.
+
+the two visuals below are the recon (pre-wipe) and execution (post-wipe)
+for the HFIX program itself.  the examples have both been altered slightly
+to compress them horizontally to fit on a typical man page.
+
+example output for (w) wipe, the recon of wipe
+.nl
+   ---------------------------------------------------------------------------
+   HFIX·gcc/make·(----)··chosen··(w:wipe)·=·recon·of·files·to·be·cleared······
+   unit·header·····1r·-··-·| main·src·strp··15r··-···-·| temp·files····5r·-··-
+   unit·src·······13r·-··-·| main·obj·······15r··-···-·| temp·CAUTION··1r·-··-
+   unit·src·strp··13r·-··-·| main·obj·strp··15r··-···-·| swap·CAUTION··2r·-··-
+   unit·obj·······13r·-··-·| main·exec·······1r··-···-·| HFIX·working··-··-··-
+   unit·obj·strp··13r·-··-·| main·debug······1r··-···-·| HTAG·working··-··-··-
+   unit·exec······13r·-··-·| main·shared·····-···-···-·| polymnia·work·1r·-··-
+   unit·debug·····13r·-··-·| main·static·····-···-···-·| fat·fingers···-··-··-
+   unit·output·····1r·-··-·| ························· | ·····················
+   unit·work·······1r·-··-·| ···60b···2m· | ·199t··21m·| wipe··139r···-···-··-
+   ---------------------------------------------------------------------------
+   below ++++++++++++++++++++++++ process data +++++++++++++++++++++++++++++++
+   under ++++++++++++++++++++++ file disposition +++++++++++++++++++++++++++++
+
+example output for (W) WIPE, the execution...
+.nl
+   ---------------------------------------------------------------------------
+   HFIX·gcc/make·(----)··chosen··(w:wipe)·=·recon·of·files·to·be·cleared······
+   unit·header·····1r·Û··Û | main·src·strp··15r·Û··Û·| temp·files······7r·Û··Û
+   unit·src·······13r·Û··Û | main·obj·······15r·Û··Û·| temp·CAUTION····1r·Ï··Ï
+   unit·src·strp··13r·Û··Û | main·obj·strp··15r·Û··Û·| swap·CAUTION····2r·Ï··Ï
+   unit·obj·······13r·Û··Û | main·exec·······1r·Û··Û·| HFIX·working····-··Û··Û
+   unit·obj·strp··13r·Û··Û | main·debug······1r·Û··Û·| HTAG·working····-··Û··Û
+   unit·exec······13r·Û··Û | main·shared·····-··Û··Û·| polymnia·work···1r·Û··Û
+   unit·debug·····13r·Û··Û | main·static·····-··Û··Û·| fat·fingers·····-··Û··Û
+   unit·output·····1r·Û··Û | ························| ·······················
+   unit·work·······1r·Û··Û | ··60b···2m· |·199t··21m·| wipe·139r·136w·136v··<s
+   ---------------------------------------------------------------------------
+   below ++++++++++++++++++++++++ process data +++++++++++++++++++++++++++++++
+   under ++++++++++++++++++++++ file disposition +++++++++++++++++++++++++++++
+
+major sections of the visual.  there are a title plus six (6) sections to be
+explained better below...
+ ´ top              simple title
+ ´ col 1 (left)     unit-test related files          (see section E)
+ ´ col 2 (center)   executable related files         (see section F)
+ ´ col 3 (right)    working files                    (see section G)
+ ´ bottom           some totals                      (see section H)
+ ´ unseen (below)   HFIX process data (debugging)    (see section I)
+ ´ unseen (under)   list of the files to delete      (see section J)
+
+.SH D) == [[ WIPE RECON (w) ]] == == == == == == == == == == == == == == == == == == #
+in the HFIX window, just press "w".  it will show data not-unlike that in
+the example below.  the sections will be the same, but the numbers will vary.
+
+the numbers next to the names indicate the number of files found that fit
+that category as defined in the HFIX program.  they are suffixed with 'r'
+for recon.  in the bottom right, the number with an 'r' at the end is the
+total number of files that will be wiped.
+
+example output (only a few characters have been truncated at the right)...
+.nl
+   ---------------------------------------------------------------------------
+   HFIX·gcc/make·(----)··chosen··(w:wipe)·=·recon·of·files·to·be·cleared······
+   unit·header·····1r·-··-·| main·src·strp··15r··-···-·| temp·files····5r·-··-
+   unit·src·······13r·-··-·| main·obj·······15r··-···-·| temp·CAUTION··1r·-··-
+   unit·src·strp··13r·-··-·| main·obj·strp··15r··-···-·| swap·CAUTION··2r·-··-
+   unit·obj·······13r·-··-·| main·exec·······1r··-···-·| HFIX·working··-··-··-
+   unit·obj·strp··13r·-··-·| main·debug······1r··-···-·| HTAG·working··-··-··-
+   unit·exec······13r·-··-·| main·shared·····-···-···-·| polymnia·work·1r·-··-
+   unit·debug·····13r·-··-·| main·static·····-···-···-·| fat·fingers···-··-··-
+   unit·output·····1r·-··-·| ··························| ······················
+   unit·work·······1r·-··-·| ···60b···2m· | ·199t··21m·| wipe··139r···-···-··-
+   ---------------------------------------------------------------------------
+
+the next four sections will explain the sections of this output.
+
+.SH E) == [[ UNIT-TEST RELATED FILES ]] == == == == == == == == == == == == == == == #
+oolumn one (1), on the letf, summarizes the unit-testing files that are
+easily recreated through koios and gcc/make.  they are grouped into nine
+(9) categories.  these categories only exist to help me visually vailidata
+what will happen.
+
+NOTE> the actual files are listed at the bottom (see section J)
+
+example output...
+.nl
+   -------------------------------------------------------------------------
+   HFIX·gcc/make·(----)··chosen··(w:wipe)·=·recon·of·files·to·be·cleared····
+   unit·header·····1r··-···-·  |      |      |    created by koios
+   unit·src·······13r··-···-·  |      |      |       " ditto
+   unit·src·strp··13r··-···-·  | col  | col  |    created by gcc/make
+   unit·obj·······13r··-···-·  |  2   |  3   |       " ditto
+   unit·obj·strp··13r··-···-·  |      |      |       " ditto
+   unit·exec······13r··-···-·  |      |      |       " ditto
+   unit·debug·····13r··-···-·  |      |      |       " ditto
+   unit·output·····1r··-···-·  |      |      |    output from running units
+   unit·work·······1r··-···-·  |      |      |    transient files
+   -------------------------------------------------------------------------
+
+.SH F) == [[ EXECUTABLE RELATED FILES ]]== == == == == == == == == == == == == == == #
+oolumn two (2), in the center, summarizes various source, object, and executable
+files that are easily recreated through gcc/make.  they are grouped into seven
+(7) categories.  these categories help me vailidata what will happen.
+
+NOTE> the actual files are listed at the bottom (see section J)
+
+example output...
+.nl
+   -------------------------------------------------------------------------
+   HFIX·gcc/make·(----)··chosen··(w:wipe)·=·recon·of·files·to·be·cleared····
+   u     | main·src·strp··15r··-···-·  |     |    created by gcc/make
+   u     | main·obj·······15r··-···-·  |     |       " ditto
+   u col | main·obj·strp··15r··-···-·  | col |       " ditto
+   u  1  | main·exec·······1r··-···-·  |  3  |    final executables
+   u     | main·debug······1r··-···-·  |     |       " ditto
+   u     | main·shared·····-···-···-·  |     |    final libraries
+   u     | main·static·····-···-···-·  |     |       " ditto
+   u     | ··························  |     |
+   u     | ···60b···2m· | ·199t··21m·  |     |   (totals see below)
+   -------------------------------------------------------------------------
+
+.SH G) == [[ WORKING FILES ]]= == == == == == == == == == == == == == == == == == == #
+oolumn three (3), on the right, summarizes various temporary and working files
+that typically can be eliminated with little thought.  they are grouped into
+seven (7) categories.  these categories help me vailidata what will happen.
+
+NOTE > the two lines labeled with CAUTION will not be automatically erased,
+but listed below to allow manual removal.  the actual files are listed at
+the bottom (see section J).
+
+example output...
+.nl
+   -------------------------------------------------------------------------
+   HFIX·gcc/make·(----)··chosen··(w:wipe)·=·recon·of·files·to·be·cleared····
+   u     |     | temp·files······5r··-···-·  |    system temp
+   u     |     | save·CAUTION····1r··-···-·  |    user saved/old
+   u col | col | swap·CAUTION····2r··-···-·  |    system editing swap
+   u  1  |  2  | HFIX·working····-···-···-·  |    HFIX left-overs
+   u     |     | HTAG·working····-···-···-·  |    HTAG left-overs
+   u     |     | polymnia·work···1r··-···-·  |    polymnia left-overs
+   u     |     | fat·fingers·····-···-···-·  |    idiot mistakes
+   u     |     | ··························  |
+   u     |     | wipe··139r···-····-·····1s  |   (totals see below)
+   -------------------------------------------------------------------------
+
+.SH H) == [[ TOTALS ]]== == == == == == == == == == == == == == == == == == == == == #
+the total line at the bottom of the visible screen has two complementary
+parts -- sizes before and after (center), then file totals (right).
+
+example output for sizes...
+.nl
+   u         col 1         | ···60b···2m· | ·199t··21m·|      col 3          
+   ---------------------------------------------------------------------------
+
+the center of the bottom visible row indicates the base and current counts
+and sizes...
+   ´ " 60b   2m" means the after/base version is 60 files and 2mb.
+   ´ "199t  21m" means the curr/total version is 199 files and 21mb.
+
+example output for totals...
+.nl
+   u         col 1          |          col 2         | wipe·139r·136w·136v··<s
+   ---------------------------------------------------------------------------
+
+the right of the bottom givs counts and duration...
+   ´ "139r"    means 139 files can be wiped
+   ´ "136w"    means 136 files were wiped (3 less)
+   ´ "136v"    means those 136 wiped files were verified as gone
+   ´ "<s"      means the recon-to-execution took under a second
+
+the differenc between 139 reconed and 136 wiped is...
+   ´ 1r (save CAUTION) never automatically deleted
+   ´ 2r (swap CAUTION) never automatically deleted
+
+.SH I) == [[ CRITICAL DATA ]]= == == == == == == == == == == == == == == == == == == #
+HFIX is able to run processes in the background and update the window
+in the interim to give feedback.  in order to manage this process, i chose
+to keep critical data right in the window itself (fun and foolish).
+
+NOTE> i know this is crazy, but it is wildly transparent for unit testing
+and debugging during execution.  as i am the sole user, zero risk.
+
+this data is on two (2) lines right below the visible portion of the data
+please don't modify the data, it will just confuse the program a little and
+hopefully lead it to delete your entire harddrive and web presence ;))
+
+example output...
+.nl
+   ---------------------------------------------------------------------------
+   pid=0         cnt=0        beg=1753701046   cur=0            end=1753701046  
+   who=HFIX_     ext=wipe     don=Y ······  sta=- ······  res=p ······  err=-  
+   ---------------------------------------------------------------------------
+
+the data is...
+   ´ pid=   run-time pid of the forked subprocess (for later waits)
+   ´ cnt=   count of checks HFIX did in gathering data (~0.5s per check)
+   ´ beg=   epoch (in seconds) when request given
+   ´ cur=   epoch (in seconds) of latest check
+   ´ end=   epoch (in seconds) of when the full activity was completed
+   ´ who=   "project" portion of the current directory
+   ´ ext=   always shows "wipe" during wipes
+   ´ don=   -= underway, y=sub-process done, Y=really done
+   ´ sta=   status of sub-process (r) running, (#) done, many other values
+   ´ res=   ?=underway, p=pass, E=error, W=warning
+   ´ err=   -=no, y=yes
+
+.SH J) == [[ LISTING OF FILES FOR WIPING ]]== == == == == == == == == == == == == == #
+i sometimes like to triple-check at least one file or another.  it was simple
+enough just to include a list of all files in the directory, whether they
+will be wiped, and which internal rule select it for wiping.
+
+to view the area, just go to the HFIX window and do down ;)
+
+example output (´ means a discontinuity in records)...
+.nl
+   -------------------------------------------------------------------------
+   u   1   1  >  HFIX_remove_unit.cs             unit·src·strp
+   u   2   2  >  HFIX_remove_unit.c              unit·src
+   u   3   3  >  HFIX_base_unit.c                unit·src
+   u   ´   ´  ´  ´                               ´
+   u  15 ---  ·  HFIX.6                          ----------
+   u  18 ---  ·  HFIX_maint.unit                 ----------
+   u  19 ---  ·  HFIX_base.c                     ----------
+   u  20  14  >  HFIX_temp_unit.o                unit·obj
+   u   ´   ´  ´  ´                               ´
+   u  25 ---  ·  .gitignore                      ----------
+   u  26  17  >  HFIX_base.o                     main·obj
+   u  27 ---  ·  HFIX_comp.unit                  ----------
+   u   ´   ´  ´  ´                               ´
+
+the columns mean...
+   ´ file number -- completely sequential as reviewed
+   ´ count       -- counting up the files to be wiped (--- means keep)
+   ´ indicator   -- '>' means to be wiped, '·' means keep
+   ´ file name   -- just the name
+   ´ rule        -- this is where it is added on the main screen
+
+.SH K) == [[ EXECUTING THE WIPE ]]== == == == == == == == == == == == == == == == == #
+in the HFIX window, just press "W".  it will show data not-unlike that in
+the example below.  the sections will be the same, but the numbers will vary.
+
+example output for (W) WIPE, the execution...
+.nl
+   ---------------------------------------------------------------------------
+   HFIX·gcc/make·(----)··chosen··(w:wipe)·=·recon·of·files·to·be·cleared······
+   unit·header·····1r·Û··Û | main·src·strp··15r·Û··Û·| temp·files······7r·Û··Û
+   unit·src·······13r·Û··Û | main·obj·······15r·Û··Û·| temp·CAUTION····1r·Ï··Ï
+   unit·src·strp··13r·Û··Û | main·obj·strp··15r·Û··Û·| swap·CAUTION····2r·Ï··Ï
+   unit·obj·······13r·Û··Û | main·exec·······1r·Û··Û·| HFIX·working····-··Û··Û
+   unit·obj·strp··13r·Û··Û | main·debug······1r·Û··Û·| HTAG·working····-··Û··Û
+   unit·exec······13r·Û··Û | main·shared·····-··Û··Û·| polymnia·work···1r·Û··Û
+   unit·debug·····13r·Û··Û | main·static·····-··Û··Û·| fat·fingers·····-··Û··Û
+   unit·output·····1r·Û··Û | ························| ·······················
+   unit·work·······1r·Û··Û | ··60b···2m· |·199t··21m·| wipe·139r·136w·136v··<s
+   ---------------------------------------------------------------------------
+   below ++++++++++++++++++++++++ process data +++++++++++++++++++++++++++++++
+   under ++++++++++++++++++++++ file disposition +++++++++++++++++++++++++++++
+
+if the actual wiped number next to the recon number matches a (Û) symbol is
+shown, else the actual number with a 'w' suffix is.
+
+next, the wipe is verified.  if the verify matches the recon, a (Û) synbol is
+shown, else the actual number with a 'v' suffix is.
+
+lastly, in the case of the CAUTION entries, they are shown with the (Ï) symbol
+to indicate they where not even attempted in the wipe.
+
+.SH BUGS ============================================================================#
+HFIX is incredibly stable for me, but if anyone else used it it might explode
+and take the universe with it.  YMMV.
+
+.SH COLOPHON ========================================================================#
+this page is part of a documentation package meant to make the use of the
+heatherly tools easier and faster

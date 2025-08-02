@@ -89,7 +89,7 @@ LD_parse                (char a_recd [LEN_RECD], short *b_count, char r_file [LE
       return rce;
    }
    /*---(regrade)------------------------*/
-   rc  = GCC__regrade (g_ylog, r_msg, r_level);
+   rc  = GCC__regrade (my.m_ylog, r_msg, r_level);
    DEBUG_HFIX  yLOG_value   ("regrade"   , rc);
    --rce;  if (rc < 0) {
       DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);

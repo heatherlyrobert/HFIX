@@ -3,57 +3,33 @@
 
 
 char
-WIPE__prepare           (char c_super, char c_action, char *r_export, char *r_style, FILE **b_file)
+WIPE__prepare           (char c_pass, char c_desc [LEN_TERSE], char c_export, char c_maintset, FILE **b_file)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    char        rc          =    0;
    FILE       *f           = NULL;
-   char        x_export    =  '-';
-   char        x_style     =  '-';
    /*---(header)-------------------------*/
    DEBUG_HFIX   yLOG_enter   (__FUNCTION__);
    /*---(default)------------------------*/
-   if (r_export   != NULL)  *r_export = '-';
    if (b_file     != NULL)  *b_file = NULL;
-   /*---(list making)--------------------*/
-   DEBUG_HFIX   yLOG_char    ("c_super"    , c_super);
-   DEBUG_HFIX   yLOG_char    ("c_action"   , c_action);
-   if (c_super == 'w' && c_action == 'r')  x_export = 'y';
-   if (c_super == 'W' && c_action == 'w')  x_export = 'y';
-   if (c_super == 'i' && c_action == 'r')  x_export = 'y';
-   if (c_super == 'I' && c_action == 'w')  x_export = 'y';
-   if (c_super == 'r' && c_action == 'r')  x_export = 'y';
-   if (c_super == 'R' && c_action == 'w')  x_export = 'y';
-   DEBUG_HFIX   yLOG_char    ("x_export"   , x_export);
-   /*---(set style)----------------------*/
-   --rce;  switch (c_super) {
-   case 'w' : case 'W':  x_style = 'w';  break;
-   case 'i' : case 'I':  x_style = 'i';  break;
-   case 'r' : case 'R':  x_style = 'r';  break;
-   case 'm' : case 'M':  x_style = 'm';  break;
-   default  :
-      DEBUG_HFIX   yLOG_exitr   (__FUNCTION__, rce);
-      return  rce;
-   }
-   DEBUG_HFIX   yLOG_char    ("x_style"    , x_style);
    /*---(remove old files)---------------*/
    rc = yENV_rm (HFIX_BUF);
    DEBUG_HFIX   yLOG_char    ("HFIX_BUF"   , rc);
    rc = yENV_rm (HFIX_LST);
    DEBUG_HFIX   yLOG_char    ("HFIX_LST"   , rc);
    /*---(prepare for recon)--------------*/
-   if (c_action == 'r') {
+   if (c_pass == HFIX_RECON) {
+      rc = BASE_starting ();
       DEBUG_HFIX    yLOG_note    ("starting fresh");
-      rc = COMP__clear ("wipe");
+      rc = BASE_clear (c_desc);
       DEBUG_HFIX    yLOG_value   ("clear"     , rc);
-      s_beg  = time (NULL);
-      DEBUG_HFIX    yLOG_value   ("s_beg"     , s_beg);
-      rc = MAINT__base  (x_style);
+      rc = MAINT__base  (c_maintset);
       DEBUG_HFIX    yLOG_value   ("base"      , rc);
    }
    /*---(open list file)-----------------*/
-   if (x_export == 'y') {
+   DEBUG_HFIX   yLOG_char    ("c_export"   , c_export);
+   if (c_export == 'y') {
       DEBUG_HFIX    yLOG_note    ("openning list file");
       f = fopen (HFIX_LST, "wt");
       DEBUG_HFIX   yLOG_point   ("f"          , f);
@@ -65,7 +41,6 @@ WIPE__prepare           (char c_super, char c_action, char *r_export, char *r_st
       DEBUG_HFIX    yLOG_note    ("not openning list file");
    }
    /*---(save-back)----------------------*/
-   if (r_export   != NULL)  *r_export = x_export;
    if (b_file     != NULL)  *b_file = f;
    /*---(complete)-----------------------*/
    DEBUG_HFIX    yLOG_exit    (__FUNCTION__);
@@ -73,7 +48,7 @@ WIPE__prepare           (char c_super, char c_action, char *r_export, char *r_st
 }
 
 char
-WIPE__finalize          (char c_super, char c_action, int a_total, int a_count, int x_caution, llong a_all, llong a_wipe, char c_unit, char a_export, FILE **b_file)
+WIPE__finalize          (char c_super, char c_pass, int a_total, int a_count, int a_caution, llong a_all, llong a_wipe, char c_export, char c_unit, FILE **b_file)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rc          =    0;
@@ -88,92 +63,45 @@ WIPE__finalize          (char c_super, char c_action, int a_total, int a_count, 
    /*---(header)-------------------------*/
    DEBUG_HFIX   yLOG_enter   (__FUNCTION__);
    DEBUG_HFIX   yLOG_char    ("c_super"    , c_super);
-   DEBUG_HFIX   yLOG_char    ("c_action"   , c_action);
-   DEBUG_HFIX   yLOG_char    ("a_export"   , a_export);
+   DEBUG_HFIX   yLOG_char    ("c_pass"     , c_pass);
    /*---(show remaining------------------*/
-   if (c_action == 'r') {
-      sprintf (x_bit, "%4db·%4s· Œ ", a_total - a_count - x_caution, HFIX_size (a_all - a_wipe));
-      if (x_bit [0] == ' ')  x_bit [0] = '·';
-      if (x_bit [1] == ' ')  x_bit [1] = '·';
-      if (x_bit [2] == ' ')  x_bit [2] = '·';
-      if (x_bit [3] == ' ')  x_bit [3] = '·';
-      DEBUG_HFIX   yLOG_info    ("x_bit"     , x_bit);
-      for (i = 0; i < 14; ++i)  s_compile [MAX_ENTRY - 2][ 1 + i] = x_bit [i];
+   if (c_pass == HFIX_RECON) {
+      rc = BASE_size ('b', a_total - a_count - a_caution, a_all - a_wipe);
+      DEBUG_HFIX    yLOG_value   ("base"      , rc);
    }
    /*---(show total)---------------------*/
-   if (c_action == 'r') {
-      sprintf (x_bit, "%4dt·%4s", a_total, HFIX_size (a_all));
-      if (x_bit [0] == ' ')  x_bit [0] = '·';
-      if (x_bit [1] == ' ')  x_bit [1] = '·';
-      if (x_bit [2] == ' ')  x_bit [2] = '·';
-      if (x_bit [3] == ' ')  x_bit [3] = '·';
-      DEBUG_HFIX   yLOG_info    ("x_bit"     , x_bit);
-      for (i = 0; i < 10; ++i)  s_compile [MAX_ENTRY - 2][15 + i] = x_bit [i];
+   if (c_pass == HFIX_RECON) {
+      rc = BASE_size ('t', a_total, a_all);
+      DEBUG_HFIX    yLOG_value   ("total"     , rc);
+      if (c_export == 'y')   BASE_done ('p');
    }
    /*---(check each one)-----------------*/
-   if (c_action == 'w') {
+   if (c_pass == HFIX_EXEC) {
       DEBUG_HFIX    yLOG_note    ("compare recon, wipe, and verify details");
       strcpy (x_check, "·Û·");
       for (i = 0; i < MAX_ENTRY - 2; ++i) {
-         /*---(check)--------------------*/
-         DEBUG_HFIX    yLOG_value   ("i"         , i);
-         if (s_compile [i][0] == '·')  continue;
-         /*---(get recon)----------------*/
-         strlcpy (x_key, s_compile [i] + 15, 3);
-         DEBUG_HFIX    yLOG_info    ("x_key"     , x_key);
-         /*---(check wipe)---------------*/
-         strlcpy (x_cmp, s_compile [i] + 19, 3);
-         DEBUG_HFIX    yLOG_info    ("x_cmp"     , x_cmp);
-         if (strcmp (x_cmp, "·Ï") != 0) {
-            if (strcmp (x_key, x_cmp) != 0)  x_result = 'E';
-            else { for (x = 0; x < 3; ++x)  s_compile [i][19 + x] = x_check [x]; }
-            DEBUG_HFIX    yLOG_char    ("x_result"  , x_result);
-         }
-         /*---(check verify)-------------*/
-         strlcpy (x_cmp, s_compile [i] + 23, 3);
-         DEBUG_HFIX    yLOG_info    ("x_cmp"     , x_cmp);
-         if (strcmp (x_cmp, "·Ï") != 0) {
-            if (strcmp (x_key, x_cmp) != 0)  x_result = 'E';
-            else { for (x = 0; x < 3; ++x)  s_compile [i][23 + x] = x_check [x]; }
-            DEBUG_HFIX    yLOG_char    ("x_result"  , x_result);
-         }
-         /*---(done)---------------------*/
+         rc = BASE_matching (i, &x_result);
+         DEBUG_HFIX    yLOG_complex ("match"     , "%2d, %d, %c", i, rc, x_result);
       }
-      s_done   = 'Y';
-      s_result = x_result;
+      BASE_done (x_result);
    }
    /*---(check totals)-------------------*/
-   if (c_action == 'w') {
-      strcpy (x_check, "··Û·");
-      /*---(get recon)-------------------*/
-      strlcpy (x_key, s_compile [MAX_ENTRY - 1] +  6, 4);
-      DEBUG_HFIX    yLOG_info    ("x_key"     , x_key);
-      /*---(check wipe)---------------*/
-      strlcpy (x_cmp, s_compile [MAX_ENTRY - 1] + 11, 4);
-      DEBUG_HFIX    yLOG_info    ("x_cmp"     , x_cmp);
-      if (strcmp (x_key, x_cmp) != 0)  ; /* x_result = 'E'; */
-      else { for (x = 0; x < 4; ++x)  s_compile [MAX_ENTRY - 1][11 + x] = x_check [x]; }
-      /*---(check verify)-------------*/
-      strlcpy (x_cmp, s_compile [MAX_ENTRY - 1] + 16, 4);
-      DEBUG_HFIX    yLOG_info    ("x_cmp"     , x_cmp);
-      if (strcmp (x_key, x_cmp) != 0)  ; /* x_result = 'E'; */
-      else { for (x = 0; x < 4; ++x)  s_compile [MAX_ENTRY - 1][16 + x] = x_check [x]; }
-      DEBUG_HFIX    yLOG_char    ("x_result"  , x_result);
+   if (c_pass == HFIX_EXEC) {
+      rc = BASE_matching (MAX_ENTRY - 1, &x_result);
+      DEBUG_HFIX    yLOG_complex ("match"     , "%2d, %d, %c", MAX_ENTRY - 1, rc, x_result);
    }
    /*---(handle duration)----------------*/
-   s_end  = time (NULL);
-   DEBUG_HFIX    yLOG_value   ("s_end"     , s_end);
-   strcpy (x_bit, HFIX_age (s_beg, s_end));
-   for (i = 0; i < 3; ++i) s_compile [MAX_ENTRY - 1][23 + i] = x_bit [i];
+   rc = BASE_finishing ();
    /*---(save-back)----------------------*/
-   if (a_export == 'y' && b_file != NULL) {
+   if (c_export == 'y' && b_file != NULL) {
       fclose (*b_file);
       *b_file = NULL;
    }
    /*---(export)-------------------------*/
-   if (a_export == 'y') {
-      if (c_unit == 'y')  rc = EXIM_export     ('w', 'p', HFIX_BUF);
-      else                rc = EXIM_export     ('w', 'p', "");
+   DEBUG_HFIX   yLOG_char    ("c_export"   , c_export);
+   if (c_export == 'y') {
+      if (c_unit == 'y')  rc = EXIM_export     (c_super, 'p', HFIX_BUF);
+      else                rc = EXIM_export     (c_super, 'p', "");
       DEBUG_HFIX    yLOG_value   ("export"    , rc);
    }
    /*---(save-back)----------------------*/
@@ -185,11 +113,21 @@ WIPE__finalize          (char c_super, char c_action, int a_total, int a_count, 
 }
 
 char
-WIPE_pass               (char c_super, char c_action, char c_unit)
+WIPE_pass               (char c_super, char c_major, char c_minor, char c_phase, char c_unit)
 {
    /*---(locals)-----------+-----+-----+-*/
    int         rc          =    0;
    char        rce         =  -10;
+   /*---(context)------------------------*/
+   char        x_whoami    [LEN_LABEL] = "";
+   char        x_desc      [LEN_TERSE] = "";
+   char        x_theme     =  '-';
+   char        x_layout    =  '-';
+   char        x_pass      =  '-';
+   char        x_ext       [LEN_TERSE] = "";
+   char        x_export    =  '-';
+   char        x_maintset  =  '-';
+   /*---(normal)-------------------------*/
    DIR        *x_dir       = NULL;
    tDIRENT    *x_file      = NULL;
    int         x_total     =    0;
@@ -202,19 +140,26 @@ WIPE_pass               (char c_super, char c_action, char c_unit)
    llong       x_all       =    0;
    llong       x_wipe      =    0;
    FILE       *f           = NULL;
-   char        x_export    =  '-';
-   char        x_style     =  '-';
    /*---(header)-------------------------*/
    DEBUG_HFIX   yLOG_enter   (__FUNCTION__);
+   /*---(precheck)-----------------------*/
+   DEBUG_HFIX   yLOG_complex ("args"       , "%c, %c, %c, %c, %c", c_super, c_major, c_minor, c_phase, c_unit);
+   rc = BASE_precheck (c_super, c_major, c_minor, c_phase, HFIX_NONE, x_whoami, x_desc, &x_theme, &x_layout, &x_pass, x_ext, &x_export, &x_maintset, c_unit);
+   DEBUG_HFIX   yLOG_char    ("precheck"   , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_HFIX   yLOG_exitr   (__FUNCTION__, rce);
+      return  rce;
+   }
+   DEBUG_HFIX   yLOG_char    ("x_pass"     , x_pass);
+   DEBUG_HFIX   yLOG_char    ("x_export"   , x_export);
    /*---(prepare)------------------------*/
-   rc = WIPE__prepare (c_super, c_action, &x_export, &x_style, &f);
+   rc = WIPE__prepare (x_pass, x_desc, x_export, x_maintset, &f);
    DEBUG_HFIX   yLOG_value   ("prepare"    , rc);
    --rce;  if (rc < 0) {
       DEBUG_HFIX   yLOG_exitr   (__FUNCTION__, rce);
       return  rce;
    }
-   DEBUG_HFIX   yLOG_char    ("x_export"   , x_export);
-   DEBUG_HFIX   yLOG_char    ("x_style"    , x_style);
+   DEBUG_HFIX   yLOG_point   ("f"          , f);
    /*---(open dir)-----------------------*/
    x_dir = opendir(".");
    DEBUG_HFIX   yLOG_point   ("x_dir"      , x_dir);
@@ -242,7 +187,7 @@ WIPE_pass               (char c_super, char c_action, char c_unit)
       ++x_total;
       x_all  += x_size;
       /*----(filtering)------------------*/
-      rc = MAINT__identify (c_super, x_file->d_name, s_whoami, x_rule);
+      rc = MAINT__identify (c_super, x_file->d_name, x_whoami, x_rule);
       DEBUG_HFIX   yLOG_value   ("identify"  , rc);
       if (rc <= 0) {
          DEBUG_HFIX   yLOG_note    ("file not identified for removal");
@@ -260,23 +205,23 @@ WIPE_pass               (char c_super, char c_action, char c_unit)
          fprintf (f, "%3d %3d  >  %-30.30s  %s\n", x_total, x_count, x_file->d_name, x_rule);
       }
       /*----(recon)----------------------*/
-      if (c_action == 'r') {
+      if (x_pass == HFIX_RECON) {
          DEBUG_HFIX   yLOG_note    ("recon adds to totals");
-         rc = MAINT__increment (c_action, x_rule, 'r');
+         rc = BASE_increment (x_theme, x_rule, HFIX_RECON);
          DEBUG_HFIX   yLOG_value   ("increment" , rc);
       }
       /*----(wipe)-----------------------*/
-      if (c_action == 'w') {
+      if (x_pass == HFIX_EXEC) {
          if (strchr ("Ww", c_super) != NULL) {
             if (strstr (x_rule, "CAUTION") == NULL) {
                DEBUG_HFIX   yLOG_note    ("wipe removes");
-               rc = MAINT__increment (c_action, x_rule, 'w');
+               rc = BASE_increment (x_theme, x_rule, HFIX_EXEC);
                rc = yENV_rm (x_file->d_name);
-               if (rc == '-')   rc = MAINT__increment (c_action, x_rule, 'v');
+               if (rc == '-')   rc = BASE_increment (x_theme, x_rule, HFIX_VERIFY);
             } else {
                DEBUG_HFIX   yLOG_note    ("CAUTION item, must be hand deleted");
-               rc = MAINT__increment (c_action, x_rule, 'w');
-               rc = MAINT__increment (c_action, x_rule, 'v');
+               rc = BASE_increment (x_theme, x_rule, HFIX_EXEC);
+               rc = BASE_increment (x_theme, x_rule, HFIX_VERIFY);
                --x_count;
                x_wipe -= x_size;
                ++x_caution;
@@ -299,7 +244,7 @@ WIPE_pass               (char c_super, char c_action, char c_unit)
    rc = closedir (x_dir);
    DEBUG_HFIX   yLOG_value   ("close_rc"  , rc);
    /*---(show remaining-------------------------*/
-   rc = WIPE__finalize (c_super, c_action, x_total, x_count, x_caution, x_all, x_wipe, c_unit, x_export, &f);
+   rc = WIPE__finalize (c_super, x_pass, x_total, x_count, x_caution, x_all, x_wipe, x_export, c_unit, &f);
    DEBUG_HFIX   yLOG_value   ("finalize"   , rc);
    /*---(complete)------------------------------*/
    DEBUG_HFIX   yLOG_exit    (__FUNCTION__);

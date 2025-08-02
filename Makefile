@@ -65,6 +65,10 @@ install_post       :
 	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_REMV
 	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_mans
 	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_MANS
+	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_git
+	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_GIT
+	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_test
+	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_TEST
 	ln --force --physical /usr/local/bin/HFIX_master   /usr/local/bin/HFIX_unittest
 	# done --------------------------------
 

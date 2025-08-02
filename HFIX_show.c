@@ -143,10 +143,10 @@ SHOW_totals             (char c_pass, char c_color, short a_show, short a_fail, 
    SHOW_num (a_waste, 4, x_waste);
    SHOW_num (a_msgs , 4, x_msgs);
    SHOW_num (a_total, 5, x_total);
-   sprintf (g_break, "%shnt -·---buffer--------------------- line col typ·---message-------------------------------------------------- ---gcc-flag-----------------------------%s", x_on, x_off);
+   sprintf (my.m_break, "%shnt -·---buffer--------------------- line col typ·---message-------------------------------------------------- ---gcc-flag-----------------------------%s", x_on, x_off);
    if (c_pass ==  0) {
       /*> printf ("%sgcc/make (help) q:quik f:full w:wipe a:ansi c:comp i:inst u:test m:manu Z:revw%s\n", x_on, x_off);   <*/
-      sprintf (x_filter, "filter=%s···········································································", g_filter);
+      sprintf (x_filter, "filter=%s···········································································", my.m_filter);
       /*> sprintf (g_print, "%scompiler (%s) show=%s, fail=%s, errs=%s, warn=%s, wast=%s, msgs=%s, line=%s   %-59.59s %s%s",   <*/
       sprintf (g_print, "%sHFIX·gcc/make·(%s)·show=%s,·fail=%s,·errs=%s,·warn=%s,·wast=%s,·msgs=%s,·line=%s···%-54.54s·%s%s",
             x_on, x_grade,
@@ -160,7 +160,7 @@ SHOW_totals             (char c_pass, char c_color, short a_show, short a_fail, 
 }
 
 char*
-SHOW_action             (char a_opt, char a_result)
+SHOW_title              (char a_opt, char a_result)
 {
    switch (a_opt) {
 
@@ -170,20 +170,26 @@ SHOW_action             (char a_opt, char a_result)
    case 'w' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(w:wipe)·=·recon·of·files·to·be·cleared···········(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
    case 'W' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(W:WIPE)·=·deep·clean·(all·temp/waste)············(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
 
-   case 'c' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(c:reco)·=·recon·of·c-files·to·be·compilied·······(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
+   case 'c' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(c:comp)·=·recon·of·c-files·to·be·compiled········(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
    case 'C' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(C:COMP)·=·compile·c-files,·show·critical·only····(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
-
-   case 'u' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(u:reco)·=·recon·of·units·to·be·compilied·········(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
-   case 'U' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(U:COMP)·=·compile·units,·show·critical·only······(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
 
    case 'i' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(i:inst)·=·recon·of·files·to·be·installed·········(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
    case 'I' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(I:INST)·=·install·everything·····················(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
 
-   case 'r' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(r:remo)·=·recon·of·files·to·be·removed···········(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
-   case 'R' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(R:KILL)·=·remove·everything······················(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
+   case 'u' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(u:unit)·=·recon·of·units·to·be·compiled··········(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
+   case 'U' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(U:UNIT)·=·compile·units,·show·critical·only······(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
+
+   case 'r' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(r:remv)·=·recon·of·files·to·be·removed···········(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
+   case 'R' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(R:REMV)·=·remove·everything······················(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
 
    case 'm' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(m:mans)·=·recon·of·manuals·to·be·installed·······(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
    case 'M' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(M:MANS)·=·install·manuals·only···················(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
+
+   case 'g' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(g:gitv)·=·recon·of·git·versioning·before·push····(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
+   case 'G' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(G:GITV)·=·conduct·git·versioning·················(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
+
+   case 't' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(t:test)·=·recon·of·unit·test·execution···········(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
+   case 'T' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(T:TEST)·=·conduct·unit·test·certification········(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
 
    case 'q' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(q:quik)·=·compile·and·install·c-filess···········(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
    case 'Q' :  sprintf (g_print, "HFIX·gcc/make·(----)··chosen··(Q:QUIK)·=·compile, install, and units············(%-4.4s)·······································································[%c]", P_VERNUM, a_result);  break;
@@ -199,16 +205,16 @@ SHOW_action             (char a_opt, char a_result)
 char
 SHOW_vim_help           (void)
 {
-   printf ("%s\n", SHOW_action ('?', '?'));
-   printf (" ƒ··wipe/clean····‰ ·,qw reco··>·,qW wipe··‚                                  ,q? help                                                                       [?]\n");
-   printf (" Œ  c-lang make   Œ  ,qc reco  > ,qC make  Œ    ,qq quik (make/inst)          ,q! rset                                                                       [?]\n");
-   printf (" Œ  install       Œ  ,qi reco  > ,qI inst  Œ    ,qQ quik (make/inst/unit)                                                                                    [?]\n");
-   printf (" Œ  unit make     Œ  ,qu reco  > ,qU make  Œ    ,qf full (wipe/make/inst/unit)                                                                               [?]\n");
-   printf (" Œ  remove        Œ  ,qr reco  > ,qR remv  Œ    ,qF full (wipe/make/inst/unit/cert)                                                                          [?]\n");
-   printf (" „··manuals·······ˆ ·,qm reco··>·,qM inst··…                                                                                                                 [?]\n");
-   printf (" ƒ··hints···············;;AA·=·go·directly·to·buffer/position·of·hint·AA·······‚                                                                             [?]\n");
-   printf (" Œ  cursoring        ,q[ head    ,q< prev    ,q. curr    ,q> next    ,q] last  Œ                                                                             [?]\n");
-   printf (" „··configure········,q··show····,qh·hide····,q+·more····,q-·less····,q# here··…                                                                             [?]\n");
+   printf ("%s\n", SHOW_title  ('?', '?'));
+   printf (" ƒ··wipe··········‰··,qw reco··>·,qW wipe··‚    ƒ²²tags²²‚   ƒ²²conf²²‚       ,q? help                                                                       [?]\n");
+   printf (" Œ  c-make        Œ  ,qc reco  > ,qC comp  Œ     ;;  find     ,q  show        ,q! rset                                                                       [?]\n");
+   printf (" Œ  install       Œ  ,qi reco  > ,qI inst  Œ     ,q[ head     ,qh hide                                                                                       [?]\n");
+   printf (" Œ  unit-make     Œ  ,qu reco  > ,qU unit  Œ     ,q< prev     ,q+ more                                                                                       [?]\n");
+   printf (" Œ  remove        Œ  ,qr reco  > ,qR remv  Œ     ,q. curr     ,q- less                                                                                       [?]\n");
+   printf (" Œ  manuals       Œ  ,qm reco  > ,qM mans  Œ     ,q> next                                                                                                    [?]\n");
+   printf (" Œ  git-vers      Œ  ,qg reco  > ,qG gitv  Œ     ,q] tail    ƒ²²tbd²²²‚                                                                                      [?]\n");
+   printf (" Œ  testing       Œ  ,qt reco  > ,qT test  Œ     ,q# THIS     ,qf WCIU                                                                                       [?]\n");
+   printf (" „··quick·········ˆ··,qq CI····>·,qQ CIU···…                  ,qF WCIUT                                                                                      [?]\n");
    exit (0);
 }
 

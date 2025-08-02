@@ -219,5 +219,31 @@ HFIX_size                (ullong a_bytes)
    return x_pretty;
 }
 
+char*
+HFIX_chrvisible         (uchar a_ch)
+{
+   char        x_ch        =    0;
+   static char x_pretty    [LEN_TERSE] = "";
+   /*---(default)------------------------*/
+   x_ch = a_ch;
+   /*---(translate)----------------------*/
+   switch (a_ch) {
+   case G_KEY_RETURN  : x_ch = G_CHAR_RETURN;    break;
+   case G_KEY_ENTER   : x_ch = G_CHAR_RETURN;    break;
+   case G_KEY_ESCAPE  : x_ch = G_CHAR_ESCAPE;    break;
+   case G_KEY_BS      : x_ch = G_CHAR_BS;        break;
+   case G_KEY_DEL     : x_ch = G_CHAR_DEL;       break;
+   case G_KEY_SPACE   : x_ch = G_CHAR_SPACE;     break;
+   case G_KEY_GROUP   : x_ch = G_CHAR_GROUP;     break;
+   case G_KEY_FIELD   : x_ch = G_CHAR_FIELD;     break;
+   case G_KEY_NULL    : x_ch = G_CHAR_NULL;      break;
+   }
+   if (a_ch < 32)  x_ch = G_CHAR_BIGDOT;
+   /*---(create output)------------------*/
+   sprintf (x_pretty, "%c/%d", x_ch, a_ch);
+   /*---(complete)-----------------------*/
+   return x_pretty;
+}
+
 
 

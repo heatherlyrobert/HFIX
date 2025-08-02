@@ -26,85 +26,7 @@
 char    s_compile     [MAX_ENTRY][LEN_DESC];
 char    s_ncount      =   0;
 
-char    s_whoami      [LEN_LABEL] = "";
-char    s_ext         [LEN_TERSE] = "";
-char    s_done        = '-';
-char    s_status      = '-';
-char    s_label       [LEN_LABEL] = "";
-char    s_result      = '?';
-char    s_error       = '-';
 
-long    s_rpid        = 0;
-long    s_cnt         = 0;
-long    s_beg         = 0;
-long    s_cur         = 0;
-long    s_end         = 0;
-
-
-
-char
-COMP__clear             (char a_ext [LEN_TERSE])
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   int         rc          =    0;
-   char        i           =    0;
-   char        x_title     [LEN_TERSE] = "TOTAL";
-   char        x_whoami    [LEN_LABEL] = "";
-   char        l           =    0;
-   /*---(header)-------------------------*/
-   DEBUG_HFIX    yLOG_enter   (__FUNCTION__);
-   /*---(default)------------------------*/
-   s_ncount = 0;
-   s_rpid = s_cnt = s_beg = s_cur = s_end = 0;
-   strcpy (s_whoami, "");
-   strcpy (s_ext   , "");
-   s_done = '-';
-   /*---(clear entries)------------------*/
-   for (i = 0; i < MAX_ENTRY; ++i) {
-      strlcpy (s_compile [i], "··························   ", LEN_DESC);
-   }
-   /*---(defense)------------------------*/
-   DEBUG_HFIX    yLOG_point   ("a_ext"     , a_ext);
-   --rce;  if (a_ext     == NULL) {
-      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_HFIX    yLOG_info    ("a_ext"     , a_ext);
-   /*---(add extension label)------------*/
-   --rce; if (strcmp (a_ext, ".c")    == 0)  strcpy (x_title, "clang");
-   else if   (strcmp (a_ext, ".unit") == 0)  strcpy (x_title, "UNITS");
-   else if   (strcmp (a_ext, "wipe")  == 0)  strcpy (x_title, "wipe");
-   else if   (strcmp (a_ext, "inst")  == 0)  strcpy (x_title, "inst");
-   else if   (strcmp (a_ext, "remo")  == 0)  strcpy (x_title, "remo");
-   else if   (strcmp (a_ext, "mans")  == 0)  strcpy (x_title, "mans");
-   else {
-      DEBUG_HFIX   yLOG_exitr   (__FUNCTION__, rce);
-      return  rce;
-   }
-   DEBUG_HFIX    yLOG_info    ("x_title"   , x_title);
-   l = strlen (x_title);
-   for (i = 0; i < l; ++i)   s_compile [MAX_ENTRY - 1][i] = x_title [i];
-   /*---(add total marks)----------------*/
-   s_compile [MAX_ENTRY - 1][ 8] = '-';
-   s_compile [MAX_ENTRY - 1][13] = '-';
-   s_compile [MAX_ENTRY - 1][18] = '-';
-   s_compile [MAX_ENTRY - 1][24] = '-';
-   /*---(add extension label)------------*/
-   rc = HFIX_whoami (x_whoami);
-   DEBUG_HFIX    yLOG_value   ("whoami"    , rc);
-   --rce;  if (rc < 0) {
-      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_HFIX    yLOG_info    ("x_whoami"  , x_whoami);
-   /*---(save-back)----------------------*/
-   strlcpy (s_whoami, x_whoami, LEN_LABEL);
-   strlcpy (s_ext   , a_ext   , LEN_TERSE);
-   /*---(complete)-----------------------*/
-   DEBUG_HFIX    yLOG_exit    (__FUNCTION__);
-   return 0;
-}
 
 char
 COMP__base              (void)
@@ -131,15 +53,15 @@ COMP__base              (void)
       return  rce;
    }
    /*---(defense)------------------------*/
-   DEBUG_HFIX   yLOG_info    ("s_whoami"   , s_whoami);
-   lb = strlen (s_whoami);
+   DEBUG_HFIX   yLOG_info    ("my.m_whoami"   , my.m_whoami);
+   lb = strlen (my.m_whoami);
    DEBUG_HFIX   yLOG_value   ("lb"         , lb);
    --rce;  if (lb     <= 3) {
       DEBUG_HFIX   yLOG_exitr   (__FUNCTION__, rce);
       return  rce;
    }
-   DEBUG_HFIX   yLOG_info    ("s_ext"      , s_ext);
-   le = strlen (s_ext);
+   DEBUG_HFIX   yLOG_info    ("my.m_ext"      , my.m_ext);
+   le = strlen (my.m_ext);
    DEBUG_HFIX   yLOG_value   ("le"         , le);
    --rce;  if (le     <= 1) {
       DEBUG_HFIX   yLOG_exitr   (__FUNCTION__, rce);
@@ -167,13 +89,13 @@ COMP__base              (void)
       l = strlen (x_name);
       strlcpy (x_bit, x_name, lb + 1);
       DEBUG_HFIX   yLOG_info    ("x_bit"     , x_bit);
-      if (strcmp (x_bit, s_whoami) != 0) {
+      if (strcmp (x_bit, my.m_whoami) != 0) {
          DEBUG_HFIX   yLOG_note    ("skipping, wrong base");
          continue;
       }
       strcpy (x_bit, x_name + l - le);
       DEBUG_HFIX   yLOG_info    ("x_bit"     , x_bit);
-      if (strcmp (x_bit, s_ext) != 0) {
+      if (strcmp (x_bit, my.m_ext) != 0) {
          DEBUG_HFIX   yLOG_note    ("skipping, wrong extention");
          continue;
       }
@@ -184,9 +106,8 @@ COMP__base              (void)
          continue;
       }
       /*---(place)-----------------------*/
-      DEBUG_HFIX   yLOG_note    ("accepted and placing");
-      snprintf (x_full , 19, "%s············································", x_name);
-      sprintf  (s_compile [s_ncount], "%s·-·-··-·   ", x_full);
+      rc = BASE_entry ('c', s_ncount, x_name);
+      DEBUG_HFIX   yLOG_value   ("entry"     , rc);
       ++s_ncount;
       /*---(done)------------------------*/
    }
@@ -199,110 +120,17 @@ COMP__base              (void)
    /*---(sort-it)------------------------*/
    HFIX_sort ();
    /*---(update total)-------------------*/
-   sprintf (x_bit, "%2d", s_ncount);
-   if (x_bit [0] == ' ')  x_bit [0] = '·';
-   if (x_bit [1] == ' ')  x_bit [1] = '·';
-   if (s_ncount == 0)     x_bit [1] = '/';
-   s_compile [MAX_ENTRY - 1][ 7] = x_bit [0];
-   s_compile [MAX_ENTRY - 1][ 8] = x_bit [1];
-   s_compile [MAX_ENTRY - 1][ 9] = 't';
+   BASE_total ('t', s_ncount);
+   /*> sprintf (x_bit, "%2d", s_ncount);                                              <* 
+    *> if (x_bit [0] == ' ')  x_bit [0] = '·';                                        <* 
+    *> if (x_bit [1] == ' ')  x_bit [1] = '·';                                        <* 
+    *> if (s_ncount == 0)     x_bit [1] = '/';                                        <* 
+    *> s_compile [MAX_ENTRY - 1][ 7] = x_bit [0];                                     <* 
+    *> s_compile [MAX_ENTRY - 1][ 8] = x_bit [1];                                     <* 
+    *> s_compile [MAX_ENTRY - 1][ 9] = 't';                                           <*/
    /*---(complete)------------------------------*/
    DEBUG_HFIX   yLOG_exit    (__FUNCTION__);
    return s_ncount;
-}
-
-char
-COMP__exist             (char c_type, char a_name [LEN_TITLE])
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   char        i           =    0;
-   char        l           =    0;
-   char        x_name      [LEN_LABEL] = "";
-   char        c           =    0;
-   char        x_row, x_col;
-   /*---(header)-------------------------*/
-   DEBUG_HFIX    yLOG_enter   (__FUNCTION__);
-   /*---(defense)------------------------*/
-   DEBUG_HFIX   yLOG_point   ("a_name"    , a_name);
-   --rce;  if (a_name == NULL || a_name [0] == '\0') {
-      DEBUG_HFIX   yLOG_exitr   (__FUNCTION__, rce);
-      return  rce;
-   }
-   DEBUG_HFIX   yLOG_info    ("a_name"    , a_name);
-   --rce;  if (strchr (" ·", a_name [0]) != NULL) {
-      DEBUG_HFIX   yLOG_exitr   (__FUNCTION__, rce);
-      return  rce;
-   }
-   /*---(prepare lookup)-----------------*/
-   DEBUG_HFIX   yLOG_char    ("c_type"    , c_type);
-   switch (c_type) {
-   case 'w' : case 'i' : case 'r' :
-      l = 14; 
-      break;
-   default  :
-      l = 18;
-      break;
-   }
-   DEBUG_HFIX   yLOG_value   ("l"         , l);
-   snprintf (x_name, LEN_LABEL - 1, "%s······························", a_name);
-   DEBUG_HFIX   yLOG_info    ("x_name"    , x_name);
-   /*---(prepare lookup)-----------------*/
-   for (i = 0; i < MAX_ENTRY; ++i) {
-      if (s_compile [i] [0] == '·')                  continue;
-      ++c;
-      if (strncmp (s_compile [i], x_name, l) != 0)   continue;
-      /*---(complete)--------------------*/
-      x_row = i / 3;
-      x_col = i % 3;
-      DEBUG_HFIX   yLOG_complex ("FOUND"     , "%2d#, %2dr, %2dc, filled %2d", i, x_row, x_col, c);
-      DEBUG_HFIX   yLOG_exit    (__FUNCTION__);
-      return i + 1;
-   }
-   /*---(trouble)------------------------*/
-   --rce;  
-   DEBUG_HFIX    yLOG_note    ("name never found");
-   DEBUG_HFIX    yLOG_exitr   (__FUNCTION__, rce);
-   return rce;
-}
-
-char
-COMP__mark              (char a_name [LEN_TITLE], char a_mark)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   char        n           =    0;
-   /*---(header)-------------------------*/
-   DEBUG_HFIX    yLOG_enter   (__FUNCTION__);
-   /*---(find)---------------------------*/
-   n = COMP__exist ('c', a_name);
-   DEBUG_HFIX   yLOG_value   ("n"         , n);
-   --rce;  if (n < 0) {
-      DEBUG_HFIX   yLOG_exitr   (__FUNCTION__, rce);
-      return  rce;
-   }
-   /*---(mark)---------------------------*/
-   DEBUG_HFIX   yLOG_char    ("a_mark"    , a_mark);
-   --rce;  if (a_mark == 0 || strchr ("nbe", a_mark) == NULL) {
-      DEBUG_HFIX   yLOG_exitr   (__FUNCTION__, rce);
-      return  rce;
-   }
-   if      (a_mark == 'n')  s_compile [n - 1][19] = '³';
-   else if (a_mark == 'b')  s_compile [n - 1][21] = ' ';
-   else if (a_mark == 'e')  s_compile [n - 1][21] = 'Ï';
-   /*---(complete)-----------------------*/
-   DEBUG_HFIX    yLOG_exit    (__FUNCTION__);
-   return 1;
-}
-
-char
-COMP__mark_done         (char a_status, char a_label [LEN_LABEL], int a_cnt)
-{
-   char        x_bit       [LEN_LABEL] = "";
-   int         i           =    0;
-   sprintf (x_bit, "  %c %-8.8s %4d  ", a_status, a_label, a_cnt);
-   for (i = 0; i < 19; ++i) s_compile [MAX_ENTRY - 2][4 + i] = x_bit [i];
-   return 0;
 }
 
 char
@@ -359,18 +187,18 @@ COMP_c_make             (char c_type, char c_phase)
       /*---(prepare buf)-----------------*/
       DEBUG_HFIX    yLOG_note    ("c recon/make request/fork");
       rc = COMP__beg ();
-      rc = COMP__clear (".c");
+      rc = BASE_clear (my.m_desc);
       DEBUG_HFIX    yLOG_value   ("clear"     , rc);
       rc = COMP__base  ();
       DEBUG_HFIX    yLOG_value   ("base"      , rc);
       /*---(run make)--------------------*/
-      s_beg  = s_cur  = time (NULL);
-      DEBUG_HFIX    yLOG_value   ("s_beg"     , s_beg);
+      my.m_beg  = my.m_cur  = time (NULL);
+      DEBUG_HFIX    yLOG_value   ("my.m_beg"     , my.m_beg);
       switch (c_type) {
-      case 'r'  :  s_rpid = yexec_ufork ("/bin/bash -c HFIX_reconc");  break;
-      case 'c'  :  s_rpid = yexec_ufork ("/bin/bash -c HFIX_make");    break;
+      case 'r'  :  my.m_rpid = yexec_ufork ("/bin/bash -c HFIX_reconc");  break;
+      case 'c'  :  my.m_rpid = yexec_ufork ("/bin/bash -c HFIX_make");    break;
       }
-      DEBUG_HFIX    yLOG_value   ("ufork"     , s_rpid);
+      DEBUG_HFIX    yLOG_value   ("ufork"     , my.m_rpid);
       /*---(default check)---------------*/
       rc_final = HFIX_CHK;
       strcpy (x_label, "launched");
@@ -379,25 +207,25 @@ COMP_c_make             (char c_type, char c_phase)
       DEBUG_HFIX    yLOG_note    ("c recon/make update/wait");
       rc = EXIM_import ("");
       DEBUG_HFIX    yLOG_value   ("import"    , rc);
-      DEBUG_HFIX    yLOG_value   ("s_rpid"    , s_rpid);
-      if (s_rpid > 0) {
+      DEBUG_HFIX    yLOG_value   ("my.m_rpid"    , my.m_rpid);
+      if (my.m_rpid > 0) {
          usleep (500000);
-         s_cur  = time (NULL);
+         my.m_cur  = time (NULL);
          COMP__chk ();
-         DEBUG_HFIX    yLOG_value   ("s_cur"     , s_cur);
-         rc_final = yexec_uwait (s_rpid, x_label);
+         DEBUG_HFIX    yLOG_value   ("my.m_cur"     , my.m_cur);
+         rc_final = yexec_uwait (my.m_rpid, x_label);
          DEBUG_HFIX    yLOG_char    ("uwait"     , rc_final);
          ACTS__progress ('1');
-         /*> ++s_cnt;                                                                 <*/
+         /*> ++my.m_cnt;                                                                 <*/
       }
    } else {
       DEBUG_HFIX    yLOG_note    ("unknown request");
       DEBUG_HFIX    yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_HFIX    yLOG_value   ("s_cnt"     , s_cnt);
+   DEBUG_HFIX    yLOG_value   ("my.m_cnt"     , my.m_cnt);
    /*---(check status)--------------------------*/
-   if (s_rpid > 0) {
+   if (my.m_rpid > 0) {
       switch (rc_final) {
       case HFIX_CHK :  case 'r' :
          rc_num = 0;
@@ -405,16 +233,16 @@ COMP_c_make             (char c_type, char c_phase)
       case '#' :
          strcpy (x_label, "DONE");
       default  :
-         s_rpid = 0;
-         s_end  = time (NULL);
-         s_done = 'Y';
-         strcpy (x_bit, HFIX_age (s_beg, s_end));
-         for (i = 0; i < 3; ++i) s_compile [MAX_ENTRY - 1][23 + i] = x_bit [i];
+         my.m_rpid = 0;
+         my.m_done = 'Y';
+         BASE_finishing ();
          break;
       }
       /*---(update elapsed)---------------------*/
-      sprintf (x_bit, "  %c %-8.8s %4d  ", rc_final, x_label, s_cur - s_beg);
-      for (i = 0; i < 18; ++i) s_compile [MAX_ENTRY - 2][4 + i] = x_bit [i];
+      rc = BASE_result (rc_final, x_label, my.m_cur - my.m_beg);
+      DEBUG_HFIX    yLOG_value   ("result"    , rc);
+      /*> sprintf (x_bit, "  %c %-8.8s %4d  ", rc_final, x_label, my.m_cur - my.m_beg);     <* 
+       *> for (i = 0; i < 18; ++i) s_compile [MAX_ENTRY - 2][4 + i] = x_bit [i];      <*/
       /*---(done)-------------------------------*/
    }
    /*---(show results)--------------------------*/
@@ -441,11 +269,11 @@ COMP_c_compile          (char a_phase)
    if (a_phase == HFIX_BEG) {
       DEBUG_HFIX    yLOG_note    ("c compile request/fork");
       rc = COMP__beg ();
-      s_beg  = s_cur  = time (NULL);
-      DEBUG_HFIX    yLOG_value   ("s_beg"     , s_beg);
-      s_rpid = yexec_ufork ("/bin/bash -c HFIX_make");
-      DEBUG_HFIX    yLOG_value   ("ufork"     , s_rpid);
-      rc_final = yexec_uwait (s_rpid, x_label);
+      my.m_beg  = my.m_cur  = time (NULL);
+      DEBUG_HFIX    yLOG_value   ("my.m_beg"     , my.m_beg);
+      my.m_rpid = yexec_ufork ("/bin/bash -c HFIX_make");
+      DEBUG_HFIX    yLOG_value   ("ufork"     , my.m_rpid);
+      rc_final = yexec_uwait (my.m_rpid, x_label);
       DEBUG_HFIX    yLOG_char    ("uwait"     , rc_final);
       COMP__chk ();
       rc_final = HFIX_CHK;
@@ -454,25 +282,25 @@ COMP_c_compile          (char a_phase)
       DEBUG_HFIX    yLOG_note    ("c recon update/wait");
       rc = EXIM_import ("");
       DEBUG_HFIX    yLOG_value   ("import"    , rc);
-      DEBUG_HFIX    yLOG_value   ("s_rpid"    , s_rpid);
-      if (s_rpid > 0) {
+      DEBUG_HFIX    yLOG_value   ("my.m_rpid"    , my.m_rpid);
+      if (my.m_rpid > 0) {
          usleep (500000);
-         s_cur  = time (NULL);
+         my.m_cur  = time (NULL);
          COMP__chk ();
-         DEBUG_HFIX    yLOG_value   ("s_cur"     , s_cur);
-         rc_final = yexec_uwait (s_rpid, x_label);
+         DEBUG_HFIX    yLOG_value   ("my.m_cur"     , my.m_cur);
+         rc_final = yexec_uwait (my.m_rpid, x_label);
          DEBUG_HFIX    yLOG_char    ("uwait"     , rc_final);
          ACTS__progress ('2');
-         /*> ++s_cnt;                                                                 <*/
+         /*> ++my.m_cnt;                                                                 <*/
       }
    } else {
       DEBUG_HFIX    yLOG_note    ("unknown request");
       DEBUG_HFIX    yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_HFIX    yLOG_value   ("s_cnt"     , s_cnt);
+   DEBUG_HFIX    yLOG_value   ("my.m_cnt"     , my.m_cnt);
    /*---(check status)--------------------------*/
-   if (s_rpid > 0) {
+   if (my.m_rpid > 0) {
       switch (rc_final) {
       case HFIX_CHK :  case 'r' :
          rc_num = 0;
@@ -480,16 +308,16 @@ COMP_c_compile          (char a_phase)
       case '#' :
          strcpy (x_label, "DONE");
       default  :
-         s_rpid = 0;
-         s_end  = time (NULL);
-         s_done = 'Y';
-         strcpy (x_bit, HFIX_age (s_beg, s_end));
-         for (i = 0; i < 3; ++i) s_compile [MAX_ENTRY - 1][23 + i] = x_bit [i];
+         my.m_rpid = 0;
+         my.m_done = 'Y';
+         BASE_finishing ();
          break;
       }
       /*---(update elapsed)---------------------*/
-      sprintf (x_bit, "  %c %-8.8s %4d  ", rc_final, x_label, s_cur - s_beg);
-      for (i = 0; i < 18; ++i) s_compile [MAX_ENTRY - 2][4 + i] = x_bit [i];
+      rc = BASE_result (rc_final, x_label, my.m_cur - my.m_beg);
+      DEBUG_HFIX    yLOG_value   ("result"    , rc);
+      /*> sprintf (x_bit, "  %c %-8.8s %4d  ", rc_final, x_label, my.m_cur - my.m_beg);     <* 
+       *> for (i = 0; i < 18; ++i) s_compile [MAX_ENTRY - 2][4 + i] = x_bit [i];      <*/
       /*---(done)-------------------------------*/
    }
    /*---(show results)--------------------------*/
@@ -515,7 +343,7 @@ COMP_running       (void)
    /*---(header)-------------------------*/
    DEBUG_HFIX    yLOG_enter   (__FUNCTION__);
    /*---(open)---------------------------*/
-   rc = BASE__open  (HFIX_OUT, NULL, NULL, &f);
+   rc = FILE_open  (HFIX_OUT, NULL, NULL, &f);
    DEBUG_HFIX  yLOG_value   ("open"      , rc);
    DEBUG_HFIX  yLOG_point   ("f"         , f);
    --rce;  if (rc < 1 || f == NULL) {
@@ -525,7 +353,7 @@ COMP_running       (void)
    /*---(handle lines)-------------------*/
    while (1) {
       /*---(read)------------------------*/
-      rc = BASE__read (f, NULL, NULL, x_recd);
+      rc = FILE_read (f, NULL, NULL, x_recd);
       DEBUG_HFIX  yLOG_value   ("read"      , rc);
       if (rc == 0)   break;
       /*---(filter)----------------------*/
@@ -538,14 +366,14 @@ COMP_running       (void)
       if (p == NULL)     continue;
       p [0] = '\0';
       DEBUG_HFIX  yLOG_info    ("x_name"    , x_name);
-      rc = COMP__mark (x_name, 'n');
+      rc = BASE_mark (my.m_theme, x_name, 'n');
       DEBUG_HFIX  yLOG_value   ("marked"    , rc);
       ++c;
       /*---(done)------------------------*/
    }
    DEBUG_HFIX  yLOG_value   ("c"         , c);
    /*---(close)--------------------------*/
-   rc = BASE__close (&f);
+   rc = FILE_close (&f);
    DEBUG_HFIX  yLOG_value   ("close"     , rc);
    DEBUG_HFIX  yLOG_point   ("f"         , f);
    --rce;  if (rc < 1 || f != NULL) {
@@ -553,13 +381,7 @@ COMP_running       (void)
       return rce;
    }
    /*---(update total)-------------------*/
-   sprintf (x_bit, "%2d", c);
-   if (x_bit [0] == ' ')  x_bit [0] = '·';
-   if (x_bit [1] == ' ')  x_bit [1] = '·';
-   if (c == 0)            x_bit [1] = '/';
-   s_compile [MAX_ENTRY - 1][12] = x_bit [0];
-   s_compile [MAX_ENTRY - 1][13] = x_bit [1];
-   s_compile [MAX_ENTRY - 1][14] = 'n';
+   BASE_total ('n', c);
    /*---(complete)------------------------------*/
    DEBUG_HFIX    yLOG_exit    (__FUNCTION__);
    return c;
@@ -572,3 +394,148 @@ RUN_clean          (void)
    /*> yexec_urun ("make --silent clean");                                            <*/
    return 0;
 }
+
+char
+BASE__handle            (char c_pass, char c_filter [LEN_LABEL], char c_color, char a_recd [LEN_RECD], short *b_handled, short *b_shown, short *b_hidden, char *r_level, char r_show [LEN_FULL])
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   char        rc_final    =    0;
+   short       x_count     =    0;
+   short       x_handled   =    0;
+   short       x_shown     =    0;
+   short       x_hidden    =    0;
+   char        x_recd      [LEN_RECD]  = "";
+   char        x_file      [LEN_HUND]  = "";
+   char        x_type      =  '-';
+   short       x_line      =    0;
+   short       x_col       =    0;
+   char        x_level     =  '-';
+   char        x_msg       [LEN_RECD]  = "";
+   char        x_flag      [LEN_HUND]  = "";
+   char        x_on        [LEN_TERSE] = "";
+   char        x_off       [LEN_TERSE] = "";
+   char        x_ln        [LEN_TERSE] = "";
+   char        x_co        [LEN_TERSE] = "";
+   char        x_show      [LEN_FULL]  = "";
+   char        x_nada      =  '-';
+   /*---(header)-------------------------*/
+   DEBUG_HFIX  yLOG_enter   (__FUNCTION__);
+   /*---(default/save)-------------------*/
+   if (b_handled != NULL)  x_handled = *b_handled;
+   if (b_shown   != NULL)  x_shown   = *b_shown;
+   if (b_hidden  != NULL)  x_hidden  = *b_hidden;
+   if (r_level   != NULL)  *r_level  = '-';
+   if (r_show    != NULL)  strcpy (r_show, "");
+   /*---(defense)------------------------*/
+   DEBUG_HFIX  yLOG_point   ("a_recd"    , a_recd);
+   --rce;  if (a_recd == NULL) {
+      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_HFIX  yLOG_info    ("a_recd"    , a_recd);
+   strlcpy (x_recd, a_recd, LEN_RECD);
+   /*---(handle)-------------------------*/
+   if      (strncmp (x_recd, "make:"      ,   5) == 0)          rc = MAKE_parse   (x_recd, &x_count, x_file, &x_type, &x_line, &x_col, &x_level, x_msg, x_flag, &x_nada);
+   else if (strncmp (x_recd, "make["      ,   5) == 0)          rc = MAKE_parse   (x_recd, &x_count, x_file, &x_type, &x_line, &x_col, &x_level, x_msg, x_flag, &x_nada);
+   else if (strncmp (x_recd, "/usr/libexec/gcc/",  16) == 0)    rc = LD_parse     (x_recd, &x_count, x_file, &x_type, &x_line, &x_col, &x_level, x_msg, x_flag);
+   else                                                         rc = GCC_parse    (x_recd, &x_count, x_file, &x_type, &x_line, &x_col, &x_level, x_msg, x_flag);
+   /*---(nothing to do)------------------*/
+   if (x_nada == 'y') {
+      if (r_level   != NULL)  *r_level   = 'm';
+      return 0;
+   }
+   /*---(trouble)------------------------*/
+   DEBUG_HFIX  yLOG_value   ("return"    , rc);
+   if (rc <= 0) {
+      DEBUG_HFIX  yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   ++x_handled;
+   /*---(classify)-----------------------*/
+   DEBUG_HFIX  yLOG_info    ("c_filter"  , c_filter);
+   DEBUG_HFIX  yLOG_value   ("c_pass"    , c_pass);
+   if      (strchr (c_filter  , x_level) == NULL)  {  ++x_hidden;  }
+   else if (c_pass == 0)                           {  ++x_shown;   }
+   else                                            {  ++x_shown;  rc_final = 1; }
+   /*---(show)---------------------------*/
+   DEBUG_HFIX  yLOG_value   ("rc_final"  , rc_final);
+   if (rc_final == 1)  strlcpy (x_show, SHOW_line (c_color, x_shown, x_type, x_file, x_line, x_col, x_level, x_msg, x_flag), LEN_FULL);
+   /*---(save-back)----------------------*/
+   if (b_handled != NULL)  *b_handled = x_handled;
+   if (b_shown   != NULL)  *b_shown   = x_shown;
+   if (b_hidden  != NULL)  *b_hidden  = x_hidden;
+   if (r_level   != NULL)  *r_level   = x_level;
+   if (r_show    != NULL)  strlcpy (r_show, x_show, LEN_FULL);
+   /*---(complete)-----------------------*/
+   DEBUG_HFIX  yLOG_exit    (__FUNCTION__);
+   return rc_final;
+}
+
+char
+BASE_pass               (char c_pass, char c_filter [LEN_LABEL], char c_color)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   FILE       *f           = NULL;
+   char        x_recd      [LEN_RECD]  = "";
+   short       x_total     =    0;
+   short       x_accept    =    0;
+   short       x_handled   =    0;
+   short       x_shown     =    0;
+   short       x_hidden    =    0;
+   char        x_level     =  '-';
+   char        x_show      [LEN_FULL]  = "";
+   int         x_fail      =    0;
+   int         x_errs      =    0;
+   int         x_warn      =    0;
+   int         x_waste     =    0;
+   int         x_msgs      =    0;
+   /*---(header)-------------------------*/
+   DEBUG_HFIX  yLOG_enter   (__FUNCTION__);
+   /*---(open)---------------------------*/
+   rc = FILE_open (my.m_file, &x_total, &x_accept, &f);
+   DEBUG_HFIX  yLOG_value   ("open"      , rc);
+   DEBUG_HFIX  yLOG_point   ("f"         , f);
+   --rce;  if (rc < 1 || f == NULL) {
+      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(handle lines)-------------------*/
+   while (1) {
+      /*---(read)------------------------*/
+      rc = FILE_read (f, &x_total, &x_accept, x_recd);
+      DEBUG_HFIX  yLOG_value   ("read"      , rc);
+      if (rc == 0)   break;
+      /*---(handle)----------------------*/
+      rc = BASE__handle (c_pass, c_filter, c_color, x_recd, &x_handled, &x_shown, &x_hidden, &x_level, x_show);
+      DEBUG_HFIX  yLOG_value   ("handle"    , rc);
+      if (rc == 1)  printf ("%s\n", x_show);
+      /*---(statistics)------------------*/
+      DEBUG_HFIX  yLOG_char    ("level"     , x_level);
+      switch (x_level) {
+      case '!' :            ++x_fail;   break;
+      case 'E' : case 'e' : ++x_errs;   break;
+      case 'W' : case 'w' : ++x_warn;   break;
+      case 'U' : case 'u' : ++x_waste;  break;
+      case 'm' :            ++x_msgs;   break;
+      }
+      /*---(done)------------------------*/
+   }
+   /*---(close)--------------------------*/
+   rc = FILE_close (&f);
+   DEBUG_HFIX  yLOG_value   ("close"     , rc);
+   DEBUG_HFIX  yLOG_point   ("f"         , f);
+   --rce;  if (rc < 1 || f != NULL) {
+      DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(totals)-------------------------*/
+   printf ("%s\n", SHOW_totals (c_pass, c_color, x_shown, x_fail, x_errs, x_warn, x_waste, x_msgs, x_total));
+   /*---(complete)-----------------------*/
+   DEBUG_HFIX  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+

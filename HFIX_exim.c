@@ -460,8 +460,8 @@ EXIM_import             (char a_file [LEN_PATH])
    DEBUG_HFIX  yLOG_point   ("fgets"     , p);
    --rce;  if (p != NULL) {
       DEBUG_HFIX  yLOG_info    ("fgets"     , p);
-      rc = EXIM__import_time  (x_line, &s_rpid, &s_cnt, &s_beg, &s_cur, &s_end);
-      DEBUG_HFIX  yLOG_complex ("time"      , "%4drc, %6dr, %4dc, %10ldb, %10ldc, %10lde", rc, s_rpid, s_cnt, s_beg, s_cur, s_end);
+      rc = EXIM__import_time  (x_line, &my.m_rpid, &my.m_cnt, &my.m_beg, &my.m_cur, &my.m_end);
+      DEBUG_HFIX  yLOG_complex ("time"      , "%4drc, %6dr, %4dc, %10ldb, %10ldc, %10lde", rc, my.m_rpid, my.m_cnt, my.m_beg, my.m_cur, my.m_end);
       if (rc < 0) {
          DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
          return rce;
@@ -473,8 +473,8 @@ EXIM_import             (char a_file [LEN_PATH])
    DEBUG_HFIX  yLOG_point   ("fgets"     , p);
    --rce;  if (p != NULL) {
       DEBUG_HFIX  yLOG_info    ("fgets"     , p);
-      rc = EXIM__import_whoami (x_line, s_whoami, s_ext , &s_done, &s_status, &s_result, &s_error);
-      DEBUG_HFIX  yLOG_complex ("whoami"    , "%4drc, %10.10s, %10.10s, %c, %c, %c, %c", rc, s_whoami, s_ext, s_done, s_status, s_result, s_error);
+      rc = EXIM__import_whoami (x_line, my.m_whoami, my.m_ext , &my.m_done, &my.m_status, &my.m_result, &my.m_error);
+      DEBUG_HFIX  yLOG_complex ("whoami"    , "%4drc, %10.10s, %10.10s, %c, %c, %c, %c", rc, my.m_whoami, my.m_ext, my.m_done, my.m_status, my.m_result, my.m_error);
       if (rc < 0) {
          DEBUG_HFIX  yLOG_exitr   (__FUNCTION__, rce);
          return rce;
@@ -562,7 +562,7 @@ EXIM__export_list       (FILE *a_buf)
 }
 
 char
-EXIM_export             (char a_super, char a_result, char a_file [LEN_PATH])
+EXIM_export             (char c_super, char a_result, char a_file [LEN_PATH])
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -574,6 +574,7 @@ EXIM_export             (char a_super, char a_result, char a_file [LEN_PATH])
    char        x_result    =  '?';
    /*---(header)-------------------------*/
    DEBUG_HFIX   yLOG_enter   (__FUNCTION__);
+   DEBUG_HFIX   yLOG_char    ("c_super"   , c_super);
    /*---(defenses)-----------------------*/
    DEBUG_HFIX  yLOG_point   ("a_file"    , a_file);
    --rce;  if (a_file  == NULL) {
@@ -600,8 +601,8 @@ EXIM_export             (char a_super, char a_result, char a_file [LEN_PATH])
    }
    DEBUG_HFIX  yLOG_point   ("f"         , f);
    /*---(write title)--------------------*/
-   if (f == NULL)  printf  (   "%s\n", SHOW_action (a_super, s_result));
-   else            fprintf (f, "%s\n", SHOW_action (a_super, s_result));
+   if (f == NULL)  printf  (   "%s\n", SHOW_title  (c_super, x_result));
+   else            fprintf (f, "%s\n", SHOW_title  (c_super, x_result));
    /*---(walk-records)-------------------*/
    for (i = 0; i <= MAX_ENTRY; ++i) {
       x_col = i % 3;
@@ -609,19 +610,19 @@ EXIM_export             (char a_super, char a_result, char a_file [LEN_PATH])
       DEBUG_HFIX   yLOG_complex ("loop"      , "%2dri, %2dc, %2dr", i, x_col, x_row);
       if (x_col == 0 && x_row > 0) {
          DEBUG_HFIX   yLOG_info    ("line"      , x_line);
-         if (f == NULL)  printf  (   "%s                                                                   [%c]\n", x_line, s_result);
-         else            fprintf (f, "%s                                                                   [%c]\n", x_line, s_result);
+         if (f == NULL)  printf  (   "%s                                                                   [%c]\n", x_line, x_result);
+         else            fprintf (f, "%s                                                                   [%c]\n", x_line, x_result);
       }
       if (i >= MAX_ENTRY)  break;
       if (x_col == 0)  strlcpy (x_line, s_compile [i], LEN_FULL);
       else             strlcat (x_line, s_compile [i], LEN_FULL);
    }
    /*---(write timings)------------------*/
-   if (f == NULL) printf  (   "%s\n", EXIM__export_time   (s_rpid, s_cnt, s_beg, s_cur, s_end, s_result));
-   else           fprintf (f, "%s\n", EXIM__export_time   (s_rpid, s_cnt, s_beg, s_cur, s_end, s_result));
+   if (f == NULL) printf  (   "%s\n", EXIM__export_time   (my.m_rpid, my.m_cnt, my.m_beg, my.m_cur, my.m_end, x_result));
+   else           fprintf (f, "%s\n", EXIM__export_time   (my.m_rpid, my.m_cnt, my.m_beg, my.m_cur, my.m_end, x_result));
    /*---(identity)-----------------------*/
-   if (f == NULL) printf  (   "%s\n", EXIM__export_whoami (s_whoami, s_ext , s_done, s_status, s_result, s_error));
-   else           fprintf (f, "%s\n", EXIM__export_whoami (s_whoami, s_ext , s_done, s_status, s_result, s_error));
+   if (f == NULL) printf  (   "%s\n", EXIM__export_whoami (my.m_whoami, my.m_ext , my.m_done, my.m_status, x_result, my.m_error));
+   else           fprintf (f, "%s\n", EXIM__export_whoami (my.m_whoami, my.m_ext , my.m_done, my.m_status, x_result, my.m_error));
    /*---(export list)--------------------*/
    rc = EXIM__export_list (f);
    DEBUG_HFIX  yLOG_value   ("list"      , rc);
@@ -668,8 +669,8 @@ EXIM_trouble            (char a_file [LEN_PATH], char a_message [LEN_HUND])
    }
    DEBUG_HFIX  yLOG_point   ("f"         , f);
    /*---(write title)--------------------*/
-   if (f == NULL)  printf  (   "%s\n", SHOW_action ('ÿ', '-'));
-   else            fprintf (f, "%s\n", SHOW_action ('ÿ', '-'));
+   if (f == NULL)  printf  (   "%s\n", SHOW_title  ('ÿ', '-'));
+   else            fprintf (f, "%s\n", SHOW_title  ('ÿ', '-'));
    /*---(build little gap)---------------*/
    if (f == NULL)  printf  (   "\n");
    else            fprintf (f, "\n");

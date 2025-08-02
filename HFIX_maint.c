@@ -41,9 +41,9 @@ struct cGROUPS {
    /*cntr -type -act- --name------------------ ---prefix---- ----suffix----- ---not------- ---group---------*/
    { 'w' , 't' , 'y' , ""                     , ""          , "~"           , ""          , "temp·files"    },
    { 'w' , 't' , 'y' , ""                     , ""          , ".tmp"        , ""          , "temp·files"    },
-   { 'w' , 't' , '-' , ""                     , ""          , ".backup"     , ""          , "temp·CAUTION"  },
-   { 'w' , 't' , '-' , ""                     , ""          , ".old"        , ""          , "temp·CAUTION"  },
-   { 'w' , 't' , '-' , ""                     , ""          , ".save"       , ""          , "temp·CAUTION"  },
+   { 'w' , 't' , '-' , ""                     , ""          , ".backup"     , ""          , "save·CAUTION"  },
+   { 'w' , 't' , '-' , ""                     , ""          , ".old"        , ""          , "save·CAUTION"  },
+   { 'w' , 't' , '-' , ""                     , ""          , ".save"       , ""          , "save·CAUTION"  },
    { 'w' , 't' , '-' , ""                     , ""          , ".swo"        , ""          , "swap·CAUTION"  },
    { 'w' , 't' , '-' , ""                     , ""          , ".swp"        , ""          , "swap·CAUTION"  },
    { 'w' , 't' , '-' , ""                     , ""          , ".swn"        , ""          , "swap·CAUTION"  },
@@ -65,24 +65,24 @@ struct cGROUPS {
    { 'w' , 't' , 'y' , ":w"                   , ""          , ""            , ""          , "fat·fingers"   },
    { 'w' , 't' , 'y' , ":{"                   , ""          , ""            , ""          , "fat·fingers"   },
    /*cntr -type -act- --name------------------ ---prefix---- ----suffix----- ---not------- ---group---------*/
+   { 'i' , 'm' , 'y' , ""                     , "(PROJ)"    , ".1"          , ""          , "man·1·cmdline" },
+   { 'i' , 'm' , 'y' , ""                     , "(PROJ)"    , ".3"          , ""          , "man·3·library" },
+   { 'i' , 'm' , 'y' , ""                     , "(PROJ)"    , ".4"          , ""          , "man·4·shared"  },
+   { 'i' , 'm' , 'y' , ""                     , "(PROJ)"    , ".5"          , ""          , "man·5·files"   },
+   { 'i' , 'm' , 'y' , ""                     , "(PROJ)"    , ".6"          , ""          , "man·6·using"   },
+   { 'i' , 'm' , 'y' , ""                     , "(PROJ)"    , ".7"          , ""          , "man·7·purpose" },
+   { 'i' , 'm' , 'y' , ""                     , "(PROJ)"    , ".8"          , ""          , "man·8·sysadm"  },
+   { 'i' , 'm' , 'y' , ""                     , "(PROJ)"    , ".9"          , ""          , "man·9·gui-std" },
+   /*cntr -type -act- --name------------------ ---prefix---- ----suffix----- ---not------- ---group---------*/
    { 'i' , 'e' , 'y' , "(PROJ)"               , ""          , ""            , ""          , "main·exec"     },
    { 'i' , 'e' , 'y' , ""                     , "(PROJ)"    , "_debug"      , "_unit_"    , "main·debug"    },
    { 'i' , 'e' , 'y' , ""                     , "(libPROJ)" , ".so"         , ""          , "main·shared"   },
    { 'i' , 'e' , 'y' , ""                     , "(libPROJ)" , ".so.¬.¬.¬"   , ""          , "main·shared"   },
    { 'i' , 'e' , 'y' , ""                     , "(libPROJ)" , ".a"          , ""          , "main·static"   },
-   { 'i' , 'e' , 'y' , "----"                 , ""          , ""            , ""          , "main·links"    },
-   /*cntr -type -act- --name------------------ ---prefix---- ----suffix----- ---not------- ---group---------*/
-   { 'i' , 'm' , 'y' , ""                     , "(PROJ)"    , ".1"          , ""          , "man·end-user"  },
-   { 'i' , 'm' , 'y' , ""                     , "(PROJ)"    , ".3"          , ""          , "man·interface" },
-   { 'i' , 'm' , 'y' , ""                     , "(PROJ)"    , ".4"          , ""          , "man·shared"    },
-   { 'i' , 'm' , 'y' , ""                     , "(PROJ)"    , ".5"          , ""          , "man·files"     },
-   { 'i' , 'm' , 'y' , ""                     , "(PROJ)"    , ".6"          , ""          , "man·interact"  },
-   { 'i' , 'm' , 'y' , ""                     , "(PROJ)"    , ".7"          , ""          , "man·purpose"   },
-   { 'i' , 'm' , 'y' , ""                     , "(PROJ)"    , ".8"          , ""          , "man·sys-admin" },
-   { 'i' , 'm' , 'y' , ""                     , "(PROJ)"    , ".9"          , ""          , "man·gui·stds"  },
+   { 'i' , 'e' , 'y' , "----"                 , ""          , ""            , ""          , "main·LINKS"    },
    /*cntr -type -act- --name------------------ ---prefix---- ----suffix----- ---not------- ---group---------*/
    { 'i' , 'o' , 'y' , ""                     , "(PROJ)"    , ".sh"         , ""          , "bash·script"   },
-   { 'i' , 'o' , 'y' , "----"                 , ""          , ""            , ""          , "script·link"   },
+   { 'i' , 'o' , 'y' , "----"                 , ""          , ""            , ""          , "script·LINKS"  },
    { 'i' , 'o' , 'y' , ""                     , "(PROJ)"    , ".vim"        , ""          , "vim·script"    },
    { 'i' , 'o' , 'y' , ""                     , "(proj)"    , "_solo.h"     , ""          , "solo·header"   },
    { 'i' , 'o' , 'y' , ""                     , "(proj)"    , "_uver.h"     , ""          , "uver·header"   },
@@ -100,7 +100,7 @@ struct cGROUPS {
 static void  o___BASE____________o () { return; }
 
 char
-MAINT__base             (char c_type)
+MAINT__base             (char c_maintset)
 {
    /*---(locals)-----------+-----+-----+-*/
    int         rc          =    0;
@@ -116,20 +116,12 @@ MAINT__base             (char c_type)
    /*---(header)-------------------------*/
    DEBUG_HFIX   yLOG_enter   (__FUNCTION__);
    /*---(prepare type)-------------------*/
-   DEBUG_HFIX   yLOG_char    ("c_type"     , c_type);
-   --rce;  switch (c_type) {
-   case 'w' : case 'W' :
-      c_type = 'w';
-      break;
-   case 'i' : case 'I' : case 'r' : case 'R' : case 'm' : case 'M' :
-      c_type = 'i';
-      break;
-   default :
-      DEBUG_HFIX   yLOG_note    ("c_type not valid");
+   DEBUG_HFIX   yLOG_char    ("c_maintset" , c_maintset);
+   --rce; if (c_maintset == 0 || strchr ("wi", c_maintset) == NULL) {
+      DEBUG_HFIX   yLOG_note    ("c_maintset not valid");
       DEBUG_HFIX   yLOG_exitr   (__FUNCTION__, rce);
       return  rce;
    }
-   DEBUG_HFIX   yLOG_char    ("c_type"     , c_type);
    /*---(clear rows)---------------------*/
    for (i = 0; i < LEN_SHORT; ++i)  x_rows [i] = 0;
    /*---(process entries)----------------*/
@@ -141,14 +133,14 @@ MAINT__base             (char c_type)
          break;
       }
       /*---(check type)------------------*/
-      if (s_groups [i].g_type != c_type) {
+      if (s_groups [i].g_type != c_maintset) {
          DEBUG_HFIX   yLOG_note    ("wrong type, skipping");
          continue;
       }
       /*---(find entry)------------------*/
       strlcpy (x_name, s_groups [i].g_group, LEN_TITLE);
       DEBUG_HFIX   yLOG_info    ("x_name"     , x_name);
-      n = COMP__exist (c_type, x_name);
+      n = BASE_exist (c_maintset, x_name);
       DEBUG_HFIX   yLOG_value   ("n"         , n);
       --rce;  if (n > 0) {
          DEBUG_HFIX   yLOG_note    ("already exists");
@@ -157,8 +149,8 @@ MAINT__base             (char c_type)
       /*---(assign column)---------------*/
       DEBUG_HFIX   yLOG_char    ("g_col"      , s_groups [i].g_col);
       switch (s_groups [i].g_col) {
-      case 'u' :  case 'e' :  x_col = 0;  break;
-      case 'c' :  case 'm' :  x_col = 1;  break;
+      case 'u' :  case 'm' :  x_col = 0;  break;
+      case 'c' :  case 'e' :  x_col = 1;  break;
       case 't' :  case 'o' :  x_col = 2;  break;
       default  :  x_col = 0;  break;
       }
@@ -166,17 +158,15 @@ MAINT__base             (char c_type)
       DEBUG_HFIX   yLOG_value   ("x_col"     , x_col);
       DEBUG_HFIX   yLOG_value   ("x_row"     , x_rows [x_col]);
       if (x_rows [x_col] > 8) {
-         DEBUG_HFIX   yLOG_note    ("too many rows in the column, skipping");
+         yLOG_note    ("too many rows in the column, skipping");
          continue;
       }
       x_pos = (x_rows [x_col] * 3) + x_col;
       DEBUG_HFIX   yLOG_value   ("x_pos"     , x_pos);
       ++(x_rows [x_col]);
       /*---(place)-----------------------*/
-      DEBUG_HFIX   yLOG_note    ("accepted and placing");
-      snprintf (x_full , 16, "%s············································", x_name);
-      DEBUG_HFIX   yLOG_info    ("x_full"     , x_full);
-      sprintf  (s_compile [x_pos], "%s·-···-···-·   ", x_full);
+      rc = BASE_entry ('m', x_pos, x_name);
+      DEBUG_HFIX   yLOG_value   ("entry"     , rc);
       ++x_total;
       /*---(done)------------------------*/
    }
@@ -184,106 +174,6 @@ MAINT__base             (char c_type)
    /*---(complete)------------------------------*/
    DEBUG_HFIX   yLOG_exit    (__FUNCTION__);
    return x_total;
-}
-
-
-
-/*====================------------------------------------====================*/
-/*===----                        counting matches                      ----===*/
-/*====================------------------------------------====================*/
-static void  o___COUNT___________o () { return; }
-
-char
-MAINT__inc_single       (char n, char a_slot, char a_off)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        x_bit       [LEN_SHORT] = "";
-   int         x_val       =    0;
-   char        i           =    0;
-   char        l           =    0;
-   /*---(header)-------------------------*/
-   DEBUG_HFIX    yLOG_enter   (__FUNCTION__);
-   /*---(get existing)-------------------*/
-   DEBUG_HFIX   yLOG_value   ("n"         , n);
-   DEBUG_HFIX   yLOG_value   ("a_off"     , a_off);
-   if (n == MAX_ENTRY)  l = 4;
-   else                 l = 3;
-   DEBUG_HFIX   yLOG_value   ("l"         , l);
-   strlcpy (x_bit, s_compile [n - 1] + a_off, l);
-   DEBUG_HFIX   yLOG_info    ("x_bit"     , x_bit);
-   if (x_bit [0] == '·')  x_bit [0] = ' ';
-   if (x_bit [1] == '·')  x_bit [1] = ' ';
-   if (x_bit [1] == '-')  x_bit [1] = ' ';
-   if (x_bit [2] == '·')  x_bit [2] = ' ';
-   if (x_bit [2] == '-')  x_bit [2] = ' ';
-   DEBUG_HFIX   yLOG_info    ("x_bit"     , x_bit);
-   /*---(convert to number)--------------*/
-   x_val = atoi (x_bit);
-   DEBUG_HFIX   yLOG_value   ("x_val"     , x_val);
-   ++x_val;
-   if (l == 3 && x_val >=  99)  x_val =  99;
-   if (l == 4 && x_val >= 999)  x_val = 999;
-   DEBUG_HFIX   yLOG_value   ("x_val"     , x_val);
-   /*---(put it back)--------------------*/
-   sprintf (x_bit, "%*d%c", l - 1, x_val, a_slot);
-   if (x_bit [0] == ' ')  x_bit [0] = '·';
-   if (x_bit [1] == ' ')  x_bit [1] = '·';
-   DEBUG_HFIX   yLOG_info    ("x_bit"     , x_bit);
-   for (i = 0; i < l; ++i)  s_compile [n - 1][a_off + i] = x_bit [i];
-   /*---(complete)-----------------------*/
-   DEBUG_HFIX    yLOG_exit    (__FUNCTION__);
-   return 1;
-}
-
-char
-MAINT__increment        (char c_type, char a_name [LEN_TITLE], char a_slot)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   char        n           =    0;
-   char        x_col       =    0;
-   char        x_tot       =    0;
-   char        x_caution   =  '-';
-   /*---(header)-------------------------*/
-   DEBUG_HFIX    yLOG_enter   (__FUNCTION__);
-   /*---(find)---------------------------*/
-   n = COMP__exist (c_type, a_name);
-   DEBUG_HFIX   yLOG_value   ("n"         , n);
-   --rce;  if (n < 0) {
-      DEBUG_HFIX   yLOG_exitr   (__FUNCTION__, rce);
-      return  rce;
-   }
-   /*---(check caution)------------------*/
-   if (strstr (a_name, "CAUTION") != NULL)  x_caution = 'y';
-   DEBUG_HFIX   yLOG_value   ("x_caution" , x_caution);
-   /*---(find)---------------------------*/
-   DEBUG_HFIX   yLOG_char    ("a_slot"    , a_slot);
-   --rce; switch (a_slot) {
-   case 'r'  :  x_col = 15;  x_tot =  6;  break;
-   case 'w'  :  x_col = 19;  x_tot = 11;  break;
-   case 'i'  :  x_col = 19;  x_tot = 11;  break;
-   case 'x'  :  x_col = 19;  x_tot = 11;  break;
-   case 'v'  :  x_col = 23;  x_tot = 16;  break;
-   default   :
-                DEBUG_HFIX   yLOG_note    ("unknown slot");
-                DEBUG_HFIX   yLOG_exitr   (__FUNCTION__, rce);
-                return  rce;
-   }
-   DEBUG_HFIX   yLOG_value   ("x_col"     , x_col);
-   /*---(get existing)-------------------*/
-   DEBUG_HFIX   yLOG_info    ("before"    , s_compile [n - 1]);
-   if (x_caution == '-' || c_type == 'r') {
-      DEBUG_HFIX   yLOG_note    ("normal/recon handling");
-      MAINT__inc_single (n        , a_slot, x_col);
-      MAINT__inc_single (MAX_ENTRY, a_slot, x_tot);
-   } else {
-      DEBUG_HFIX   yLOG_note    ("caution handling");
-      s_compile [n - 1][x_col + 1] = 'Ï';
-   }
-   DEBUG_HFIX   yLOG_info    ("after"     , s_compile [n - 1]);
-   /*---(complete)-----------------------*/
-   DEBUG_HFIX    yLOG_exit    (__FUNCTION__);
-   return 1;
 }
 
 

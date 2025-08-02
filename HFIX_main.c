@@ -8,14 +8,9 @@ main               (int a_argc, char *a_argv [])
    char        rc          =    0;
    /*---(header)-------------------------*/
    DEBUG_HFIX  yLOG_enter   (__FUNCTION__);
-   /*---(startup)------------------------*/
-   rc = PROG__urgs (a_argc, a_argv);
-   rc = PROG__args (a_argc, a_argv);
-   DEBUG_HFIX  yLOG_value   ("args"      , rc);
    /*---(run)----------------------------*/
-   rc = PROG_handler (g_super);
-   DEBUG_HFIX    yLOG_value   ("handler"   , rc);
-   DEBUG_HFIX    yLOG_char    ("handler"   , rc);
+   rc = PROG_psuedo (a_argc, a_argv);
+   DEBUG_HFIX  yLOG_value   ("psuedo"    , rc);
    /*---(complete)-----------------------*/
    DEBUG_HFIX  yLOG_exit    (__FUNCTION__);
    return rc;

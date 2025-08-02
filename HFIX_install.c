@@ -33,7 +33,7 @@ INST_pass               (char c_super, char c_pass, char c_unit)
     *> /+---(header)-------------------------+/                                                                       <* 
     *> DEBUG_HFIX  yLOG_enter   (__FUNCTION__);                                                                       <* 
     *> /+---(open)---------------------------+/                                                                       <* 
-    *> rc = BASE__open (g_file, &x_total, &x_accept, &f);                                                             <* 
+    *> rc = FILE_open (my.m_file, &x_total, &x_accept, &f);                                                             <* 
     *> DEBUG_HFIX  yLOG_value   ("open"      , rc);                                                                   <* 
     *> DEBUG_HFIX  yLOG_point   ("f"         , f);                                                                    <* 
     *> --rce;  if (rc < 1 || f == NULL) {                                                                             <* 
@@ -43,7 +43,7 @@ INST_pass               (char c_super, char c_pass, char c_unit)
     *> /+---(handle lines)-------------------+/                                                                       <* 
     *> while (1) {                                                                                                    <* 
     *>    /+---(read)------------------------+/                                                                       <* 
-    *>    rc = BASE__read (f, &x_total, &x_accept, x_recd);                                                           <* 
+    *>    rc = FILE_read (f, &x_total, &x_accept, x_recd);                                                           <* 
     *>    DEBUG_HFIX  yLOG_value   ("read"      , rc);                                                                <* 
     *>    if (rc == 0)   break;                                                                                       <* 
     *>    /+---(handle)----------------------+/                                                                       <* 
@@ -62,7 +62,7 @@ INST_pass               (char c_super, char c_pass, char c_unit)
     *>    /+---(done)------------------------+/                                                                       <* 
     *> }                                                                                                              <* 
     *> /+---(close)--------------------------+/                                                                       <* 
-    *> rc = BASE__close (&f);                                                                                         <* 
+    *> rc = FILE_close (&f);                                                                                         <* 
     *> DEBUG_HFIX  yLOG_value   ("close"     , rc);                                                                   <* 
     *> DEBUG_HFIX  yLOG_point   ("f"         , f);                                                                    <* 
     *> --rce;  if (rc < 1 || f != NULL) {                                                                             <* 
